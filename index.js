@@ -659,10 +659,6 @@ telnet.on("ready", () => {
   if(!config["skip-discord-auth"]) {
     updateStatus(1);
   }
-
-  // Run lpi on startup to acquire names of any players that are already on the server.
-  // See: d7dtdState.waitingForInitialLpi
-  telnet.exec('lpi');
 });
 
 telnet.on("failedlogin", () => {
