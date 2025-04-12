@@ -1,6 +1,6 @@
 {
   "name": "dishorde",
-  "version": "2.2.1",
+  "version": "3.0.0-pre1",
   "description": "A Discord bridge bot for 7 Days to Die. This integrates a dedicated server with Discord, allowing players to access the game's chat from any device or location.",
   "main": "index.js",
   "type": "module",
