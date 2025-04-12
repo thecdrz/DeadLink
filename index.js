@@ -1,13 +1,18 @@
-const minimist = require("minimist");
-const fs = require("fs");
-const pjson = require("./package.json");
-const Discord = require("discord.js");
-const { Telnet } = require("telnet-client");
-const DishordeInitializer = require("./lib/init.js");
-const Logger = require("./lib/log.js");
+import minimist from "minimist";
+import {writeFile} from "fs";
+import {readFile} from "fs/promises";
+import {ChannelType, Client, GatewayIntentBits, PermissionsBitField} from "discord.js"
+import {Telnet} from "telnet-client";
+import DishordeInitializer from "./lib/init.js";
+import Logger from "./lib/log.js";
 
-const { ChannelType, Client, GatewayIntentBits, PermissionsBitField } = Discord;
+import DemoClient from "./lib/demoServer.js";
+
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent];
+
+const pjson = JSON.parse(
+  await readFile('./package.json')
+);
 
 console.log("\x1b[7m# Dishorde v" + pjson.version + " #\x1b[0m");
 console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
@@ -69,7 +74,10 @@ else {
   if(typeof argv.configFile !== "undefined") {
     configFile = argv.configFile;
   }
-  config = require(configFile);
+
+  config = JSON.parse(
+    await readFile(configFile)
+  );
 }
 
 // Logging init
@@ -77,7 +85,7 @@ if(config["log-console"]) {
   d7dtdState.logger = new Logger();
 }
 
-const telnet = config["demo-mode"]?require("./lib/demoServer.js").client:new Telnet();
+const telnet = config["demo-mode"]?new DemoClient():new Telnet();
 
 // IP
 // This argument allows you to run the bot on a remote network.
@@ -462,7 +470,7 @@ function parseDiscordCommand(msg, mentioned) {
 
     config.channel = channelid;
 
-    fs.writeFile(configFile, JSON.stringify(config, null, "\t"), "utf8", (err) => {
+    writeFile(configFile, JSON.stringify(config, null, "\t"), "utf8", (err) => {
       if(err) {
         console.error("Failed to write to the config file with the following err:\n" + err + "\nMake sure your config file is not read-only or missing.");
         msg.channel.send(":warning: Channel set successfully to <#" + channelobj.id + "> (" + channelobj.id + "), however the configuration has failed to save. The configured channel will not save when the bot restarts. See the bot's console for more info.");
