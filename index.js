@@ -2,7 +2,7 @@ import minimist from "minimist";
 import {writeFile} from "fs";
 import {readFile} from "fs/promises";
 import {ChannelType, Client, GatewayIntentBits, PermissionsBitField} from "discord.js"
-import {Telnet} from "telnet-client";
+import SevenDaysClient from "./lib/sevenDaysClient.js";
 import DishordeInitializer from "./lib/init.js";
 import Logger from "./lib/log.js";
 
@@ -28,8 +28,6 @@ console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypt
  * - Group 7 = message
  */
 const regexChat = /(.+) INF (Chat|GMSG)( \(from '(.+|)', entity id '(.+)', to '(.+)'\)|): (.+)/;
-
-const lineSplit = /\n|\r/g;
 
 let channel = void 0;
 
@@ -85,7 +83,7 @@ if(config["log-console"]) {
   d7dtdState.logger = new Logger();
 }
 
-const telnet = config["demo-mode"]?new DemoClient():new Telnet();
+const telnet = config["demo-mode"]?new DemoClient():new SevenDaysClient();
 
 // IP
 // This argument allows you to run the bot on a remote network.
@@ -186,17 +184,6 @@ function handleMsgFromGame(line) {
     return;
   }
 
-  // TODO This might be redundant now. Remove if we don't see any instances of it in the wild.
-  let isLineDuplicate = false;
-  // Line check
-  if(d7dtdState.previousLine === line) {
-    if(config["debug-mode"]) console.log(`[DEBUG] Duplicate console line. Line: ${line}`);
-    isLineDuplicate = true;
-    d7dtdState.data = ""; // Clear the data cache
-
-    return;
-  }
-
   d7dtdState.previousLine = line;
 
   const dataRaw = line.match(regexChat);
@@ -211,6 +198,7 @@ function handleMsgFromGame(line) {
 
   // We have content info to derive from the source info match
   
+  content.from = dataRaw[4];
   content.to = dataRaw[6];
   content.entityId = dataRaw[5];
 
@@ -264,13 +252,6 @@ function handleMsgFromGame(line) {
         }
       }
 
-      // If we're dealing with a duplicated message, we need to run a warning.
-      if(isLineDuplicate) {
-        console.warn(`WARNING: Caught attempting to send a duplicate line from the game. This line will be skipped. Line: ${line}`);
-    
-        return;
-      }
-
       // Sanitize the resulting message, username included.
       msg = sanitizeMsgFromGame(msg);
 
@@ -285,16 +266,9 @@ function handleMsgFromGame(line) {
 function handleMsgToGame(line) {
   if(!config["disable-chatmsgs"]) {
     const msg = sanitizeMsgToGame(line);
-    telnet.exec("say \"" + msg + "\"", (err, response) => {
+    telnet.exec("say \"" + msg + "\"", (err) => {
       if(err) {
         console.log("Error while attempting to send message: " + err.message);
-      }
-      else {
-        const lines = response.split(lineSplit);
-        for(let i = 0; i <= lines.length-1; i++) {
-          const lineResponse = lines[i];
-          handleMsgFromGame(lineResponse);
-        }
       }
     });
   }
@@ -403,18 +377,6 @@ function d7dtdHeartbeat() {
   d7dtdState.timeout = setTimeout(() => {
     d7dtdHeartbeat();
   }, 3.6e+6); // Heartbeat every hour
-}
-
-function processTelnetResponse(response, callback) {
-  // Sometimes the "response" has more than what we're looking for.
-  // We have to double-check and make sure the correct line is returned.
-  if(typeof response !== "undefined") {
-    const lines = response.split(lineSplit);
-    d7dtdState.receivedData = 0;
-    for(let i = 0; i <= lines.length-1; i++) {
-      callback(lines[i]);
-    }
-  }
 }
 
 /**
@@ -540,68 +502,40 @@ function parseDiscordCommand(msg, mentioned) {
     if(!config["disable-commands"]) {
       // 7d!time
       if(cmd === "TIME" || cmd === "T" || cmd === "DAY") {
-        telnet.exec("gettime", (err, response) => {
-          if(!err) {
-            processTelnetResponse(response, (line) => {
-              if(line.startsWith("Day")) {
-                d7dtdState.receivedData = 1;
-                handleTime(line, msg);
-              }
-            });
-
-            // Sometimes, the response doesn't have the data we're looking for...
-            if(!d7dtdState.receivedData) {
-              d7dtdState.waitingForTime = 1;
-              d7dtdState.waitingForTimeMsg = msg;
-            }
-          }
-          else {
+        telnet.exec("gettime", (err) => {
+          if(err) {
             handleCmdError(err);
+            return;
           }
+
+          d7dtdState.waitingForTime = 1;
+          d7dtdState.waitingForTimeMsg = msg;
         });
       }
 
       // 7d!version
       if(cmd === "VERSION" || cmd === "V") {
-        telnet.exec("version", (err, response) => {
-          if(!err) {
-            processTelnetResponse(response, (line) => {
-              if(line.startsWith("Game version:")) {
-                msg.channel.send(line);
-                d7dtdState.receivedData = 1;
-              }
-            });
-
-            if(!d7dtdState.receivedData) {
-              d7dtdState.waitingForVersion = 1;
-              d7dtdState.waitingForVersionMsg = msg;
-            }
-          }
-          else {
+        telnet.exec("version", (err) => {
+          if(err) {
             handleCmdError(err);
+            return;
           }
+
+          d7dtdState.waitingForVersion = 1;
+          d7dtdState.waitingForVersionMsg = msg;
         });
       }
 
       // 7d!players
       if(cmd === "PLAYERS" || cmd === "P" || cmd === "PL" || cmd === "LP") {
-        telnet.exec("lp", (err, response) => {
-          if(!err) {
-            processTelnetResponse(response, (line) => {
-              if(line.startsWith("Total of ")) {
-                d7dtdState.receivedData = 1;
-                handlePlayerCount(line, msg);
-              }
-            });
-
-            if(!d7dtdState.receivedData) {
-              d7dtdState.waitingForPlayers = 1;
-              d7dtdState.waitingForPlayersMsg = msg;
-            }
-          }
-          else {
+        telnet.exec("lp", (err) => {
+          if(err) {
             handleCmdError(err);
+            return;
           }
+
+          d7dtdState.waitingForPlayers = 1;
+          d7dtdState.waitingForPlayersMsg = msg;
         });
       }
 
@@ -646,14 +580,8 @@ function parseDiscordCommand(msg, mentioned) {
 const params = {
   host: ip,
   port,
-  timeout: 15000,
   username: "",
   password: pass,
-
-  passwordPrompt: /Please enter password:/i,
-  shellPrompt: /\r\n$/,
-
-  debug: false,
 };
 
 // If Discord auth is skipped, we have to connect now rather than waiting for the Discord client.
@@ -675,9 +603,6 @@ telnet.on("failedlogin", () => {
 });
 
 telnet.on("close", () => {
-  // Empty the cache.
-  d7dtdState.data = "";
-
   // If there is no error, update status to 'No connection'
   if(d7dtdState.connStatus !== -1) {
     updateStatus(0);
@@ -690,100 +615,46 @@ telnet.on("close", () => {
 });
 
 telnet.on("data", (data) => {
-  if(config["debug-mode"]) {
-    const str = data.toString();
-
-    let lineEnding = "!!!NONE!!!";
-    if(str.endsWith("\r\n")) lineEnding = "CRLF";
-    else if(str.endsWith("\r")) lineEnding = "CR";
-    else if(str.endsWith("\n")) lineEnding = "LF";
-
-    console.log(`[DEBUG] Buffer length: ${data.length}; Line ending: ${lineEnding};`);
-
-    if(lineEnding === "!!!NONE!!!") console.warn("[DEBUG] Buffer is missing a line ending!");
-
-    if(str.startsWith("\r\n") || str.startsWith("\n") || str.startsWith("\r")) {
-      console.log("[DEBUG] Line starts with a line ending. Possible issues?");
-    }
-
-    if(config["debug-buffer-log"]) {
-      console.log(`[BUFFERDMP1] ${str}`);
-    }
-  }
-
-  data = d7dtdState.data + data.toString();
-
-  if(data.endsWith("\n") || data.endsWith("\r")) {
-    d7dtdState.data = ""; // Clear the existing data cache.
-  }
-  else {
-    // Fill the cache to be completed on the next "data" call.
-    d7dtdState.data = d7dtdState.data + data;
-
-    // Await further information.
-    return;
-  }
-
-  const lines = data.split(lineSplit);
-
   if(config["log-telnet"]) {
     console.log("[Telnet] " + data);
   }
 
-  // Error catchers for password re-prompts
-  if(data === "Please enter password:\r\n\u0000\u0000") {
-    console.log("ERROR: Received password prompt!");
-    process.exit();
+  const split = data.split(" ");
+
+  if(split[2] === "INF" && split[3] === "[NET]" && split[4] === "ServerShutdown\r") {
+    // If we don't destroy the connection, crashes will happen when someone types a message.
+    // This is a workaround until better measures can be put in place for sending data to the game.
+    console.log("The server has shut down. Closing connection...");
+    telnet.destroy();
+
+    channel.send({embeds: [{
+      color: 14164000,
+      description: "The server has shut down."
+    }] })
+      .catch(() => {
+      // Try re-sending without the embed if an error occurs.
+        channel.send("**The server has shut down.**")
+          .catch((err) => {
+            console.log("Failed to send message with error: " + err.message);
+          });
+      });
   }
 
-  if(data === "Password incorrect, please enter password:\r\n") {
-    console.log("ERROR: Received password prompt! (Telnet password is incorrect)");
-    process.exit();
+  // This is a workaround for responses not working properly, particularly on local connections.
+  if(d7dtdState.waitingForTime && data.startsWith("Day")) {
+    handleTime(data, d7dtdState.waitingForTimeMsg);
   }
-
-  for(let i = 0; i <= lines.length-1; i++) {
-    const line = lines[i];
-
-    // escapeRegExp
-    lines[i] = lines[i].replace(/[.*+?^${}()|[\]\\]/g, " ");
-
-    const split = line.split(" ");
-
-    if(split[2] === "INF" && split[3] === "[NET]" && split[4] === "ServerShutdown\r") {
-      // If we don't destroy the connection, crashes will happen when someone types a message.
-      // This is a workaround until better measures can be put in place for sending data to the game.
-      console.log("The server has shut down. Closing connection...");
-      telnet.destroy();
-
-      channel.send({embeds: [{
-        color: 14164000,
-        description: "The server has shut down."
-      }] })
-        .catch(() => {
-        // Try re-sending without the embed if an error occurs.
-          channel.send("**The server has shut down.**")
-            .catch((err) => {
-              console.log("Failed to send message with error: " + err.message);
-            });
-        });
-    }
-
-    // This is a workaround for responses not working properly, particularly on local connections.
-    if(d7dtdState.waitingForTime && line.startsWith("Day")) {
-      handleTime(line, d7dtdState.waitingForTimeMsg);
-    }
-    else if(d7dtdState.waitingForVersion && line.startsWith("Game version:")) {
-      d7dtdState.waitingForVersionMsg.channel.send(line);
-    }
-    else if(d7dtdState.waitingForPlayers && line.startsWith("Total of ")) {
-      d7dtdState.waitingForPlayersMsg.channel.send(line);
-    }
-    //else if(d7dtdState.waitingForPref && line.startsWith("GamePref.")) {
-    //  d7dtdState.waitingForPrefMsg.channel.send(line);
-    //}
-    else {
-      handleMsgFromGame(line);
-    }
+  else if(d7dtdState.waitingForVersion && data.startsWith("Game version:")) {
+    d7dtdState.waitingForVersionMsg.channel.send(data);
+  }
+  else if(d7dtdState.waitingForPlayers && data.startsWith("Total of ")) {
+    d7dtdState.waitingForPlayersMsg.channel.send(data);
+  }
+  //else if(d7dtdState.waitingForPref && data.startsWith("GamePref.")) {
+  //  d7dtdState.waitingForPrefMsg.channel.send(data);
+  //}
+  else {
+    handleMsgFromGame(data);
   }
 });
 

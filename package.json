@@ -13,8 +13,7 @@
   "dependencies": {
     "discord.js": "^14.17.2",
     "minimist": "^1.2.5",
-    "semver-compare": "^1.0.0",
-    "telnet-client": "^2.2.1"
+    "semver-compare": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
