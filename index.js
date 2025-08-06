@@ -412,11 +412,6 @@ function handlePlayerCount(line, msg) {
 
 function generateActivityMessage(players, time, hordeInfo) {
   let activityMsg = "";
-  const timestamp = new Date().toLocaleTimeString('en-US', { 
-    hour12: false, 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  });
   
   if (players.length === 0) {
     const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
@@ -431,7 +426,6 @@ function generateActivityMessage(players, time, hordeInfo) {
     if (hordeInfo) {
       activityMsg += `\n\n${hordeInfo}`;
     }
-    activityMsg += `\n\n*📡 Report generated at ${timestamp}*`;
   } else if (players.length === 1) {
     const player = players[0];
     const location = getLocationDescription(player.pos);
@@ -511,7 +505,6 @@ function generateActivityMessage(players, time, hordeInfo) {
         activityMsg += `\n${hordeInfo}\n`;
       }
     }
-    activityMsg += `\n\n📡 *Report generated at ${timestamp}*`;
   } else {
     const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
     const groupActivity = analyzeGroupActivity(players, timeOfDay, hordeInfo);
@@ -527,7 +520,6 @@ function generateActivityMessage(players, time, hordeInfo) {
     if (hordeInfo && !groupActivity.includes("blood moon") && !groupActivity.includes("aftermath")) {
       activityMsg += `\n\n${hordeInfo}`;
     }
-    activityMsg += `\n\n*📡 Report generated at ${timestamp}*`;
   }
   
   return activityMsg;
@@ -1010,7 +1002,7 @@ function handleTrends(msg) {
     title: "📊 Server Analytics Dashboard",
     description: trendsReport,
     footer: {
-      text: `Report generated at ${new Date().toLocaleTimeString()}`,
+      text: `Report generated at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
     },
     timestamp: new Date().toISOString()
   };
@@ -1177,7 +1169,7 @@ function handleActivityFromButton(interaction) {
                   title: "🎯 Server Activity Report",
                   description: activityMessage,
                   footer: {
-                    text: `Data collected at ${new Date().toLocaleTimeString()}`,
+                    text: `Data collected at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
                   },
                   timestamp: new Date().toISOString()
                 };
@@ -1336,7 +1328,7 @@ function handleActivity(msg) {
                 title: "🎯 Server Activity Report",
                 description: activityMessage,
                 footer: {
-                  text: `Data collected at ${new Date().toLocaleTimeString()}`,
+                  text: `Data collected at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
                 },
                 timestamp: new Date().toISOString()
               };
