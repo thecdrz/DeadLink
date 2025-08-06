@@ -1,13 +1,14 @@
 {
-  "_comment": "Keep this file secure as it contains sensitive information.",
-  "_comment2": "If arguments are used in run.bat/run.sh, this config file will be ignored.",
-  "_comment3": "See README.md for the config documentation.",
+  "_comment": "SECURITY: Sensitive credentials should be set via environment variables",
+  "_comment2": "Set DISCORD_TOKEN, TELNET_PASSWORD, TELNET_IP, TELNET_PORT, DISCORD_CHANNEL as environment variables",
+  "_comment3": "If arguments are used in run.bat/run.sh, this config file will be ignored.",
+  "_comment4": "See README.md for the config documentation.",
 
-  "password": "8c4668b000ec5aaf2a406d5f35734a01",
-  "token": "MTM5NDAyMDQ0OTU3NDQ1NzQzNA.Gm6Kjs.tyZElmRzvj9FtYbiJnC9CKfet85tL14KHr2Wic",
-  "channel": "1402003460815061154",
-  "port": "59021",
-  "ip": "us4.supercraft.host",
+  "password": "yourtelnetpassword",
+  "token": "yourbottoken", 
+  "channel": "yourchannelid",
+  "port": "8081",
+  "ip": "yourserverip",
 
   "allow-exec-command": false,
   "allow-links-from-game": false,

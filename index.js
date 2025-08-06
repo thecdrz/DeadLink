@@ -9,7 +9,7 @@ const Logger = require("./lib/log.js");
 const { Client, Intents } = Discord;
 var intents = ["GUILDS", "GUILD_MESSAGES"];
 
-console.log("\x1b[7m# Dishorde-CDRZ v" + pjson.version + " (Enhanced by Sherlock) #\x1b[0m");
+console.log("\x1b[7m# HordeComms v" + pjson.version + " (Based on Dishorde by LakeYS, Enhanced by Sherlock) #\x1b[0m");
 console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
 
 const lineSplit = /\n|\r/g;
@@ -75,6 +75,49 @@ else {
   }
 
   config = require(configFile);
+  
+  // Security: Use environment variables for sensitive data if available
+  // This allows keeping secrets out of the config file
+  if (process.env.DISCORD_TOKEN) {
+    config.token = process.env.DISCORD_TOKEN;
+    console.log("Using Discord token from environment variable");
+  }
+  
+  if (process.env.TELNET_PASSWORD) {
+    config.password = process.env.TELNET_PASSWORD;
+    console.log("Using telnet password from environment variable");
+  }
+  
+  if (process.env.TELNET_IP) {
+    config.ip = process.env.TELNET_IP;
+    console.log("Using telnet IP from environment variable");
+  }
+  
+  if (process.env.TELNET_PORT) {
+    config.port = process.env.TELNET_PORT;
+    console.log("Using telnet port from environment variable");
+  }
+  
+  if (process.env.DISCORD_CHANNEL) {
+    config.channel = process.env.DISCORD_CHANNEL;
+    console.log("Using Discord channel from environment variable");
+  }
+  
+  // Validate required configuration
+  if (!config.token || config.token === "yourbottoken") {
+    console.error("ERROR: Discord token not configured. Set DISCORD_TOKEN environment variable or update config.json");
+    process.exit(1);
+  }
+  
+  if (!config.password || config.password === "yourtelnetpassword") {
+    console.error("ERROR: Telnet password not configured. Set TELNET_PASSWORD environment variable or update config.json");
+    process.exit(1);
+  }
+  
+  if (!config.ip || config.ip === "yourserverip") {
+    console.error("ERROR: Server IP not configured. Set TELNET_IP environment variable or update config.json");
+    process.exit(1);
+  }
 }
 
 // Logging init
@@ -994,7 +1037,7 @@ function createDashboardEmbed() {
                  `⏰ **Time** - Check current game time\n` +
                  `ℹ️ **Info** - Server version and details`,
     footer: {
-      text: `Dishorde-CDRZ v${pjson.version} (Enhanced by Sherlock)`,
+      text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock`,
     },
     timestamp: new Date().toISOString()
   };
@@ -1232,7 +1275,7 @@ function handleInfoFromButton(interaction) {
     const cmdString = !config["disable-commands"] ? 
       `\n**Commands:** ${prefix.toLowerCase()}info, ${prefix.toLowerCase()}time, ${prefix.toLowerCase()}version, ${prefix.toLowerCase()}players, ${prefix.toLowerCase()}activity, ${prefix.toLowerCase()}trends, ${prefix.toLowerCase()}dashboard` : "";
     
-    const infoMessage = `Server connection: ${statusMsg}${cmdString}\n\n*Dishorde-CDRZ v${pjson.version} (Enhanced by Sherlock) - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
+    const infoMessage = `Server connection: ${statusMsg}${cmdString}\n\n*HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
     
     interaction.editReply({ embeds: [{ description: infoMessage }] }).catch(console.error);
   }).catch(console.error);
@@ -1544,7 +1587,7 @@ function parseDiscordCommand(msg, mentioned) {
         cmdString += `\n\n💡 **Pro Tip:** Use \`${pre}dashboard\` for an interactive GUI with clickable buttons!`;
       }
 
-      var string = `Server connection: ${statusMsg}${cmdString}\n\n*Dishorde-CDRZ v${pjson.version} (Enhanced by Sherlock) - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
+      var string = `Server connection: ${statusMsg}${cmdString}\n\n*HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
       msg.channel.send({embeds: [{description: string}] })
         .catch((err) => {
           console.log(err);

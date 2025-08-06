@@ -62,3 +62,15 @@ Dishorde/
 Dishorde.tar.gz
 Dishorde.zip
 console.log
+
+# Security: Environment variable files
+.env
+.env.*
+.environment
+*.env.bat
+*.env.sh
+*.env.ps1
+config_production.json
+config_dev.json
+credentials.json
+secrets.json

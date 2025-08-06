@@ -1,14 +1,28 @@
 {
-  "name": "dishorde-cdrz",
+  "name": "hordecomms",
   "version": "2.3.0-sherlock",
-  "description": "Enhanced Discord bridge bot for 7 Days to Die with intelligent activity tracking. Forked from Dishorde with advanced player analysis and survival insights.",
+  "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, player trends analytics, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by Sherlock.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "Sherlock (fork of Lake Y's Dishorde)",
+  "author": "Sherlock (built on Dishorde by LakeYS)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thecdrz/HordeComms"
+  },
+  "keywords": [
+    "discord",
+    "7-days-to-die",
+    "bot",
+    "telnet",
+    "gaming",
+    "server-management",
+    "analytics",
+    "dashboard"
+  ],
   "dependencies": {
     "discord.js": "^13.17.1",
     "minimist": "^1.2.5",

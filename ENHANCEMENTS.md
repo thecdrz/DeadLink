@@ -150,4 +150,17 @@
 
 ---
 
-*Enhanced by Sherlock - Building on the solid foundation of Dishorde-CDRZ v2.3.0*
+*HordeComms - Built on the solid foundation of Dishorde by LakeYS, Enhanced by Sherlock*
+
+## 🙏 Credits
+
+**Original Project**: [Dishorde](https://github.com/LakeYS/Dishorde) by LakeYS
+- Base Discord bot framework and 7DTD telnet integration
+- Core command structure and reliable foundation
+
+**HordeComms Enhancements**: by Sherlock
+- Interactive dashboard with clickable buttons
+- Player trends analytics and visual charts
+- Intelligent activity analysis with narrative storytelling
+- Comprehensive security features with environment variables
+- Rich Discord embeds and modern UI/UX improvements

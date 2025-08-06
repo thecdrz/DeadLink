@@ -1,23 +1,34 @@
-# Dishorde-CDRZ - Enhanced 7 Days to Die Discord Integration
+# HordeComms - Advanced 7 Days to Die Discord Integration
 
-**Enhanced Fork by Sherlock** | [Original by LakeYS](https://github.com/LakeYS/Dishorde) | [Join the Discord](https://discord.gg/ZMpSE2a3rs)
+**Built on Dishorde by LakeYS, Enhanced by Sherlock** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
 
-Dishorde-CDRZ is an enhanced fork of the popular Dishorde Discord bridge bot for 7 Days to Die. This version includes intelligent activity tracking and survival analysis features that provide clever insights about player behavior and game state.
+HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enterprise-grade security.
 
-**NEW FEATURES in CDRZ Fork:**
-- 🎯 **Activity Command**: Get intelligent reports about what players are doing in-game
-- 🧠 **Smart Analysis**: Biome detection, health assessment, and survival suggestions  
+## 🚀 **NEW FEATURES in HordeComms:**
+- � **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
+- 📊 **Player Trends Analytics**: 24-hour tracking with visual charts and peak time analysis
+- 🎯 **Intelligent Activity Reports**: Smart analysis with biome detection and survival insights
+- 🔒 **Enterprise Security**: Environment variable support for credential protection
 - 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
-- 📱 **Enhanced Discord Formatting**: Beautiful, structured messages with emojis and sections
-- 🏃 **Player Behavior Insights**: Clever observations about player activities and locations
+- 📱 **Rich Discord Embeds**: Professional formatting with organized sections
+- 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activities
 
-Dishorde runs as a completely separate application, so no mods are required to run it.
+HordeComms runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
 
-**See below for download links instructions on how to install the bot. Dedicated servers on PC only.**
+## 🎮 Commands
+
+- `7d!dashboard` - Interactive GUI with clickable buttons ⭐ **NEW!**
+- `7d!activity` - Intelligent activity reports with survival insights
+- `7d!trends` - Player count analytics with visual charts ⭐ **NEW!**
+- `7d!players` - Current online players
+- `7d!time` - Current game time
+- `7d!info` - Bot information and help
+
+💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
 # How it Works
-Dishorde works by connecting to your server's console and monitoring it for chat messages. Messages are relayed to and from the server using Discord, allowing for communication between in-game players and Discord users.
+HordeComms works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
 
 # Enhanced Features
 This CDRZ fork adds intelligent analysis capabilities that monitor player activity and provide contextual insights:
