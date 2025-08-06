@@ -1,6 +1,6 @@
-# **Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)ordeComms - Advanced 7 Days to Die Discord Integration
+# HordeComms - Advanced 7 Days to Die Discord Integration
 
-**Built on Dishorde by LakeYS, Enhanced by Sherlock** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
+**Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
 
 HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enterprise-grade security.
@@ -36,13 +36,6 @@ This CDRZ fork adds intelligent analysis capabilities that monitor player activi
 - Health conditions trigger appropriate survival suggestions
 - Time of day affects activity descriptions and safety recommendations
 - Blood moon cycles provide strategic warnings and preparation advice
-
-# Development and Support
-This is a community-enhanced fork. For the original Dishorde support, questions, and comments, you can join the Discord server, or [submit an issue](https://github.com/LakeYS/Dishorde/issues/new) for bugs and support.
-
-For developers: If you are interested in helping out, [GitHub pull requests](https://help.github.com/articles/about-pull-requests/) are welcome and greatly appreciated.
-
-Original author: contact@lakeys.net
 
 # Authors
 **Original Dishorde**: LakeYS (contact@lakeys.net)  
