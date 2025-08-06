@@ -1,5 +1,21 @@
 # Dishorde-CDRZ Enhanced Features
 
+## 📋 Changelog
+
+### Version 2.4.0 (August 6, 2025)
+- **🔄 Persistent Analytics**: Analytics data now saves to `analytics.json` and survives bot restarts
+- **🎯 UI Polish**: Removed duplicate emoji and attribution text for cleaner visual experience
+- **🧹 Code Cleanup**: Removed "Powered by discord.js" references and streamlined documentation
+- **📝 Attribution Update**: Updated all references from "Sherlock" to "CDRZ" with full name credit
+- **📖 Documentation Refresh**: Cleaned up README formatting and removed redundant support sections
+
+### Version 2.3.0 (Previous)
+- Interactive dashboard with clickable buttons
+- Player trends analytics with 24-hour tracking
+- Enhanced activity reports with intelligent analysis
+- Rich Discord embeds across all features
+- Comprehensive security implementation
+
 ## 🆕 New Features Added
 
 ### 🎮 Interactive Dashboard (`7d!dashboard`)

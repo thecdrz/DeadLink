@@ -63,6 +63,9 @@ Dishorde.tar.gz
 Dishorde.zip
 console.log
 
+# Analytics data storage
+analytics.json
+
 # Security: Environment variable files
 .env
 .env.*

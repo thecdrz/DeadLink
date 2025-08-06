@@ -1,4 +1,12 @@
-# HordeComms - Advanced 7 Days to Die Discord Integration
+# Horde## 🚀 **NEW FEATURES in HordeComms:**
+- 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
+- 📊 **Player Trends Analytics**: 24-hour tracking with visual charts and peak time analysis
+- 💾 **Persistent Analytics**: Data survives bot restarts with automatic save/load functionality
+- 🎯 **Intelligent Activity Reports**: Smart analysis with biome detection and survival insights
+- 🔒 **Enterprise Security**: Environment variable support for credential protection
+- 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
+- 📱 **Rich Discord Embeds**: Professional formatting with organized sections
+- 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activitiesAdvanced 7 Days to Die Discord Integration
 
 **Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------

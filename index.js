@@ -200,6 +200,9 @@ const configPrivate = {
 
 new DishordeInitializer(pjson, config, configPrivate);
 
+// Load analytics data on startup
+loadAnalyticsData();
+
 ////// # Functions # //////
 function sanitizeMsgFromGame(msg) {
   // Replace @everyone and @here
@@ -978,6 +981,37 @@ function formatPlayerList(players) {
   return `${players.slice(0, -1).join(", ")}, and ${players[players.length - 1]}`;
 }
 
+// Analytics persistence functions
+function saveAnalyticsData() {
+  try {
+    const analyticsData = {
+      playerTrends: d7dtdState.playerTrends,
+      lastSaved: Date.now()
+    };
+    fs.writeFileSync('./analytics.json', JSON.stringify(analyticsData, null, 2), 'utf8');
+  } catch (error) {
+    console.warn('Warning: Failed to save analytics data:', error.message);
+  }
+}
+
+function loadAnalyticsData() {
+  try {
+    if (fs.existsSync('./analytics.json')) {
+      const data = fs.readFileSync('./analytics.json', 'utf8');
+      const analyticsData = JSON.parse(data);
+      
+      // Restore player trends data
+      if (analyticsData.playerTrends) {
+        d7dtdState.playerTrends = analyticsData.playerTrends;
+        console.log(`Analytics data loaded: ${d7dtdState.playerTrends.history.length} data points restored`);
+      }
+    }
+  } catch (error) {
+    console.warn('Warning: Failed to load analytics data:', error.message);
+    console.log('Starting with fresh analytics data');
+  }
+}
+
 function trackPlayerCount(playerCount, playerNames = []) {
   const now = Date.now();
   const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -1001,6 +1035,9 @@ function trackPlayerCount(playerCount, playerNames = []) {
   if (d7dtdState.playerTrends.history.length > d7dtdState.playerTrends.maxHistory) {
     d7dtdState.playerTrends.history.shift();
   }
+  
+  // Save analytics data after each update
+  saveAnalyticsData();
   
   console.log(`[TRENDS] Tracked ${playerCount} players at ${new Date().toLocaleTimeString()}`);
 }
@@ -1044,7 +1081,7 @@ function generateTrendsReport() {
   const chart = generateMiniChart(chartData.map(d => d.count));
   
   // Build report
-  let report = `📊 **Player Count Trends**\n\n`;
+  let report = ``;
   
   // Current status with trend indicator
   const trendEmoji = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
