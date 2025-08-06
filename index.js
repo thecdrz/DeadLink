@@ -1419,12 +1419,20 @@ function handleInfoFromButton(interaction) {
                      d7dtdState.connStatus === 0 ? ":white_circle: Connecting..." : 
                      ":red_circle: Error";
     
-    const cmdString = !config["disable-commands"] ? 
-      `\n**Commands:** ${prefix.toLowerCase()}info, ${prefix.toLowerCase()}time, ${prefix.toLowerCase()}version, ${prefix.toLowerCase()}players, ${prefix.toLowerCase()}activity, ${prefix.toLowerCase()}trends, ${prefix.toLowerCase()}dashboard` : "";
+    // Use the comprehensive changes content for info (same as main info command)
+    const changesReport = generateChangesReport();
+    const infoContent = `Server connection: ${statusMsg}\n\n${changesReport}`;
     
-    const infoMessage = `Server connection: ${statusMsg}${cmdString}\n\n*HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
+    const embed = {
+      color: 0x7289da, // Discord blurple for info
+      title: "🎮 HordeComms Information & Features",
+      description: infoContent,
+      footer: {
+        text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}`,
+      }
+    };
     
-    interaction.editReply({ embeds: [{ description: infoMessage }] }).catch(console.error);
+    interaction.editReply({ embeds: [embed] }).catch(console.error);
   }).catch(console.error);
 }
 
