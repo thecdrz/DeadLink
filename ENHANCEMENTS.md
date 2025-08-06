@@ -88,8 +88,8 @@
   - Visual improvements documentation
   - Credit attribution for developers
 
-### Enhanced Help
-- **Usage**: `7d!help`, `7d!info`
+### Enhanced Info Command
+- **Usage**: `7d!info`, `7d!i`
 - **Updated**: Now includes dashboard and trends commands with pro tip
 
 ## 🎨 Visual Features

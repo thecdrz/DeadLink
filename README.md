@@ -50,7 +50,6 @@ Commands can be sent via DM or in the specified chat channel.
 
 `7d!info` - Shows server connection status and available commands
 `7d!time` - Shows current game day/time and blood moon information  
-`7d!version` - Shows game version information
 `7d!players` - Shows total number of players online
 `7d!activity` - Shows clever insights about current player activity, locations, and survival tips
 `7d!changes` - Displays recent updates, new features, and changelog information

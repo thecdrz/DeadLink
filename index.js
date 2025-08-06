@@ -20,7 +20,6 @@ var d7dtdState = {
   doReconnect: 1,
 
   waitingForTime: 0,
-  waitingForVersion: 0,
   waitingForPlayers: 0,
   waitingForActivity: 0,
   waitingForTrends: 0,
@@ -1613,7 +1612,7 @@ function parseDiscordCommand(msg, mentioned) {
   // The following commands only work in the specified channel if one is set.
   if(msg.channel === channel || msg.channel.type === "DM") {
     // 7d!info
-    if(cmd === "INFO" || cmd === "I" || cmd === "HELP" || cmd === "H" || mentioned) {
+    if(cmd === "INFO" || cmd === "I" || mentioned) {
       // -1 = Error, 0 = No connection/connecting, 1 = Online, -100 = Override or N/A (value is ignored)
       var statusMsg;
       switch(d7dtdState.connStatus) {
@@ -1631,7 +1630,7 @@ function parseDiscordCommand(msg, mentioned) {
       var cmdString = "";
       if(!config["disable-commands"]) {
         var pre = prefix.toLowerCase();
-        cmdString = `\n**Commands:** ${pre}info, ${pre}time, ${pre}version, ${pre}players, ${pre}activity, ${pre}trends, ${pre}dashboard`;
+        cmdString = `\n**Commands:** ${pre}info, ${pre}time, ${pre}players, ${pre}activity, ${pre}trends, ${pre}dashboard, ${pre}changes`;
         cmdString += `\n\n💡 **Pro Tip:** Use \`${pre}dashboard\` for an interactive GUI with clickable buttons!`;
       }
 
@@ -1662,28 +1661,6 @@ function parseDiscordCommand(msg, mentioned) {
             if(!d7dtdState.receivedData) {
               d7dtdState.waitingForTime = 1;
               d7dtdState.waitingForTimeMsg = msg;
-            }
-          }
-          else {
-            handleCmdError(err);
-          }
-        });
-      }
-
-      // 7d!version
-      if(cmd === "VERSION" || cmd === "V") {
-        telnet.exec("version", (err, response) => {
-          if(!err) {
-            processTelnetResponse(response, (line) => {
-              if(line.startsWith("Game version:")) {
-                msg.channel.send(line);
-                d7dtdState.receivedData = 1;
-              }
-            });
-
-            if(!d7dtdState.receivedData) {
-              d7dtdState.waitingForVersion = 1;
-              d7dtdState.waitingForVersionMsg = msg;
             }
           }
           else {
@@ -1905,9 +1882,6 @@ telnet.on("data", (data) => {
     if(d7dtdState.waitingForTime && line.startsWith("Day")) {
       handleTime(line, d7dtdState.waitingForTimeMsg);
     }
-    else if(d7dtdState.waitingForVersion && line.startsWith("Game version:")) {
-      d7dtdState.waitingForVersionMsg.channel.send(line);
-    }
     else if(d7dtdState.waitingForPlayers && line.startsWith("Total of ")) {
       d7dtdState.waitingForPlayersMsg.channel.send(line);
     }
@@ -2025,7 +1999,7 @@ if(!config["skip-discord-auth"]) {
 
     // If the bot is mentioned, pass through as if the user typed 7d!info
     // Also includes overrides for the default prefix.
-    var mentioned = msg.content.includes("<@" + client.user.id + ">") || msg.content === "7d!info" || msg.content === "7d!help";
+    var mentioned = msg.content.includes("<@" + client.user.id + ">") || msg.content === "7d!info";
 
     if(msg.content.toUpperCase().startsWith(prefix) || mentioned) {
       parseDiscordCommand(msg, mentioned);
