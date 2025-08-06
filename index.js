@@ -1020,8 +1020,7 @@ function generateChangesReport() {
     year: 'numeric' 
   });
   
-  return `🔄 **Recent HordeComms Updates & Changes**\n\n` +
-         `**🆕 Latest Features** *(${currentDate})*\n` +
+  return `**🆕 Latest Features & Updates** *(${currentDate})*\n` +
          `🎯 **Smart Activity Analysis** - Intelligent player activity reports with survival insights\n` +
          `📊 **Player Trends Analytics** - 24-hour player count tracking and trend analysis\n` +
          `🎮 **Interactive Dashboard** - Button-based GUI for quick server access\n` +
