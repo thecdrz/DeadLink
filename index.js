@@ -979,6 +979,265 @@ function handleTrends(msg) {
     });
 }
 
+function createDashboardEmbed() {
+  const statusEmoji = d7dtdState.connStatus === 1 ? "🟢" : d7dtdState.connStatus === 0 ? "🟡" : "🔴";
+  const statusText = d7dtdState.connStatus === 1 ? "Online" : d7dtdState.connStatus === 0 ? "Connecting..." : "Error";
+  
+  return {
+    color: 0x7289da, // Discord blurple
+    title: "🎮 7 Days to Die Server Dashboard",
+    description: `${statusEmoji} **Server Status**: ${statusText}\n\n` +
+                 `Welcome to the interactive server control panel! Use the buttons below to quickly access server information and analytics.\n\n` +
+                 `🎯 **Activity** - Get detailed player activity reports\n` +
+                 `📊 **Trends** - View player count analytics and trends\n` +
+                 `👥 **Players** - See current online players\n` +
+                 `⏰ **Time** - Check current game time\n` +
+                 `ℹ️ **Info** - Server version and details`,
+    footer: {
+      text: `Dishorde-CDRZ v${pjson.version} (Enhanced by Sherlock)`,
+    },
+    timestamp: new Date().toISOString()
+  };
+}
+
+function createDashboardButtons() {
+  return {
+    type: 1, // Action Row
+    components: [
+      {
+        type: 2, // Button
+        style: 3, // Green (Success)
+        label: "🎯 Activity",
+        custom_id: "dashboard_activity",
+        disabled: d7dtdState.connStatus !== 1
+      },
+      {
+        type: 2, // Button
+        style: 1, // Blue (Primary)
+        label: "📊 Trends",
+        custom_id: "dashboard_trends",
+        disabled: false
+      },
+      {
+        type: 2, // Button
+        style: 2, // Gray (Secondary)
+        label: "👥 Players",
+        custom_id: "dashboard_players",
+        disabled: d7dtdState.connStatus !== 1
+      },
+      {
+        type: 2, // Button
+        style: 2, // Gray (Secondary)
+        label: "⏰ Time",
+        custom_id: "dashboard_time",
+        disabled: d7dtdState.connStatus !== 1
+      },
+      {
+        type: 2, // Button
+        style: 2, // Gray (Secondary)
+        label: "ℹ️ Info",
+        custom_id: "dashboard_info",
+        disabled: false
+      }
+    ]
+  };
+}
+
+function handleDashboard(msg) {
+  const embed = createDashboardEmbed();
+  const buttons = createDashboardButtons();
+  
+  msg.channel.send({
+    embeds: [embed],
+    components: [buttons]
+  }).catch((err) => {
+    console.log("Dashboard embed failed, sending fallback:", err);
+    // Fallback without buttons
+    msg.channel.send({ embeds: [embed] });
+  });
+}
+
+function handleButtonInteraction(interaction) {
+  const customId = interaction.customId;
+  
+  switch(customId) {
+    case 'dashboard_activity':
+      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Activity button`);
+      handleActivityFromButton(interaction);
+      break;
+      
+    case 'dashboard_trends':
+      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Trends button`);
+      handleTrendsFromButton(interaction);
+      break;
+      
+    case 'dashboard_players':
+      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Players button`);
+      handlePlayersFromButton(interaction);
+      break;
+      
+    case 'dashboard_time':
+      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Time button`);
+      handleTimeFromButton(interaction);
+      break;
+      
+    case 'dashboard_info':
+      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Info button`);
+      handleInfoFromButton(interaction);
+      break;
+      
+    default:
+      interaction.reply("❌ Unknown button interaction.").catch(console.error);
+  }
+}
+
+function handleActivityFromButton(interaction) {
+  // Defer the reply immediately
+  interaction.deferReply().then(() => {
+    // Reuse existing activity logic but with interaction response
+    d7dtdState.activityData = {
+      players: [],
+      time: null,
+      hordeTime: null
+    };
+
+    telnet.exec("lp", (err, response) => {
+      if (!err) {
+        processTelnetResponse(response, (line) => {
+          if (line.includes("id=") && line.includes("pos=")) {
+            const playerData = parsePlayerData(line);
+            if (playerData) {
+              d7dtdState.activityData.players.push(playerData);
+            }
+          }
+        });
+
+        telnet.exec("gettime", (timeErr, timeResponse) => {
+          if (!timeErr) {
+            processTelnetResponse(timeResponse, (timeLine) => {
+              if (timeLine.startsWith("Day")) {
+                d7dtdState.activityData.time = timeLine;
+                const hordeMsg = calculateHordeStatus(timeLine);
+                d7dtdState.activityData.hordeTime = hordeMsg;
+                
+                const playerNames = d7dtdState.activityData.players.map(p => p.name);
+                trackPlayerCount(d7dtdState.activityData.players.length, playerNames);
+                
+                const activityMessage = generateActivityMessage(
+                  d7dtdState.activityData.players,
+                  d7dtdState.activityData.time,
+                  d7dtdState.activityData.hordeTime
+                );
+                
+                const embed = {
+                  color: 0x2ecc71,
+                  title: "🎯 Server Activity Report",
+                  description: activityMessage,
+                  footer: {
+                    text: `Data collected at ${new Date().toLocaleTimeString()}`,
+                  },
+                  timestamp: new Date().toISOString()
+                };
+                
+                interaction.editReply({ embeds: [embed] }).catch(console.error);
+              }
+            });
+          } else {
+            interaction.editReply("❌ Failed to get server time.").catch(console.error);
+          }
+        });
+      } else {
+        interaction.editReply("❌ Failed to connect to server.").catch(console.error);
+      }
+    });
+  }).catch(console.error);
+}
+
+function handleTrendsFromButton(interaction) {
+  interaction.deferReply().then(() => {
+    const trendsReport = generateTrendsReport();
+    
+    const embed = {
+      color: 0x3498db,
+      title: "📊 Server Analytics Dashboard",
+      description: trendsReport,
+      footer: {
+        text: `Report generated at ${new Date().toLocaleTimeString()}`,
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    interaction.editReply({ embeds: [embed] }).catch(console.error);
+  }).catch(console.error);
+}
+
+function handlePlayersFromButton(interaction) {
+  interaction.deferReply().then(() => {
+    telnet.exec("lp", (err, response) => {
+      if (!err) {
+        let playerData = "";
+        processTelnetResponse(response, (line) => {
+          if (line.startsWith("Total of ")) {
+            playerData = line;
+            
+            const match = line.match(/Total of (\d+) players/);
+            if (match) {
+              const playerCount = parseInt(match[1]);
+              trackPlayerCount(playerCount);
+            }
+          }
+        });
+        
+        if (playerData) {
+          interaction.editReply(playerData).catch(console.error);
+        } else {
+          interaction.editReply("❌ No player data received.").catch(console.error);
+        }
+      } else {
+        interaction.editReply("❌ Failed to get player list.").catch(console.error);
+      }
+    });
+  }).catch(console.error);
+}
+
+function handleTimeFromButton(interaction) {
+  interaction.deferReply().then(() => {
+    telnet.exec("gettime", (err, response) => {
+      if (!err) {
+        let timeData = "";
+        processTelnetResponse(response, (line) => {
+          if (line.startsWith("Day")) {
+            timeData = line;
+          }
+        });
+        
+        if (timeData) {
+          interaction.editReply(`⏰ **Current Game Time**\n${timeData}`).catch(console.error);
+        } else {
+          interaction.editReply("❌ No time data received.").catch(console.error);
+        }
+      } else {
+        interaction.editReply("❌ Failed to get server time.").catch(console.error);
+      }
+    });
+  }).catch(console.error);
+}
+
+function handleInfoFromButton(interaction) {
+  interaction.deferReply().then(() => {
+    const statusMsg = d7dtdState.connStatus === 1 ? ":green_circle: Online" : 
+                     d7dtdState.connStatus === 0 ? ":white_circle: Connecting..." : 
+                     ":red_circle: Error";
+    
+    const cmdString = !config["disable-commands"] ? 
+      `\n**Commands:** ${prefix.toLowerCase()}info, ${prefix.toLowerCase()}time, ${prefix.toLowerCase()}version, ${prefix.toLowerCase()}players, ${prefix.toLowerCase()}activity, ${prefix.toLowerCase()}trends, ${prefix.toLowerCase()}dashboard` : "";
+    
+    const infoMessage = `Server connection: ${statusMsg}${cmdString}\n\n*Dishorde-CDRZ v${pjson.version} (Enhanced by Sherlock) - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
+    
+    interaction.editReply({ embeds: [{ description: infoMessage }] }).catch(console.error);
+  }).catch(console.error);
+}
+
 function handleActivity(msg) {
   // Clear previous activity data
   d7dtdState.activityData = {
@@ -1281,7 +1540,8 @@ function parseDiscordCommand(msg, mentioned) {
       var cmdString = "";
       if(!config["disable-commands"]) {
         var pre = prefix.toLowerCase();
-        cmdString = `\n**Commands:** ${pre}info, ${pre}time, ${pre}version, ${pre}players, ${pre}activity, ${pre}trends`;
+        cmdString = `\n**Commands:** ${pre}info, ${pre}time, ${pre}version, ${pre}players, ${pre}activity, ${pre}trends, ${pre}dashboard`;
+        cmdString += `\n\n💡 **Pro Tip:** Use \`${pre}dashboard\` for an interactive GUI with clickable buttons!`;
       }
 
       var string = `Server connection: ${statusMsg}${cmdString}\n\n*Dishorde-CDRZ v${pjson.version} (Enhanced by Sherlock) - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
@@ -1373,6 +1633,12 @@ function parseDiscordCommand(msg, mentioned) {
       if(cmd === "TRENDS" || cmd === "T" || cmd === "TREND") {
         console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
         handleTrends(msg);
+      }
+
+      // 7d!dashboard
+      if(cmd === "DASHBOARD" || cmd === "D" || cmd === "DASH") {
+        console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
+        handleDashboard(msg);
       }
 
       //if(cmd === "PREF") {
@@ -1670,6 +1936,16 @@ if(!config["skip-discord-auth"]) {
     else if(msg.channel === channel && msg.channel.type === "GUILD_TEXT") {
       msg = "[" + msg.member.displayName + "] " + msg.cleanContent;
       handleMsgToGame(msg);
+    }
+  });
+
+  // Handle button interactions
+  client.on("interactionCreate", (interaction) => {
+    if (!interaction.isButton()) return;
+    
+    // Only handle dashboard button interactions
+    if (interaction.customId.startsWith("dashboard_")) {
+      handleButtonInteraction(interaction);
     }
   });
 }

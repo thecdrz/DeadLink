@@ -2,6 +2,13 @@
 
 ## 🆕 New Features Added
 
+### 🎮 Interactive Dashboard (`7d!dashboard`)
+- **GUI Interface**: Modern Discord-style interactive dashboard with clickable buttons
+- **One-Click Access**: All major commands available through buttons instead of typing
+- **Real-time Status**: Dynamic button states based on server connection status
+- **Professional Layout**: Clean, organized interface with intuitive navigation
+- **Smart Interactions**: Proper Discord interaction handling with deferred responses
+
 ### 📊 Player Count Trends & Analytics (`7d!trends`)
 - **Real-time Tracking**: Automatically tracks player counts every 10 minutes
 - **Historical Analysis**: Stores up to 144 data points (24 hours of data)
@@ -21,6 +28,12 @@
 
 ## 🔧 Technical Improvements
 
+### Interactive Components
+- **Button Interactions**: Full Discord button component integration
+- **Deferred Responses**: Proper async interaction handling
+- **State Management**: Dynamic button enabling/disabling based on server status
+- **Error Handling**: Graceful fallbacks for interaction failures
+
 ### Data Tracking System
 - **Player Trends Storage**: Persistent tracking of player counts over time
 - **Activity Data Cache**: Enhanced data structure for comprehensive activity analysis
@@ -28,7 +41,7 @@
 
 ### Visual Enhancements
 - **Discord Embeds**: Rich embeds for both activity and trends commands
-- **Color Coding**: Green for activity reports, blue for analytics
+- **Color Coding**: Green for activity reports, blue for analytics, blurple for dashboard
 - **Organized Layout**: Clean sections with consistent spacing
 - **ASCII Charts**: Mini bar charts for visual trend representation
 
@@ -38,6 +51,15 @@
 - **Command Safety**: Proper error handling for all new features
 
 ## 📋 Command Reference
+
+### Dashboard Command (NEW!)
+- **Usage**: `7d!dashboard`, `7d!d`, `7d!dash`
+- **Features**:
+  - Interactive GUI with clickable buttons
+  - One-click access to all major functions
+  - Real-time server status display
+  - Professional Discord interface
+  - Smart button states (disabled when server offline)
 
 ### Activity Command
 - **Usage**: `7d!activity`, `7d!a`, `7d!act`
@@ -59,9 +81,15 @@
 
 ### Enhanced Help
 - **Usage**: `7d!help`, `7d!info`
-- **Updated**: Now includes trends command in help text
+- **Updated**: Now includes dashboard and trends commands with pro tip
 
 ## 🎨 Visual Features
+
+### Interactive Dashboard
+- **Button Interface**: Five main action buttons for core functionality
+- **Status Indicators**: Color-coded server status (🟢 Online, 🟡 Connecting, 🔴 Error)
+- **Professional Design**: Discord blurple theme with organized layout
+- **Smart Controls**: Buttons automatically disable when server is unavailable
 
 ### Activity Reports
 - **Organized Sections**: Clear separation of information types
@@ -86,6 +114,7 @@
 ### Integration Points
 - **Activity Command**: Tracks players when activity is checked
 - **Player List Command**: Records counts during player list requests
+- **Dashboard Interactions**: Seamless data collection through button clicks
 - **Background Monitoring**: Seamless data collection during normal operations
 
 ## 🚀 Performance Optimizations
@@ -99,6 +128,25 @@
 - **Batched Requests**: Combines multiple telnet commands efficiently
 - **Error Recovery**: Robust handling of connection issues
 - **Rate Limiting**: Respects 10-minute minimum intervals
+
+### Interaction Optimization
+- **Deferred Responses**: Non-blocking interaction handling
+- **Async Processing**: Proper promise-based flow control
+- **Error Recovery**: Graceful handling of Discord API limitations
+
+## 🎮 User Experience
+
+### Ease of Use
+- **Click Instead of Type**: No need to remember command syntax
+- **Visual Feedback**: Immediate response to button clicks
+- **Intuitive Layout**: Clear, self-explanatory interface
+- **Professional Feel**: Modern Discord application experience
+
+### Accessibility
+- **Multiple Access Methods**: Both commands and buttons work
+- **Clear Labeling**: Descriptive button text and emojis
+- **Status Awareness**: Visual indication of what's available
+- **Fallback Options**: Commands still work if interactions fail
 
 ---
 
