@@ -1002,7 +1002,7 @@ function handleTrends(msg) {
     title: "📊 Server Analytics Dashboard",
     description: trendsReport,
     footer: {
-      text: `Report generated at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+      text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
     }
   };
   
@@ -1010,6 +1010,68 @@ function handleTrends(msg) {
     .catch(() => {
       // Fallback to plain text if embed fails
       msg.channel.send(trendsReport);
+    });
+}
+
+function generateChangesReport() {
+  const currentDate = new Date().toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+  
+  return `🔄 **Recent HordeComms Updates & Changes**\n\n` +
+         `**🆕 Latest Features** *(${currentDate})*\n` +
+         `🎯 **Smart Activity Analysis** - Intelligent player activity reports with survival insights\n` +
+         `📊 **Player Trends Analytics** - 24-hour player count tracking and trend analysis\n` +
+         `🎮 **Interactive Dashboard** - Button-based GUI for quick server access\n` +
+         `🔒 **Enhanced Security** - Environment variable support for credentials\n` +
+         `⏰ **Consistent Timestamps** - Military time format with dates\n\n` +
+         
+         `**⚡ Enhanced Commands**\n` +
+         `🎯 \`7d!activity\` - Detailed activity with location insights and survival tips\n` +
+         `📊 \`7d!trends\` - Player count analytics with visual trends\n` +
+         `🎮 \`7d!dashboard\` - Interactive control panel with clickable buttons\n` +
+         `🔄 \`7d!changes\` - View recent updates and changes (this command!)\n\n` +
+         
+         `**🛡️ Intelligent Features**\n` +
+         `🧠 **Context-Aware Suggestions** - Smart survival advice based on game state\n` +
+         `🩸 **Blood Moon Integration** - Automatic horde warnings and prep advice\n` +
+         `🏥 **Health Monitoring** - Player condition analysis and medical alerts\n` +
+         `📍 **Location Intelligence** - Area-specific survival recommendations\n` +
+         `📈 **Trend Visualization** - Player activity patterns and server health\n\n` +
+         
+         `**🎨 Visual Improvements**\n` +
+         `📋 **Organized Sections** - Clean, hierarchical information display\n` +
+         `🎯 **Rich Embeds** - Professional Discord formatting with consistent styling\n` +
+         `🔔 **Smart Notifications** - Context-aware alerts and status updates\n` +
+         `📊 **Data Visualization** - Graphs and charts for trend analysis\n\n` +
+         
+         `**🔧 Technical Enhancements**\n` +
+         `⚡ **Performance Optimized** - Faster response times and better error handling\n` +
+         `🔒 **Security Hardened** - Environment variables and credential protection\n` +
+         `📱 **Mobile Friendly** - Responsive design for Discord mobile apps\n` +
+         `🔄 **Real-time Updates** - Live data synchronization with game server\n\n` +
+         
+         `*Based on the original Dishorde by LakeYS with extensive enhancements by Sherlock*`;
+}
+
+function handleChanges(msg) {
+  const changesReport = generateChangesReport();
+  
+  const embed = {
+    color: 0xe74c3c, // Red color for updates/changes
+    title: "🔄 HordeComms Changelog",
+    description: changesReport,
+    footer: {
+      text: `Changelog generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+    }
+  };
+  
+  msg.channel.send({ embeds: [embed] })
+    .catch(() => {
+      // Fallback to plain text if embed fails
+      msg.channel.send(changesReport);
     });
 }
 
@@ -1167,7 +1229,7 @@ function handleActivityFromButton(interaction) {
                   title: "🎯 Server Activity Report",
                   description: activityMessage,
                   footer: {
-                    text: `Data collected at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+                    text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
                   }
                 };
                 
@@ -1194,7 +1256,7 @@ function handleTrendsFromButton(interaction) {
       title: "📊 Server Analytics Dashboard",
       description: trendsReport,
       footer: {
-        text: `Report generated at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+        text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
       }
     };
     
@@ -1324,7 +1386,7 @@ function handleActivity(msg) {
                 title: "🎯 Server Activity Report",
                 description: activityMessage,
                 footer: {
-                  text: `Data collected at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+                  text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
                 }
               };
               
@@ -1669,6 +1731,12 @@ function parseDiscordCommand(msg, mentioned) {
       if(cmd === "DASHBOARD" || cmd === "D" || cmd === "DASH") {
         console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
         handleDashboard(msg);
+      }
+
+      // 7d!changes
+      if(cmd === "CHANGES" || cmd === "C" || cmd === "CHANGE" || cmd === "CHANGELOG") {
+        console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
+        handleChanges(msg);
       }
 
       //if(cmd === "PREF") {

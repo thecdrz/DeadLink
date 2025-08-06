@@ -79,6 +79,15 @@
   - Current vs historical comparison
   - Data collection timeline
 
+### Changes Command (NEW!)
+- **Usage**: `7d!changes`, `7d!c`, `7d!change`, `7d!changelog`
+- **Features**:
+  - Complete feature changelog
+  - Recent updates and enhancements
+  - Technical improvements summary
+  - Visual improvements documentation
+  - Credit attribution for developers
+
 ### Enhanced Help
 - **Usage**: `7d!help`, `7d!info`
 - **Updated**: Now includes dashboard and trends commands with pro tip
