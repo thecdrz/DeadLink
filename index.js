@@ -328,10 +328,94 @@ function handleMsgFromGame(line) {
 
       // If we didn't filter the message down to nothing, send it.
       if(msg !== "") {
-        channel.send(msg);
+        sendEnhancedGameMessage(msg);
       }
     }
   }
+}
+
+function sendEnhancedGameMessage(message) {
+  // Check if this is a special game event that should get rich embed treatment
+  if (message.includes("joined the game")) {
+    const playerMatch = message.match(/Player '([^']+)' joined the game/);
+    if (playerMatch) {
+      const playerName = playerMatch[1];
+      const embed = {
+        color: 0x2ecc71, // Green for joins
+        title: "🚪 Player Joined",
+        description: `🎉 **${playerName}** has entered the wasteland!\n> Welcome to the apocalypse, survivor. Stay alert and stay alive.`,
+        footer: {
+          text: `Player joined on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+        }
+      };
+      
+      channel.send({ embeds: [embed] })
+        .catch(() => {
+          // Fallback to plain text if embed fails
+          channel.send(message);
+        });
+      return;
+    }
+  }
+  
+  if (message.includes("left the game")) {
+    const playerMatch = message.match(/Player '([^']+)' left the game/);
+    if (playerMatch) {
+      const playerName = playerMatch[1];
+      const embed = {
+        color: 0xe67e22, // Orange for leaves
+        title: "🚪 Player Left",
+        description: `👋 **${playerName}** has left the wasteland.\n> Another survivor returns to safety... or perhaps to face a different kind of danger.`,
+        footer: {
+          text: `Player left on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+        }
+      };
+      
+      channel.send({ embeds: [embed] })
+        .catch(() => {
+          // Fallback to plain text if embed fails
+          channel.send(message);
+        });
+      return;
+    }
+  }
+  
+  if (message.includes("died")) {
+    const deathMatch = message.match(/Player '([^']+)' died/);
+    if (deathMatch) {
+      const playerName = deathMatch[1];
+      
+      // Extract cause of death if available
+      let deathCause = "unknown circumstances";
+      if (message.includes("zombie")) deathCause = "a zombie attack";
+      else if (message.includes("fall")) deathCause = "fall damage";
+      else if (message.includes("starv")) deathCause = "starvation";
+      else if (message.includes("thirst")) deathCause = "dehydration";
+      else if (message.includes("heat")) deathCause = "extreme heat";
+      else if (message.includes("cold")) deathCause = "freezing temperatures";
+      else if (message.includes("explosion")) deathCause = "an explosion";
+      else if (message.includes("drown")) deathCause = "drowning";
+      
+      const embed = {
+        color: 0xe74c3c, // Red for deaths
+        title: "💀 Player Death",
+        description: `⚰️ **${playerName}** has fallen to ${deathCause}.\n> The wasteland claims another victim. Will they return stronger?`,
+        footer: {
+          text: `Death occurred on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+        }
+      };
+      
+      channel.send({ embeds: [embed] })
+        .catch(() => {
+          // Fallback to plain text if embed fails
+          channel.send(message);
+        });
+      return;
+    }
+  }
+  
+  // For all other messages (chat, etc.), send as plain text
+  channel.send(message);
 }
 
 function handleMsgToGame(line) {
