@@ -1003,8 +1003,7 @@ function handleTrends(msg) {
     description: trendsReport,
     footer: {
       text: `Report generated at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-    },
-    timestamp: new Date().toISOString()
+    }
   };
   
   msg.channel.send({ embeds: [embed] })
@@ -1030,8 +1029,7 @@ function createDashboardEmbed() {
                  `ℹ️ **Info** - Server version and details`,
     footer: {
       text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock`,
-    },
-    timestamp: new Date().toISOString()
+    }
   };
 }
 
@@ -1170,8 +1168,7 @@ function handleActivityFromButton(interaction) {
                   description: activityMessage,
                   footer: {
                     text: `Data collected at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-                  },
-                  timestamp: new Date().toISOString()
+                  }
                 };
                 
                 interaction.editReply({ embeds: [embed] }).catch(console.error);
@@ -1197,9 +1194,8 @@ function handleTrendsFromButton(interaction) {
       title: "📊 Server Analytics Dashboard",
       description: trendsReport,
       footer: {
-        text: `Report generated at ${new Date().toLocaleTimeString()}`,
-      },
-      timestamp: new Date().toISOString()
+        text: `Report generated at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+      }
     };
     
     interaction.editReply({ embeds: [embed] }).catch(console.error);
@@ -1329,8 +1325,7 @@ function handleActivity(msg) {
                 description: activityMessage,
                 footer: {
                   text: `Data collected at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-                },
-                timestamp: new Date().toISOString()
+                }
               };
               
               msg.channel.send({ embeds: [embed] })
