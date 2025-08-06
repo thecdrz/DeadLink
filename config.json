@@ -3,11 +3,11 @@
   "_comment2": "If arguments are used in run.bat/run.sh, this config file will be ignored.",
   "_comment3": "See README.md for the config documentation.",
 
-  "password": "changeme",
-  "token": "your_token_here",
-  "channel": "channelid",
-  "port": "8081",
-  "ip": "127.0.0.1",
+  "password": "8c4668b000ec5aaf2a406d5f35734a01",
+  "token": "MTM5NDAyMDQ0OTU3NDQ1NzQzNA.Gm6Kjs.tyZElmRzvj9FtYbiJnC9CKfet85tL14KHr2Wic",
+  "channel": "1402003460815061154",
+  "port": "59021",
+  "ip": "us4.supercraft.host",
 
   "allow-exec-command": false,
   "allow-links-from-game": false,
@@ -25,6 +25,9 @@
   "horde-frequency": "7",
   "log-console": false,
   "log-messages": false,
-  "log-telnet": false,
-  "prefix": "7d!"
+  "log-telnet": true,
+  "prefix": "7d!",
+  "demo-mode": false
 }
+
+

@@ -1,9 +1,16 @@
-# Dishorde - 7 Days to Die Discord Integration
+# Dishorde-CDRZ - Enhanced 7 Days to Die Discord Integration
 
-[How to Install](https://github.com/LakeYS/Dishorde#how-to-install---windows) | [Support it on Patreon](https://www.patreon.com/LakeYS) | [Join the Discord](https://discord.gg/ZMpSE2a3rs) | [Website](http://lakeys.net/dishorde)
------------- | ------------- | ------------- | -------------
+**Enhanced Fork by Sherlock** | [Original by LakeYS](https://github.com/LakeYS/Dishorde) | [Join the Discord](https://discord.gg/ZMpSE2a3rs)
+------------ | ------------- | -------------
 
-Dishorde is a Discord bridge bot for 7 Days to Die. It integrates a dedicated game server's chat with Discord, granting players access to the server's chat through Discord.
+Dishorde-CDRZ is an enhanced fork of the popular Dishorde Discord bridge bot for 7 Days to Die. This version includes intelligent activity tracking and survival analysis features that provide clever insights about player behavior and game state.
+
+**NEW FEATURES in CDRZ Fork:**
+- 🎯 **Activity Command**: Get intelligent reports about what players are doing in-game
+- 🧠 **Smart Analysis**: Biome detection, health assessment, and survival suggestions  
+- 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
+- 📱 **Enhanced Discord Formatting**: Beautiful, structured messages with emojis and sections
+- 🏃 **Player Behavior Insights**: Clever observations about player activities and locations
 
 Dishorde runs as a completely separate application, so no mods are required to run it.
 
@@ -12,20 +19,28 @@ Dishorde runs as a completely separate application, so no mods are required to r
 # How it Works
 Dishorde works by connecting to your server's console and monitoring it for chat messages. Messages are relayed to and from the server using Discord, allowing for communication between in-game players and Discord users.
 
+# Enhanced Features
+This CDRZ fork adds intelligent analysis capabilities that monitor player activity and provide contextual insights:
+- Players' locations are analyzed for biome detection and danger assessment
+- Health conditions trigger appropriate survival suggestions
+- Time of day affects activity descriptions and safety recommendations
+- Blood moon cycles provide strategic warnings and preparation advice
+
 # Development and Support
-For support, questions, and comments, you can join the Discord server, or [submit an issue](https://github.com/LakeYS/Dishorde/issues/new) for bugs and support.
+This is a community-enhanced fork. For the original Dishorde support, questions, and comments, you can join the Discord server, or [submit an issue](https://github.com/LakeYS/Dishorde/issues/new) for bugs and support.
 
 For developers: If you are interested in helping out, [GitHub pull requests](https://help.github.com/articles/about-pull-requests/) are welcome and greatly appreciated.
 
-For business inquiries, contact: contact@lakeys.net
+Original author: contact@lakeys.net
 
 # Commands
 Commands can be sent via DM or in the specified chat channel.
 
-`7d!info`
-`7d!time`
-`7d!version`
-`7d!players`
+`7d!info` - Shows server connection status and available commands
+`7d!time` - Shows current game day/time and blood moon information  
+`7d!version` - Shows game version information
+`7d!players` - Shows total number of players online
+`7d!activity` - Shows clever insights about current player activity, locations, and survival tips
 
 # Terminal Commands
 `exit`

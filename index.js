@@ -9,7 +9,7 @@ const Logger = require("./lib/log.js");
 const { Client, Intents } = Discord;
 var intents = ["GUILDS", "GUILD_MESSAGES"];
 
-console.log("\x1b[7m# Dishorde v" + pjson.version + " #\x1b[0m");
+console.log("\x1b[7m# Dishorde-CDRZ v" + pjson.version + " (Enhanced by Sherlock) #\x1b[0m");
 console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
 
 const lineSplit = /\n|\r/g;
@@ -22,6 +22,8 @@ var d7dtdState = {
   waitingForTime: 0,
   waitingForVersion: 0,
   waitingForPlayers: 0,
+  waitingForActivity: 0,
+  waitingForTrends: 0,
   //waitingForPref: 0,
   receivedData: 0,
 
@@ -32,6 +34,20 @@ var d7dtdState = {
 
   previousLine: null,
   dataCheck: null,
+
+  // Activity data storage
+  activityData: {
+    players: [],
+    time: null,
+    hordeTime: null
+  },
+
+  // Player count tracking
+  playerTrends: {
+    history: [], // Array of {timestamp, count, players}
+    maxHistory: 144, // Keep 24 hours of 10-minute intervals
+    lastCheck: 0
+  },
 
   // Connection status
   // -1 = Error, 0 = No connection/connecting, 1 = Online
@@ -341,7 +357,760 @@ function handleTime(line, msg) {
 }
 
 function handlePlayerCount(line, msg) {
+  // Extract player count from line like "Total of 3 players online"
+  const match = line.match(/Total of (\d+) players/);
+  if (match) {
+    const playerCount = parseInt(match[1]);
+    trackPlayerCount(playerCount);
+  }
+  
   msg.channel.send(line);
+}
+
+function generateActivityMessage(players, time, hordeInfo) {
+  let activityMsg = "";
+  const timestamp = new Date().toLocaleTimeString('en-US', { 
+    hour12: false, 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+  
+  if (players.length === 0) {
+    const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
+    const emptyMessages = [
+      `🌙 Empty wasteland during the ${timeOfDay}\n> Even the zombies seem to have taken a break... or are they planning something?`,
+      `👻 Eerie silence during the ${timeOfDay}\n> The absence of survivors might be more ominous than their presence.`,
+      `🏜️ No survivors active during the ${timeOfDay}\n> Perhaps they're wisely hiding, or perhaps something scared them all away.`,
+      `🌌 World lies dormant during the ${timeOfDay}\n> One can only wonder what horrors await the next survivor to log in.`
+    ];
+    
+    activityMsg = getRandomElement(emptyMessages);
+    if (hordeInfo) {
+      activityMsg += `\n\n${hordeInfo}`;
+    }
+    activityMsg += `\n\n*📡 Report generated at ${timestamp}*`;
+  } else if (players.length === 1) {
+    const player = players[0];
+    const location = getLocationDescription(player.pos);
+    const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
+    const healthCondition = getHealthCondition(player.health);
+    const activity = getSoloActivity(player, timeOfDay);
+    const suggestions = getSurvivalSuggestions(player, time, hordeInfo);
+    
+    // Build player stats
+    let playerStats = "";
+    if (player.health) playerStats += `❤️ ${player.health}% HP`;
+    if (player.level) playerStats += ` | 📊 Level ${player.level}`;
+    if (player.zombiesKilled) playerStats += ` | 🧟 ${player.zombiesKilled} kills`;
+    
+    activityMsg = `🎯 **Solo Survivor Report**\n\n`;
+    activityMsg += `**${player.name}** — ${playerStats ? `${playerStats}` : ""}\n`;
+    activityMsg += `📍 *${location.charAt(0).toUpperCase() + location.slice(1)}*\n`;
+    activityMsg += `🕒 ${time || "Unknown"}\n\n`;
+    activityMsg += `"*${healthCondition} and ${activity} ${location}.*"\n\n`;
+    
+    // Format suggestions as organized sections
+    if (suggestions) {
+      const suggestionLines = suggestions.split('\n');
+      let currentSection = '';
+      
+      suggestionLines.forEach(line => {
+        if (line.includes('🚨 CRITICAL') || line.includes('🩸 Blood Moon')) {
+          if (currentSection) activityMsg += '\n';
+          activityMsg += `⚠️ **${line.includes('CRITICAL') ? 'Critical Alert' : 'Blood Moon Preparation'}**\n`;
+          activityMsg += `🔴 ${line.replace(/🚨 CRITICAL: |🩸 Blood Moon Prep: /, '')}\n`;
+          currentSection = 'critical';
+        } else if (line.includes('🌙 Night Ops') || line.includes('🛡️ Defense') || line.includes('💡 Lighting')) {
+          if (currentSection !== 'tactical') {
+            if (currentSection) activityMsg += '\n';
+            activityMsg += `⚔️ **Immediate Action**\n`;
+            currentSection = 'tactical';
+          }
+          activityMsg += `🛡️ ${line.replace(/🌙 Night Ops: |🛡️ Defense: |💡 Lighting: /, '')}\n`;
+        } else if (line.includes('⚕️') || line.includes('🩹') || line.includes('🏥')) {
+          if (currentSection !== 'medical') {
+            if (currentSection) activityMsg += '\n';
+            activityMsg += `🏥 **Medical Priority**\n`;
+            currentSection = 'medical';
+          }
+          activityMsg += `⚕️ ${line.replace(/⚕️ |🩹 |🏥 /, '')}\n`;
+        } else if (line.includes('🆕') || line.includes('🏆')) {
+          if (currentSection !== 'advice') {
+            if (currentSection) activityMsg += '\n';
+            activityMsg += `💡 **Survival Advice**\n`;
+            currentSection = 'advice';
+          }
+          activityMsg += `📋 ${line.replace(/🆕 Newbie: |🏆 Veteran: /, '')}\n`;
+        } else if (line.includes('✅') || line.includes('👍') || line.includes('💪') || line.includes('🎯')) {
+          if (currentSection !== 'status') {
+            if (currentSection) activityMsg += '\n';
+            activityMsg += `✅ **Status Check**\n`;
+            currentSection = 'status';
+          }
+          activityMsg += `✅ ${line.replace(/✅ |👍 |💪 |🎯 /, '')}\n`;
+        }
+      });
+    }
+    
+    // Add blood moon information if present
+    if (hordeInfo) {
+      if (hordeInfo.includes("begins in")) {
+        activityMsg += `\n🔴 **Blood Moon Incoming**\n`;
+        const timeMatch = hordeInfo.match(/begins in (.+)!/);
+        if (timeMatch) {
+          activityMsg += `🕒 ${timeMatch[1].charAt(0).toUpperCase() + timeMatch[1].slice(1)}!\n`;
+          activityMsg += `💀 Prepare for maximum aggression.\n`;
+        }
+      } else if (hordeInfo.includes("rampaging now")) {
+        activityMsg += `\n🔴 **Blood Moon Active**\n`;
+        activityMsg += `💀 The horde is rampaging! Seek shelter immediately!\n`;
+      } else {
+        activityMsg += `\n${hordeInfo}\n`;
+      }
+    }
+    activityMsg += `\n\n📡 *Report generated at ${timestamp}*`;
+  } else {
+    const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
+    const groupActivity = analyzeGroupActivity(players, timeOfDay, hordeInfo);
+    
+    // Build player names list
+    const playerNames = players.map(player => player.name).join(", ");
+    
+    activityMsg = `👥 **Group Story** (${players.length} survivors)\n`;
+    activityMsg += `**${playerNames}**\n`;
+    activityMsg += `⏰ ${time || "Unknown"}\n\n`;
+    activityMsg += `${groupActivity}`;
+    
+    if (hordeInfo && !groupActivity.includes("blood moon") && !groupActivity.includes("aftermath")) {
+      activityMsg += `\n\n${hordeInfo}`;
+    }
+    activityMsg += `\n\n*📡 Report generated at ${timestamp}*`;
+  }
+  
+  return activityMsg;
+}
+
+function getRandomElement(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function getSoloActivity(player, timeOfDay) {
+  const activities = {
+    morning: [
+      "starting their day with a careful survey of",
+      "cautiously exploring", 
+      "scavenging through",
+      "methodically searching",
+      "bravely venturing into"
+    ],
+    afternoon: [
+      "battling the heat while exploring",
+      "pushing through the sweltering conditions in",
+      "making the most of daylight in",
+      "working tirelessly in",
+      "persevering through"
+    ],
+    evening: [
+      "racing against the setting sun in",
+      "preparing for nightfall while in",
+      "making final preparations in",
+      "seeking shelter in",
+      "hurrying through"
+    ],
+    night: [
+      "daringly moving through",
+      "sneaking carefully through",
+      "fighting for survival in",
+      "desperately trying to escape",
+      "courageously facing the darkness of"
+    ]
+  };
+
+  let timeKey = "morning";
+  if (timeOfDay.includes("afternoon")) timeKey = "afternoon";
+  else if (timeOfDay.includes("evening")) timeKey = "evening"; 
+  else if (timeOfDay.includes("night")) timeKey = "night";
+
+  return getRandomElement(activities[timeKey]);
+}
+
+function getTimeOfDay(timeStr) {
+  // Parse "Day X, HH:MM" format
+  const match = timeStr.match(/Day\s+(\d+),\s+(\d+):(\d+)/);
+  if (!match) return "mysterious hours";
+  
+  const hour = parseInt(match[2]);
+  
+  if (hour >= 6 && hour < 12) return "morning light";
+  if (hour >= 12 && hour < 18) return "afternoon heat";
+  if (hour >= 18 && hour < 22) return "evening twilight";
+  return "dark of night";
+}
+
+function getLocationDescription(position) {
+  if (!position) return "unknown territories";
+  
+  const coords = position.split(',');
+  if (coords.length < 3) return "mysterious coordinates";
+  
+  const x = parseInt(coords[0].trim());
+  const z = parseInt(coords[2].trim());
+  
+  // Enhanced biome detection with more variety
+  const centerRange = 300;
+  const midRange = 800;
+  const farRange = 1500;
+  
+  if (Math.abs(x) < centerRange && Math.abs(z) < centerRange) {
+    const centerLocations = [
+      "the dangerous central wasteland",
+      "the heart of the wasteland where zombies roam freely", 
+      "the contested central zone",
+      "the perilous core territories"
+    ];
+    return getRandomElement(centerLocations);
+  }
+  
+  // Determine primary direction and distance
+  const distance = Math.sqrt(x*x + z*z);
+  let distanceDesc = "nearby";
+  if (distance > farRange) distanceDesc = "distant";
+  else if (distance > midRange) distanceDesc = "far";
+  else if (distance > centerRange) distanceDesc = "outer";
+  
+  // Determine biome based on coordinates  
+  if (Math.abs(x) > Math.abs(z)) {
+    // East/West regions
+    if (x > 0) {
+      const eastLocations = [
+        `the ${distanceDesc} eastern burned forest where fire once raged`,
+        `the ${distanceDesc} scorched eastern territories`,
+        `the ${distanceDesc} eastern ash lands`,
+        `the ${distanceDesc} fire-ravaged eastern biome`
+      ];
+      return getRandomElement(eastLocations);
+    } else {
+      const westLocations = [
+        `the ${distanceDesc} western snow biome where cold death awaits`,
+        `the ${distanceDesc} frozen western territories`, 
+        `the ${distanceDesc} icy western wasteland`,
+        `the ${distanceDesc} snow-covered western regions`
+      ];
+      return getRandomElement(westLocations);
+    }
+  } else {
+    // North/South regions
+    if (z > 0) {
+      const northLocations = [
+        `the ${distanceDesc} northern forest biome full of lurking dangers`,
+        `the ${distanceDesc} dense northern woodlands`,
+        `the ${distanceDesc} northern pine forests`,
+        `the ${distanceDesc} forest-covered northern territories`
+      ];
+      return getRandomElement(northLocations);
+    } else {
+      const southLocations = [
+        `the ${distanceDesc} southern desert wasteland where heat kills`,
+        `the ${distanceDesc} scorching southern desert`,
+        `the ${distanceDesc} barren southern territories`,
+        `the ${distanceDesc} sand-swept southern wastelands`
+      ];
+      return getRandomElement(southLocations);
+    }
+  }
+}
+
+function getHealthCondition(health) {
+  if (!health) return "in unknown condition";
+  
+  const hp = parseInt(health);
+  if (hp >= 80) return "in excellent health";
+  if (hp >= 60) return "slightly wounded but determined";
+  if (hp >= 40) return "nursing some serious injuries";
+  if (hp >= 20) return "badly hurt and struggling";
+  return "clinging to life by a thread";
+}
+
+function getSurvivalSuggestions(player, time, hordeInfo) {
+  const suggestions = [];
+  const priorities = [];
+  
+  // Critical health warnings (highest priority)
+  if (player.health && parseInt(player.health) < 20) {
+    priorities.push("🚨 CRITICAL: Emergency medical attention needed - find shelter and heal immediately!");
+  } else if (player.health && parseInt(player.health) < 50) {
+    const healingSuggestions = [
+      "⚕️ Find bandages and painkillers - your health is dangerously low",
+      "🩹 Seek first aid kits as priority - you're losing precious health",
+      "🏥 Find a safe place to heal - your wounds need immediate attention"
+    ];
+    suggestions.push(getRandomElement(healingSuggestions));
+  }
+  
+  // Time-based warnings
+  if (time) {
+    const match = time.match(/Day\s+(\d+),\s+(\d+):(\d+)/);
+    if (match) {
+      const hour = parseInt(match[2]);
+      if (hour >= 22 || hour < 6) {
+        const nightSuggestions = [
+          "🌙 Night Ops: Extremely dangerous - seek fortified shelter or prepare for combat",
+          "🛡️ Defense: Find secure position - zombies are most active in darkness",
+          "💡 Lighting: Ensure good visibility and weapons ready for night encounters"
+        ];
+        suggestions.push(getRandomElement(nightSuggestions));
+      } else if (hour >= 18 && hour < 22) {
+        suggestions.push("🌅 Twilight: Secure your position before full darkness arrives");
+      }
+    }
+  }
+  
+  // Horde-specific warnings
+  if (hordeInfo && hordeInfo.includes("begins in")) {
+    priorities.push("🩸 Blood Moon Prep: Fortify position and stockpile ammunition NOW!");
+  } else if (hordeInfo && hordeInfo.includes("rampaging now")) {
+    priorities.push("💀 HORDE ACTIVE: Find the strongest shelter available - survival mode engaged!");
+  }
+  
+  // Level-based advice
+  if (player.level) {
+    const level = parseInt(player.level);
+    if (level < 10) {
+      suggestions.push("🆕 Newbie: Focus on basic crafting, building, and avoid dangerous areas");
+    } else if (level > 50) {
+      suggestions.push("🏆 Veteran: Consider helping others or tackling high-level challenges");
+    }
+  }
+  
+  // Combine all suggestions with proper formatting
+  let result = "";
+  if (priorities.length > 0) {
+    result += priorities.join("\n");
+  }
+  
+  if (suggestions.length > 0) {
+    if (result) result += "\n";
+    result += suggestions.join("\n");
+  }
+  
+  if (!result) {
+    const generalSuggestions = [
+      "✅ Managing well - maintain vigilance in this dangerous world",
+      "👍 Current survival strategy appears effective",
+      "💪 Demonstrating solid survival instincts",
+      "🎯 Holding strong against the apocalypse - well done!"
+    ];
+    result = getRandomElement(generalSuggestions);
+  }
+  
+  return result;
+}
+
+function analyzeGroupActivity(players, timeOfDay, hordeInfo) {
+  // Categorize players by health status for narrative purposes
+  const healthy = [];
+  const wounded = [];
+  const critical = [];
+  
+  players.forEach(player => {
+    if (player.health) {
+      const hp = parseInt(player.health);
+      if (hp >= 70) {
+        healthy.push(player.name);
+      } else if (hp >= 40) {
+        wounded.push(player.name);
+      } else {
+        critical.push(player.name);
+      }
+    } else {
+      healthy.push(player.name); // Assume healthy if unknown
+    }
+  });
+  
+  // Create narrative based on group composition and time
+  let narrative = "";
+  
+  // Blood moon context integration
+  let bloodMoonContext = "";
+  if (hordeInfo) {
+    if (hordeInfo.includes("begins in")) {
+      bloodMoonContext = "with the blood moon approaching";
+    } else if (hordeInfo.includes("rampaging now")) {
+      bloodMoonContext = "during the blood moon chaos";
+    } else if (hordeInfo.includes("day")) {
+      bloodMoonContext = "in the aftermath of recent horrors";
+    }
+  }
+  
+  // Generate narrative based on group health status
+  if (critical.length > 0) {
+    if (critical.length === 1) {
+      narrative = `💔 Crisis in Progress: ${critical[0]} is fighting for their life while `;
+      if (healthy.length > 0) {
+        narrative += `${formatPlayerList(healthy)} ${healthy.length === 1 ? 'desperately tries' : 'desperately try'} to provide aid`;
+      }
+      if (wounded.length > 0) {
+        if (healthy.length > 0) narrative += " and ";
+        narrative += `${formatPlayerList(wounded)} ${wounded.length === 1 ? 'pushes' : 'push'} through their own pain to help`;
+      }
+    } else {
+      narrative = `🚨 Dire Situation: ${formatPlayerList(critical)} are barely clinging to life`;
+      if (healthy.length > 0 || wounded.length > 0) {
+        narrative += ` while the remaining survivors rally together`;
+      }
+    }
+    narrative += ` ${bloodMoonContext}`;
+  } else if (wounded.length > healthy.length) {
+    narrative = `⚔️ Battle-Worn Group: ${formatPlayerList(wounded)} are nursing serious wounds`;
+    if (healthy.length > 0) {
+      narrative += ` while ${formatPlayerList(healthy)} ${healthy.length === 1 ? 'stands' : 'stand'} guard and ${healthy.length === 1 ? 'tends' : 'tend'} to the injured`;
+    }
+    narrative += ` ${bloodMoonContext}`;
+  } else if (healthy.length === players.length) {
+    const scenarios = [
+      `💪 Elite Squad: ${formatPlayerList(healthy)} move as a well-coordinated unit`,
+      `🎯 Perfect Formation: ${formatPlayerList(healthy)} demonstrate exceptional teamwork`,
+      `⚡ Strike Team: ${formatPlayerList(healthy)} operate with military precision`,
+      `🏆 Veteran Survivors: ${formatPlayerList(healthy)} show why they've lasted this long`
+    ];
+    narrative = getRandomElement(scenarios) + ` ${bloodMoonContext}`;
+  } else {
+    // Mixed group
+    if (healthy.length > 0 && wounded.length > 0) {
+      narrative = `🤝 Supporting Each Other: ${formatPlayerList(healthy)} ${healthy.length === 1 ? 'leads' : 'lead'} the group while ${formatPlayerList(wounded)} ${wounded.length === 1 ? 'follows' : 'follow'} courageously despite their injuries ${bloodMoonContext}`;
+    }
+  }
+  
+  // Add time-specific narrative elements
+  const timeNarratives = {
+    morning: [
+      "- planning their next moves as dawn breaks over the wasteland",
+      "- making the most of the early light to assess their situation", 
+      "- preparing for whatever challenges the day might bring",
+      "- coordinating their efforts as the world awakens around them"
+    ],
+    afternoon: [
+      "- pushing through the heat and danger of midday operations",
+      "- maximizing the precious daylight hours for critical tasks",
+      "- working efficiently while visibility remains on their side",
+      "- making decisive moves during the safest hours"
+    ],
+    evening: [
+      "- racing against time as shadows grow longer",
+      "- making final preparations before the darkness arrives",
+      "- securing their position for the dangerous hours ahead", 
+      "- hustling to complete objectives before nightfall"
+    ],
+    night: [
+      "- moving through the darkness with either desperate courage or foolish bravery",
+      "- defying the night terrors that would drive most to shelter",
+      "- proving their mettle against the most dangerous hours",
+      "- showing remarkable nerve in the face of nocturnal horrors"
+    ]
+  };
+
+  let timeKey = "morning";
+  if (timeOfDay.includes("afternoon")) timeKey = "afternoon";
+  else if (timeOfDay.includes("evening")) timeKey = "evening"; 
+  else if (timeOfDay.includes("night")) timeKey = "night";
+
+  narrative += ` ${getRandomElement(timeNarratives[timeKey])}`;
+  
+  return narrative;
+}
+
+function formatPlayerList(players) {
+  if (players.length === 0) return "";
+  if (players.length === 1) return players[0];
+  if (players.length === 2) return `${players[0]} and ${players[1]}`;
+  return `${players.slice(0, -1).join(", ")}, and ${players[players.length - 1]}`;
+}
+
+function trackPlayerCount(playerCount, playerNames = []) {
+  const now = Date.now();
+  const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+  
+  // Only track if it's been at least 10 minutes since last check
+  if (now - d7dtdState.playerTrends.lastCheck < tenMinutes) {
+    return;
+  }
+  
+  d7dtdState.playerTrends.lastCheck = now;
+  
+  // Add new data point
+  d7dtdState.playerTrends.history.push({
+    timestamp: now,
+    count: playerCount,
+    players: [...playerNames],
+    time: new Date().toLocaleTimeString('en-US', { hour12: false })
+  });
+  
+  // Keep only the last maxHistory entries
+  if (d7dtdState.playerTrends.history.length > d7dtdState.playerTrends.maxHistory) {
+    d7dtdState.playerTrends.history.shift();
+  }
+  
+  console.log(`[TRENDS] Tracked ${playerCount} players at ${new Date().toLocaleTimeString()}`);
+}
+
+function generateTrendsReport() {
+  const history = d7dtdState.playerTrends.history;
+  if (history.length < 2) {
+    return "📊 **Player Trends**\n\n❌ Not enough data yet. Trends will be available after a few hours of monitoring.\n\n*Check back later for detailed analytics!*";
+  }
+  
+  // Calculate statistics
+  const counts = history.map(h => h.count);
+  const currentCount = counts[counts.length - 1];
+  const avgCount = Math.round(counts.reduce((a, b) => a + b, 0) / counts.length * 10) / 10;
+  const maxCount = Math.max(...counts);
+  const minCount = Math.min(...counts);
+  
+  // Find peak times
+  const hourlyStats = {};
+  history.forEach(entry => {
+    const hour = new Date(entry.timestamp).getHours();
+    if (!hourlyStats[hour]) hourlyStats[hour] = [];
+    hourlyStats[hour].push(entry.count);
+  });
+  
+  const hourlyAvgs = Object.keys(hourlyStats).map(hour => ({
+    hour: parseInt(hour),
+    avg: hourlyStats[hour].reduce((a, b) => a + b, 0) / hourlyStats[hour].length
+  })).sort((a, b) => b.avg - a.avg);
+  
+  const peakHour = hourlyAvgs[0];
+  const lowHour = hourlyAvgs[hourlyAvgs.length - 1];
+  
+  // Recent trend (last 6 data points)
+  const recentData = history.slice(-6);
+  const recentTrend = recentData.length > 1 ? 
+    recentData[recentData.length - 1].count - recentData[0].count : 0;
+  
+  // Generate visual chart
+  const chartData = history.slice(-12); // Last 12 data points (2 hours)
+  const chart = generateMiniChart(chartData.map(d => d.count));
+  
+  // Build report
+  let report = `📊 **Player Count Trends**\n\n`;
+  
+  // Current status with trend indicator
+  const trendEmoji = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
+  report += `${trendEmoji} **Current**: ${currentCount} player${currentCount === 1 ? '' : 's'}\n`;
+  report += `📋 **24h Average**: ${avgCount} players\n`;
+  report += `🔝 **Peak**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
+  
+  // Visual chart
+  report += `📈 **Recent Activity** (2 hours)\n\`\`\`\n${chart}\n\`\`\`\n`;
+  
+  // Peak times analysis
+  if (peakHour && lowHour) {
+    const peakTime = formatHour(peakHour.hour);
+    const lowTime = formatHour(lowHour.hour);
+    report += `⏰ **Peak Time**: ${peakTime} (${Math.round(peakHour.avg * 10) / 10} avg)\n`;
+    report += `🌙 **Quiet Time**: ${lowTime} (${Math.round(lowHour.avg * 10) / 10} avg)\n\n`;
+  }
+  
+  // Trend analysis
+  if (recentTrend > 0) {
+    report += `🚀 **Trending Up**: +${recentTrend} player${Math.abs(recentTrend) === 1 ? '' : 's'} in recent activity\n`;
+  } else if (recentTrend < 0) {
+    report += `📉 **Trending Down**: ${recentTrend} player${Math.abs(recentTrend) === 1 ? '' : 's'} in recent activity\n`;
+  } else {
+    report += `🔄 **Stable**: Consistent player count recently\n`;
+  }
+  
+  // Data collection info
+  const dataAge = Math.round((Date.now() - history[0].timestamp) / (1000 * 60 * 60 * 10)) / 10;
+  report += `\n📡 *Tracking ${history.length} data points over ${dataAge}h*`;
+  
+  return report;
+}
+
+function generateMiniChart(data) {
+  if (data.length === 0) return "No data";
+  
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  
+  const bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"];
+  
+  let chart = "";
+  data.forEach((value, index) => {
+    const normalized = (value - min) / range;
+    const barIndex = Math.floor(normalized * (bars.length - 1));
+    chart += bars[barIndex];
+    
+    // Add spacing every 4 characters for readability
+    if ((index + 1) % 4 === 0 && index < data.length - 1) {
+      chart += " ";
+    }
+  });
+  
+  return chart;
+}
+
+function formatHour(hour) {
+  if (hour === 0) return "12:00 AM";
+  if (hour < 12) return `${hour}:00 AM`;
+  if (hour === 12) return "12:00 PM";
+  return `${hour - 12}:00 PM`;
+}
+
+function handleTrends(msg) {
+  const trendsReport = generateTrendsReport();
+  
+  // Create enhanced embed for trends
+  const embed = {
+    color: 0x3498db, // Blue color
+    title: "📊 Server Analytics Dashboard",
+    description: trendsReport,
+    footer: {
+      text: `Report generated at ${new Date().toLocaleTimeString()}`,
+    },
+    timestamp: new Date().toISOString()
+  };
+  
+  msg.channel.send({ embeds: [embed] })
+    .catch(() => {
+      // Fallback to plain text if embed fails
+      msg.channel.send(trendsReport);
+    });
+}
+
+function handleActivity(msg) {
+  // Clear previous activity data
+  d7dtdState.activityData = {
+    players: [],
+    time: null,
+    hordeTime: null
+  };
+
+  // Set up the waiting state
+  d7dtdState.waitingForActivity = 1;
+  d7dtdState.waitingForActivityMsg = msg;
+
+  // Execute multiple commands to gather data
+  telnet.exec("lp", (err, response) => {
+    if (!err) {
+      processTelnetResponse(response, (line) => {
+        if (line.includes("id=") && line.includes("pos=")) {
+          // Parse player data from listplayers output
+          const playerData = parsePlayerData(line);
+          if (playerData) {
+            d7dtdState.activityData.players.push(playerData);
+          }
+        } else if (line.startsWith("Total of ")) {
+          d7dtdState.receivedData = 1;
+        }
+      });
+
+      // Get current time
+      telnet.exec("gettime", (timeErr, timeResponse) => {
+        if (!timeErr) {
+          processTelnetResponse(timeResponse, (timeLine) => {
+            if (timeLine.startsWith("Day")) {
+              d7dtdState.activityData.time = timeLine;
+              
+              // Calculate horde information
+              const hordeMsg = calculateHordeStatus(timeLine);
+              d7dtdState.activityData.hordeTime = hordeMsg;
+              
+              // Track player count for trends (before generating message)
+              const playerNames = d7dtdState.activityData.players.map(p => p.name);
+              trackPlayerCount(d7dtdState.activityData.players.length, playerNames);
+              
+              // Generate and send the activity message
+              const activityMessage = generateActivityMessage(
+                d7dtdState.activityData.players,
+                d7dtdState.activityData.time,
+                d7dtdState.activityData.hordeTime
+              );
+              
+              // Create enhanced embed for activity
+              const embed = {
+                color: 0x2ecc71, // Green color for activity
+                title: "🎯 Server Activity Report",
+                description: activityMessage,
+                footer: {
+                  text: `Data collected at ${new Date().toLocaleTimeString()}`,
+                },
+                timestamp: new Date().toISOString()
+              };
+              
+              msg.channel.send({ embeds: [embed] })
+                .catch(() => {
+                  // Fallback to plain text if embed fails
+                  msg.channel.send(activityMessage);
+                });
+                
+              d7dtdState.waitingForActivity = 0;
+            }
+          });
+        }
+      });
+    } else {
+      handleCmdError(err);
+      d7dtdState.waitingForActivity = 0;
+    }
+  });
+}
+
+function parsePlayerData(line) {
+  try {
+    // Parse player data from lines like:
+    // "1. id=171, PlayerName, pos=(100.5, 67.0, 200.3), rot=(0.0, 45.0, 0.0), remote=True, health=100, deaths=2, zombies=15, players=0, score=150, level=10, steamid=76561198123456789, ip=192.168.1.100, ping=50"
+    
+    const nameMatch = line.match(/id=\d+,\s*([^,]+),/);
+    const posMatch = line.match(/pos=\(([^)]+)\)/);
+    const healthMatch = line.match(/health=(\d+)/);
+    const levelMatch = line.match(/level=(\d+)/);
+    const zombiesMatch = line.match(/zombies=(\d+)/);
+    
+    if (nameMatch && posMatch) {
+      return {
+        name: nameMatch[1].trim(),
+        pos: posMatch[1],
+        health: healthMatch ? healthMatch[1] : null,
+        level: levelMatch ? levelMatch[1] : null,
+        zombiesKilled: zombiesMatch ? zombiesMatch[1] : null
+      };
+    }
+  } catch (error) {
+    console.log("Error parsing player data:", error);
+  }
+  
+  return null;
+}
+
+function calculateHordeStatus(timeStr) {
+  let hordeFreq = 7;
+  if (config["horde-frequency"] != null) {
+    hordeFreq = parseInt(config["horde-frequency"]);
+  }
+
+  const messageValues = timeStr.split(",");
+  const day = parseInt(messageValues[0].replace("Day ", ""));
+  const hour = parseInt(messageValues[1].split(":")[0]);
+  const daysFromHorde = day % hordeFreq;
+
+  const isFirstWeek = day === 1 || day === 2;
+  const isHordeHour = (daysFromHorde === 0 && hour >= 22) || (daysFromHorde === 1 && hour < 4);
+  const isHordeNow = !isFirstWeek && isHordeHour;
+
+  if (daysFromHorde === 0 && hour < 22) {
+    const hoursToHorde = 22 - hour;
+    const hourStr = hour === 21 ? "less than an hour" : `${hoursToHorde} hour${hoursToHorde === 1 ? "" : "s"}`;
+    return `🩸 Blood Moon Warning\n> Horde begins in ${hourStr}!`;
+  } else if (isHordeNow) {
+    return `🔴 Blood Moon Active\n> The horde is rampaging! Seek shelter immediately!`;
+  } else if (daysFromHorde !== 0) {
+    const daysToHorde = parseInt(hordeFreq) - daysFromHorde;
+    return `🗓️ Next Blood Moon\n> ${daysToHorde} day${daysToHorde === 1 ? "" : "s"} remaining until the horde arrives`;
+  }
+
+  return "";
 }
 
 ////// # Discord # //////
@@ -512,10 +1281,10 @@ function parseDiscordCommand(msg, mentioned) {
       var cmdString = "";
       if(!config["disable-commands"]) {
         var pre = prefix.toLowerCase();
-        cmdString = `\n**Commands:** ${pre}info, ${pre}time, ${pre}version, ${pre}players`;
+        cmdString = `\n**Commands:** ${pre}info, ${pre}time, ${pre}version, ${pre}players, ${pre}activity, ${pre}trends`;
       }
 
-      var string = `Server connection: ${statusMsg}${cmdString}\n\n*Dishorde v${pjson.version} - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
+      var string = `Server connection: ${statusMsg}${cmdString}\n\n*Dishorde-CDRZ v${pjson.version} (Enhanced by Sherlock) - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
       msg.channel.send({embeds: [{description: string}] })
         .catch((err) => {
           console.log(err);
@@ -592,6 +1361,18 @@ function parseDiscordCommand(msg, mentioned) {
             handleCmdError(err);
           }
         });
+      }
+
+      // 7d!activity
+      if(cmd === "ACTIVITY" || cmd === "A" || cmd === "ACT") {
+        console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
+        handleActivity(msg);
+      }
+
+      // 7d!trends
+      if(cmd === "TRENDS" || cmd === "T" || cmd === "TREND") {
+        console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
+        handleTrends(msg);
       }
 
       //if(cmd === "PREF") {
@@ -766,6 +1547,20 @@ telnet.on("data", (data) => {
     }
     else if(d7dtdState.waitingForPlayers && line.startsWith("Total of ")) {
       d7dtdState.waitingForPlayersMsg.channel.send(line);
+    }
+    else if(d7dtdState.waitingForActivity && line.startsWith("Total of ")) {
+      // Trigger activity processing when player count is received
+      setTimeout(() => {
+        if (d7dtdState.waitingForActivity) {
+          const activityMessage = generateActivityMessage(
+            d7dtdState.activityData.players,
+            d7dtdState.activityData.time,
+            d7dtdState.activityData.hordeTime
+          );
+          d7dtdState.waitingForActivityMsg.channel.send(activityMessage);
+          d7dtdState.waitingForActivity = 0;
+        }
+      }, 1000); // Give time for other commands to complete
     }
     //else if(d7dtdState.waitingForPref && line.startsWith("GamePref.")) {
     //  d7dtdState.waitingForPrefMsg.channel.send(line);

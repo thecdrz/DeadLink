@@ -1,13 +1,13 @@
 {
-  "name": "dishorde",
-  "version": "2.2.1",
-  "description": "A Discord bridge bot for 7 Days to Die. This integrates a dedicated server with Discord, allowing players to access the game's chat from any device or location.",
+  "name": "dishorde-cdrz",
+  "version": "2.3.0-sherlock",
+  "description": "Enhanced Discord bridge bot for 7 Days to Die with intelligent activity tracking. Forked from Dishorde with advanced player analysis and survival insights.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "Lake Y",
+  "author": "Sherlock (fork of Lake Y's Dishorde)",
   "license": "MIT",
   "dependencies": {
     "discord.js": "^13.17.1",
