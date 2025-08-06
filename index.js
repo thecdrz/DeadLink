@@ -1064,7 +1064,7 @@ function generateChangesReport() {
          `🎯 \`7d!activity\` - Detailed activity with location insights and survival tips\n` +
          `📊 \`7d!trends\` - Player count analytics with visual trends\n` +
          `🎮 \`7d!dashboard\` - Interactive control panel with clickable buttons\n` +
-         `🔄 \`7d!changes\` - View recent updates and changes (this command!)\n\n` +
+         `ℹ️ \`7d!info\` - Complete feature overview and server information\n\n` +
          
          `**🛡️ Intelligent Features**\n` +
          `🧠 **Context-Aware Suggestions** - Smart survival advice based on game state\n` +
@@ -1086,25 +1086,6 @@ function generateChangesReport() {
          `🔄 **Real-time Updates** - Live data synchronization with game server\n\n` +
          
          `*Based on the original Dishorde by LakeYS with extensive enhancements by Sherlock*`;
-}
-
-function handleChanges(msg) {
-  const changesReport = generateChangesReport();
-  
-  const embed = {
-    color: 0xe74c3c, // Red color for updates/changes
-    title: "🔄 HordeComms Changelog",
-    description: changesReport,
-    footer: {
-      text: `Changelog generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-    }
-  };
-  
-  msg.channel.send({ embeds: [embed] })
-    .catch(() => {
-      // Fallback to plain text if embed fails
-      msg.channel.send(changesReport);
-    });
 }
 
 function createDashboardEmbed() {
@@ -1661,19 +1642,24 @@ function parseDiscordCommand(msg, mentioned) {
         break;
       }
 
-      var cmdString = "";
-      if(!config["disable-commands"]) {
-        var pre = prefix.toLowerCase();
-        cmdString = `\n**Commands:** ${pre}info, ${pre}time, ${pre}players, ${pre}activity, ${pre}trends, ${pre}dashboard, ${pre}changes`;
-        cmdString += `\n\n💡 **Pro Tip:** Use \`${pre}dashboard\` for an interactive GUI with clickable buttons!`;
-      }
-
-      var string = `Server connection: ${statusMsg}${cmdString}\n\n*HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}.*`;
-      msg.channel.send({embeds: [{description: string}] })
+      // Use the comprehensive changes content for info
+      const changesReport = generateChangesReport();
+      const infoContent = `Server connection: ${statusMsg}\n\n${changesReport}`;
+      
+      const embed = {
+        color: 0x7289da, // Discord blurple for info
+        title: "🎮 HordeComms Information & Features",
+        description: infoContent,
+        footer: {
+          text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}`,
+        }
+      };
+      
+      msg.channel.send({ embeds: [embed] })
         .catch((err) => {
           console.log(err);
           // If the embed fails, try sending without it.
-          msg.channel.send(string);
+          msg.channel.send(infoContent);
         });
     }
 
@@ -1741,12 +1727,6 @@ function parseDiscordCommand(msg, mentioned) {
       if(cmd === "DASHBOARD" || cmd === "D" || cmd === "DASH") {
         console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
         handleDashboard(msg);
-      }
-
-      // 7d!changes
-      if(cmd === "CHANGES" || cmd === "C" || cmd === "CHANGE" || cmd === "CHANGELOG") {
-        console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
-        handleChanges(msg);
       }
 
       //if(cmd === "PREF") {

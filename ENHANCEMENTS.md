@@ -79,18 +79,17 @@
   - Current vs historical comparison
   - Data collection timeline
 
-### Changes Command (NEW!)
-- **Usage**: `7d!changes`, `7d!c`, `7d!change`, `7d!changelog`
-- **Features**:
-  - Complete feature changelog
-  - Recent updates and enhancements
-  - Technical improvements summary
-  - Visual improvements documentation
-  - Credit attribution for developers
-
-### Enhanced Info Command
+### Enhanced Info Command ⭐ **UPDATED!**
 - **Usage**: `7d!info`, `7d!i`
-- **Updated**: Now includes dashboard and trends commands with pro tip
+- **Features**: 
+  - Complete feature overview and changelog
+  - Server connection status display
+  - Comprehensive command documentation
+  - Latest updates and enhancements summary
+  - Technical improvements and visual features list
+  - Proper attribution to developers
+- **Usage**: `7d!info`, `7d!i`
+- **Updated**: Now includes complete feature overview with comprehensive changelog
 
 ## 🎨 Visual Features
 

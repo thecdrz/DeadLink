@@ -21,10 +21,9 @@ HordeComms runs as a completely separate application, so no mods are required. *
 - `7d!dashboard` - Interactive GUI with clickable buttons ⭐ **NEW!**
 - `7d!activity` - Intelligent activity reports with survival insights
 - `7d!trends` - Player count analytics with visual charts ⭐ **NEW!**
-- `7d!changes` - View recent updates and changelog ⭐ **NEW!**
 - `7d!players` - Current online players
 - `7d!time` - Current game time
-- `7d!info` - Bot information and help
+- `7d!info` - Complete feature overview and server information ⭐ **ENHANCED!**
 
 💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
@@ -48,11 +47,10 @@ Original author: contact@lakeys.net
 # Commands
 Commands can be sent via DM or in the specified chat channel.
 
-`7d!info` - Shows server connection status and available commands
+`7d!info` - Complete feature overview, changelog, and server status
 `7d!time` - Shows current game day/time and blood moon information  
 `7d!players` - Shows total number of players online
 `7d!activity` - Shows clever insights about current player activity, locations, and survival tips
-`7d!changes` - Displays recent updates, new features, and changelog information
 
 # Terminal Commands
 `exit`
