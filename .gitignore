@@ -66,6 +66,9 @@ console.log
 # Analytics data storage
 analytics.json
 
+# Version tracking
+version.json
+
 # Security: Environment variable files
 .env
 .env.*

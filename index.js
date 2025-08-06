@@ -203,6 +203,9 @@ new DishordeInitializer(pjson, config, configPrivate);
 // Load analytics data on startup
 loadAnalyticsData();
 
+// Check for version updates and announce if needed
+checkAndAnnounceVersion();
+
 ////// # Functions # //////
 function sanitizeMsgFromGame(msg) {
   // Replace @everyone and @here
@@ -1010,6 +1013,101 @@ function loadAnalyticsData() {
     console.warn('Warning: Failed to load analytics data:', error.message);
     console.log('Starting with fresh analytics data');
   }
+}
+
+// Version announcement functions
+function checkAndAnnounceVersion() {
+  try {
+    let versionData = { lastAnnouncedVersion: null };
+    
+    // Load previous version data
+    if (fs.existsSync('./version.json')) {
+      const data = fs.readFileSync('./version.json', 'utf8');
+      versionData = JSON.parse(data);
+    }
+    
+    // Check if this is a new version
+    const currentVersion = pjson.version;
+    if (versionData.lastAnnouncedVersion !== currentVersion) {
+      console.log(`New version detected: ${currentVersion} (was: ${versionData.lastAnnouncedVersion || 'none'})`);
+      
+      // Save the new version
+      versionData.lastAnnouncedVersion = currentVersion;
+      fs.writeFileSync('./version.json', JSON.stringify(versionData, null, 2), 'utf8');
+      
+      // Schedule announcement after Discord is ready
+      setTimeout(() => {
+        announceNewVersion(currentVersion);
+      }, 5000); // Wait 5 seconds for Discord to be fully ready
+    }
+  } catch (error) {
+    console.warn('Warning: Failed to check version:', error.message);
+  }
+}
+
+function announceNewVersion(version) {
+  if (!channel) {
+    console.log('Channel not ready for version announcement');
+    return;
+  }
+  
+  const releaseNotes = {
+    "2.4.0": {
+      title: "🎉 HordeComms v2.4.0 Released!",
+      description: "Major update with persistent analytics and UI improvements",
+      features: [
+        "💾 **Persistent Analytics** - Your server trends now survive bot restarts!",
+        "🎯 **UI Polish** - Cleaner visual experience with reduced clutter",
+        "📊 **Data Reliability** - Analytics automatically save every 10 minutes",
+        "🧹 **Code Cleanup** - Streamlined interface and improved performance"
+      ],
+      color: 0x00ff00 // Green for new release
+    }
+  };
+  
+  const notes = releaseNotes[version];
+  if (!notes) {
+    // Generic announcement for versions without specific release notes
+    const embed = {
+      color: 0x7289da,
+      title: `🚀 HordeComms v${version} Released!`,
+      description: "The bot has been updated with new features and improvements!",
+      footer: {
+        text: `HordeComms v${version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    channel.send({ embeds: [embed] }).catch(console.error);
+    return;
+  }
+  
+  // Detailed announcement with release notes
+  const embed = {
+    color: notes.color,
+    title: notes.title,
+    description: notes.description,
+    fields: [
+      {
+        name: "✨ What's New",
+        value: notes.features.join('\n'),
+        inline: false
+      },
+      {
+        name: "📋 Commands",
+        value: "`7d!info` - View all features and changelog\n`7d!dashboard` - Interactive control panel",
+        inline: false
+      }
+    ],
+    footer: {
+      text: `HordeComms v${version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
+    },
+    timestamp: new Date().toISOString()
+  };
+  
+  channel.send({ embeds: [embed] })
+    .then(() => console.log(`Version ${version} announcement sent to Discord`))
+    .catch(error => console.error('Failed to send version announcement:', error));
 }
 
 function trackPlayerCount(playerCount, playerNames = []) {
