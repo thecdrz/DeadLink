@@ -404,9 +404,43 @@ function handlePlayerCount(line, msg) {
   if (match) {
     const playerCount = parseInt(match[1]);
     trackPlayerCount(playerCount);
+    
+    // Create a proper embed for player count display
+    let description = "";
+    let color = 0x95a5a6; // Gray color for neutral
+    
+    if (playerCount === 0) {
+      description = "🌙 **Server is Empty**\n> The wasteland stands silent... waiting for survivors to brave the darkness.";
+      color = 0x34495e; // Darker gray for empty
+    } else if (playerCount === 1) {
+      description = `👤 **Lone Survivor**\n> One brave soul is currently fighting for survival in the apocalypse.`;
+      color = 0xf39c12; // Orange for solo
+    } else if (playerCount <= 5) {
+      description = `👥 **Small Group**\n> ${playerCount} survivors are currently working together to stay alive.`;
+      color = 0x3498db; // Blue for small group
+    } else {
+      description = `🏘️ **Active Community**\n> ${playerCount} players are currently online and building their fortress!`;
+      color = 0x27ae60; // Green for active community
+    }
+    
+    const embed = {
+      color: color,
+      title: "👥 Current Players Online",
+      description: description,
+      footer: {
+        text: `Player count checked on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+      }
+    };
+    
+    msg.channel.send({ embeds: [embed] })
+      .catch(() => {
+        // Fallback to plain text if embed fails
+        msg.channel.send(line);
+      });
+  } else {
+    // Fallback for unexpected format
+    msg.channel.send(line);
   }
-  
-  msg.channel.send(line);
 }
 
 function generateActivityMessage(players, time, hordeInfo) {
@@ -1883,7 +1917,7 @@ telnet.on("data", (data) => {
       handleTime(line, d7dtdState.waitingForTimeMsg);
     }
     else if(d7dtdState.waitingForPlayers && line.startsWith("Total of ")) {
-      d7dtdState.waitingForPlayersMsg.channel.send(line);
+      handlePlayerCount(line, d7dtdState.waitingForPlayersMsg);
     }
     else if(d7dtdState.waitingForActivity && line.startsWith("Total of ")) {
       // Trigger activity processing when player count is received
