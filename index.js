@@ -9,7 +9,7 @@ const Logger = require("./lib/log.js");
 const { Client, Intents } = Discord;
 var intents = ["GUILDS", "GUILD_MESSAGES"];
 
-console.log("\x1b[7m# HordeComms v" + pjson.version + " (Based on Dishorde by LakeYS, Enhanced by Sherlock) #\x1b[0m");
+console.log("\x1b[7m# HordeComms v" + pjson.version + " (Based on Dishorde by LakeYS, Enhanced by CDRZ) #\x1b[0m");
 console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
 
 const lineSplit = /\n|\r/g;
@@ -557,7 +557,7 @@ function generateActivityMessage(players, time, hordeInfo) {
     if (player.level) playerStats += ` | 📊 Level ${player.level}`;
     if (player.zombiesKilled) playerStats += ` | 🧟 ${player.zombiesKilled} kills`;
     
-    activityMsg = `🎯 **Solo Survivor Report**\n\n`;
+    activityMsg = `**Solo Survivor Report**\n\n`;
     activityMsg += `**${player.name}** — ${playerStats ? `${playerStats}` : ""}\n`;
     activityMsg += `📍 *${location.charAt(0).toUpperCase() + location.slice(1)}*\n`;
     activityMsg += `🕒 ${time || "Unknown"}\n\n`;
@@ -1167,9 +1167,7 @@ function generateChangesReport() {
          `⚡ **Performance Optimized** - Faster response times and better error handling\n` +
          `🔒 **Security Hardened** - Environment variables and credential protection\n` +
          `📱 **Mobile Friendly** - Responsive design for Discord mobile apps\n` +
-         `🔄 **Real-time Updates** - Live data synchronization with game server\n\n` +
-         
-         `*Based on the original Dishorde by LakeYS with extensive enhancements by Sherlock*`;
+         `🔄 **Real-time Updates** - Live data synchronization with game server`;
 }
 
 function createDashboardEmbed() {
@@ -1187,7 +1185,7 @@ function createDashboardEmbed() {
                  `⏰ **Time** - Check current game time\n` +
                  `ℹ️ **Info** - Server version and details`,
     footer: {
-      text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock`,
+      text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
     }
   };
 }
@@ -1428,7 +1426,7 @@ function handleInfoFromButton(interaction) {
       title: "🎮 HordeComms Information & Features",
       description: infoContent,
       footer: {
-        text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}`,
+        text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
       }
     };
     
@@ -1743,7 +1741,7 @@ function parseDiscordCommand(msg, mentioned) {
         title: "🎮 HordeComms Information & Features",
         description: infoContent,
         footer: {
-          text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by Sherlock - Powered by discord.js ${pjson.dependencies["discord.js"].replace("^","")}`,
+          text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
         }
       };
       

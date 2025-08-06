@@ -1,13 +1,13 @@
 {
   "name": "hordecomms",
   "version": "2.3.0",
-  "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, player trends analytics, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by Sherlock.",
+  "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, player trends analytics, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by CDRZ.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "Sherlock (built on Dishorde by LakeYS)",
+  "author": "Scott Moreau (CDRZ) - built on Dishorde by LakeYS",
   "license": "MIT",
   "repository": {
     "type": "git",

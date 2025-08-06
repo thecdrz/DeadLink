@@ -99,4 +99,4 @@ Your bot is now production-ready with proper credential security! 🛡️
 
 ---
 
-*HordeComms - Built on Dishorde by LakeYS, Enhanced by Sherlock*
+*HordeComms - Built on Dishorde by LakeYS, Enhanced by CDRZ*

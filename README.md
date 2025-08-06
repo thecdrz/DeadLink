@@ -1,4 +1,4 @@
-# HordeComms - Advanced 7 Days to Die Discord Integration
+# **Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)ordeComms - Advanced 7 Days to Die Discord Integration
 
 **Built on Dishorde by LakeYS, Enhanced by Sherlock** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
@@ -43,6 +43,10 @@ This is a community-enhanced fork. For the original Dishorde support, questions,
 For developers: If you are interested in helping out, [GitHub pull requests](https://help.github.com/articles/about-pull-requests/) are welcome and greatly appreciated.
 
 Original author: contact@lakeys.net
+
+# Authors
+**Original Dishorde**: LakeYS (contact@lakeys.net)  
+**HordeComms Enhancements**: Scott Moreau (CDRZ) - Discord: <@217012303063678978>
 
 # Commands
 Commands can be sent via DM or in the specified chat channel.
