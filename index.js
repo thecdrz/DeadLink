@@ -552,11 +552,13 @@ function generateActivityMessage(players, time, hordeInfo) {
   
   if (players.length === 0) {
     const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
+    const weather = getCurrentWeather(time);
+    
     const emptyMessages = [
-      `🌙 Empty wasteland during the ${timeOfDay}\n> Even the zombies seem to have taken a break... or are they planning something?`,
-      `👻 Eerie silence during the ${timeOfDay}\n> The absence of survivors might be more ominous than their presence.`,
-      `🏜️ No survivors active during the ${timeOfDay}\n> Perhaps they're wisely hiding, or perhaps something scared them all away.`,
-      `🌌 World lies dormant during the ${timeOfDay}\n> One can only wonder what horrors await the next survivor to log in.`
+      `${weather.icon} Empty wasteland during the ${timeOfDay} with ${weather.description}\n> Even the zombies seem to have taken shelter from the ${weather.description}... or are they planning something?`,
+      `👻 Eerie silence during the ${timeOfDay} ${weather.narrative}\n> The absence of survivors becomes more ominous when combined with ${weather.description}.`,
+      `🏜️ No survivors active during the ${timeOfDay}\n> Perhaps they're wisely avoiding the ${weather.description}, or perhaps the weather has driven something else to hunt.`,
+      `🌌 World lies dormant during the ${timeOfDay}\n> The ${weather.description} adds an extra layer of danger for any survivor brave enough to venture out.`
     ];
     
     activityMsg = getRandomElement(emptyMessages);
@@ -565,9 +567,35 @@ function generateActivityMessage(players, time, hordeInfo) {
     }
   } else if (players.length === 1) {
     const player = players[0];
-    const location = getLocationDescription(player.pos);
     const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
     const healthCondition = getHealthCondition(player.health);
+    
+    // 🌦️ Get current weather conditions
+    const weather = getCurrentWeather(time);
+    
+    // 🗺️ Enhanced location with biome and POI detection
+    let locationContext = "";
+    let locationDisplay = "unknown location";
+    if (player.pos) {
+      const coords = player.pos.split(',');
+      const x = parseInt(coords[0]);
+      const z = parseInt(coords[2]);
+      
+      // Check for POI first
+      const nearbyPOI = identifyPOI(x, z);
+      if (nearbyPOI) {
+        locationContext = getPOINarrative(nearbyPOI, weather);
+        locationDisplay = `${nearbyPOI.name} (${nearbyPOI.type.charAt(0).toUpperCase() + nearbyPOI.type.slice(1)})`;
+      } else {
+        locationContext = getBiomeSpecificNarrative(x, z, weather);
+        const biomeData = getBiomeData(x, z);
+        locationDisplay = biomeData.name;
+      }
+    } else {
+      locationContext = `surviving somewhere in the wasteland ${weather.narrative}`;
+      locationDisplay = "Unknown Wasteland";
+    }
+    
     const activity = getSoloActivity(player, timeOfDay);
     const suggestions = getSurvivalSuggestions(player, time, hordeInfo);
     
@@ -579,9 +607,9 @@ function generateActivityMessage(players, time, hordeInfo) {
     
     activityMsg = `**Solo Survivor Report**\n\n`;
     activityMsg += `**${player.name}** — ${playerStats ? `${playerStats}` : ""}\n`;
-    activityMsg += `🌍 *${location.charAt(0).toUpperCase() + location.slice(1)}*\n`;
-    activityMsg += `🕒 ${time || "Unknown"}\n\n`;
-    activityMsg += `"*${healthCondition} and ${activity} ${location}.*"\n\n`;
+    activityMsg += `🌍 *${locationDisplay}*\n`;
+    activityMsg += `${weather.icon} *${weather.description}* | 🕒 ${time || "Unknown"}\n\n`;
+    activityMsg += `"*${healthCondition} and ${activity} while ${locationContext}.*"\n\n`;
     
     // Format suggestions as organized sections
     if (suggestions) {
@@ -876,6 +904,235 @@ function getSurvivalSuggestions(player, time, hordeInfo) {
   }
   
   return result;
+}
+
+// 🌦️ Weather Integration System
+function getCurrentWeather(time) {
+  if (!time) return getRandomWeather();
+  
+  const hour = parseInt(time.split(',')[1]?.split(':')[0] || 12);
+  const day = parseInt(time.split(',')[0]?.replace('Day ', '') || 1);
+  
+  // Simulate weather patterns based on time and seed
+  const weatherSeed = (day + hour) % 24;
+  
+  const weatherPatterns = [
+    { type: "clear", icon: "☀️", description: "clear skies", danger: "low", narrative: "under brilliant sunshine" },
+    { type: "cloudy", icon: "☁️", description: "overcast skies", danger: "low", narrative: "beneath heavy cloud cover" },
+    { type: "rain", icon: "🌧️", description: "steady rainfall", danger: "medium", narrative: "through driving rain" },
+    { type: "storm", icon: "⛈️", description: "thunderstorm", danger: "high", narrative: "amid a raging thunderstorm" },
+    { type: "fog", icon: "🌫️", description: "thick fog", danger: "high", narrative: "through vision-obscuring fog" },
+    { type: "hot", icon: "🔥", description: "scorching heat", danger: "medium", narrative: "under the blazing desert sun" },
+    { type: "cold", icon: "❄️", description: "bitter cold", danger: "medium", narrative: "in bone-chilling cold" },
+    { type: "sandstorm", icon: "🌪️", description: "sandstorm", danger: "extreme", narrative: "fighting through a blinding sandstorm" }
+  ];
+  
+  return weatherPatterns[weatherSeed % weatherPatterns.length];
+}
+
+function getRandomWeather() {
+  const commonWeather = [
+    { type: "clear", icon: "☀️", description: "clear skies", danger: "low", narrative: "under clear skies" },
+    { type: "cloudy", icon: "☁️", description: "overcast conditions", danger: "low", narrative: "beneath cloudy skies" },
+    { type: "rain", icon: "🌧️", description: "light rain", danger: "medium", narrative: "through gentle rainfall" }
+  ];
+  return getRandomElement(commonWeather);
+}
+
+// 🗺️ Enhanced Biome-Specific Stories  
+function getBiomeSpecificNarrative(x, z, weather) {
+  const biomeData = getBiomeData(x, z);
+  const weatherContext = weather ? ` ${weather.narrative}` : "";
+  
+  const biomeStories = {
+    desert: [
+      `braving the scorching desert wastes${weatherContext}`,
+      `navigating the sun-bleached dunes${weatherContext}`,
+      `surviving the harsh desert landscape${weatherContext}`,
+      `enduring the merciless desert heat${weatherContext}`
+    ],
+    snow: [
+      `traversing the frozen tundra${weatherContext}`,
+      `surviving the icy northern wastes${weatherContext}`,
+      `battling through snow-covered terrain${weatherContext}`,
+      `enduring the bitter cold wilderness${weatherContext}`
+    ],
+    forest: [
+      `moving through dense woodland${weatherContext}`,
+      `navigating the shadowy forest paths${weatherContext}`,
+      `surviving among the towering pines${weatherContext}`,
+      `threading through the dangerous woods${weatherContext}`
+    ],
+    burned: [
+      `crossing the fire-ravaged wasteland${weatherContext}`,
+      `navigating the ash-covered ruins${weatherContext}`,
+      `surviving the scorched eastern territories${weatherContext}`,
+      `traversing the burned-out landscape${weatherContext}`
+    ],
+    plains: [
+      `moving across the open grasslands${weatherContext}`,
+      `traversing the exposed plains${weatherContext}`,
+      `surviving the windswept prairies${weatherContext}`,
+      `crossing the dangerous open ground${weatherContext}`
+    ]
+  };
+  
+  return getRandomElement(biomeStories[biomeData.type] || biomeStories.plains);
+}
+
+function getBiomeData(x, z) {
+  const absX = Math.abs(x);
+  const absZ = Math.abs(z);
+  
+  if (absX > absZ) {
+    if (x > 0) return { type: "burned", name: "Burned Forest", dangers: ["radiation", "ash storms", "mutated zombies"] };
+    else return { type: "snow", name: "Snow Biome", dangers: ["freezing", "hypothermia", "ice zombies"] };
+  } else {
+    if (z > 0) return { type: "forest", name: "Forest", dangers: ["wild animals", "thick vegetation", "hidden zombies"] };
+    else return { type: "desert", name: "Desert", dangers: ["dehydration", "heat stroke", "sand zombies"] };
+  }
+}
+
+// 🏭 POI Recognition System
+function identifyPOI(x, z) {
+  // Common 7DTD POI patterns based on coordinates
+  const pois = [
+    { name: "Shotgun Messiah Factory", coords: [0, 0], radius: 50, type: "industrial", danger: "extreme" },
+    { name: "Crackabook Factory", coords: [200, 200], radius: 40, type: "industrial", danger: "high" },
+    { name: "Hospital", coords: [-200, 100], radius: 30, type: "medical", danger: "extreme" },
+    { name: "Police Station", coords: [100, -150], radius: 25, type: "military", danger: "high" },
+    { name: "Trader Joe's", coords: [0, 250], radius: 20, type: "trader", danger: "safe" },
+    { name: "Pharmacy", coords: [-100, -100], radius: 15, type: "medical", danger: "medium" },
+    { name: "Gun Shop", coords: [150, 50], radius: 20, type: "military", danger: "medium" },
+    { name: "Grocery Store", coords: [-50, 200], radius: 25, type: "supply", danger: "medium" }
+  ];
+  
+  for (const poi of pois) {
+    const distance = Math.sqrt(Math.pow(x - poi.coords[0], 2) + Math.pow(z - poi.coords[1], 2));
+    if (distance <= poi.radius) {
+      return poi;
+    }
+  }
+  
+  return null;
+}
+
+function getPOINarrative(poi, weather) {
+  if (!poi) return null;
+  
+  const weatherContext = weather && weather.danger !== "low" ? ` during ${weather.description}` : "";
+  
+  const narratives = {
+    industrial: [
+      `exploring the dangerous ${poi.name}${weatherContext}`,
+      `scavenging through the ${poi.name} complex${weatherContext}`,
+      `risking the industrial zones of ${poi.name}${weatherContext}`
+    ],
+    medical: [
+      `searching the zombie-infested ${poi.name}${weatherContext}`,
+      `raiding the dangerous ${poi.name} for supplies${weatherContext}`,
+      `braving the overrun ${poi.name}${weatherContext}`
+    ],
+    military: [
+      `infiltrating the fortified ${poi.name}${weatherContext}`,
+      `assaulting the well-defended ${poi.name}${weatherContext}`,
+      `attempting to breach ${poi.name}${weatherContext}`
+    ],
+    trader: [
+      `seeking refuge at ${poi.name}${weatherContext}`,
+      `trading safely at ${poi.name}${weatherContext}`,
+      `resupplying at the protected ${poi.name}${weatherContext}`
+    ],
+    supply: [
+      `looting the abandoned ${poi.name}${weatherContext}`,
+      `scavenging through ${poi.name}${weatherContext}`,
+      `searching for supplies at ${poi.name}${weatherContext}`
+    ]
+  };
+  
+  return getRandomElement(narratives[poi.type] || narratives.supply);
+}
+
+// ⏰ Enhanced Blood Moon Prediction System
+function getAdvancedHordeInfo(timeStr) {
+  if (!timeStr) return null;
+  
+  let hordeFreq = 7;
+  if (config["horde-frequency"] != null) {
+    hordeFreq = parseInt(config["horde-frequency"]);
+  }
+
+  const messageValues = timeStr.split(",");
+  const day = parseInt(messageValues[0].replace("Day ", ""));
+  const hour = parseInt(messageValues[1].split(":")[0]);
+  const minute = parseInt(messageValues[1].split(":")[1]);
+  const daysFromHorde = day % hordeFreq;
+
+  const isFirstWeek = day === 1 || day === 2;
+  const isHordeDay = daysFromHorde === 0;
+  const hordeStartHour = 22;
+  const hordeEndHour = 4;
+  
+  const totalMinutesToHorde = isHordeDay ? 
+    (hordeStartHour - hour) * 60 - minute : 
+    ((hordeFreq - daysFromHorde) * 24 - hour) * 60 - minute;
+
+  // Enhanced predictions with specific timing
+  if (isHordeDay && hour < hordeStartHour) {
+    const hoursToHorde = hordeStartHour - hour;
+    const minutesToHorde = 60 - minute;
+    
+    if (hoursToHorde === 1 && minutesToHorde <= 60) {
+      return {
+        type: "imminent",
+        icon: "🚨",
+        title: "BLOOD MOON IMMINENT",
+        message: `Blood moon begins in ${minutesToHorde} minutes - FINAL PREPARATIONS NOW!`,
+        urgency: "critical"
+      };
+    } else if (hoursToHorde <= 3) {
+      return {
+        type: "warning",
+        icon: "🩸",
+        title: "Blood Moon Approaching",
+        message: `Blood moon begins in ${hoursToHorde} hour${hoursToHorde === 1 ? '' : 's'} - fortify and stockpile!`,
+        urgency: "high"
+      };
+    } else {
+      return {
+        type: "preparation",
+        icon: "⚠️",
+        title: "Blood Moon Today",
+        message: `Blood moon tonight at ${hordeStartHour}:00 - prepare defenses and ammunition`,
+        urgency: "medium"
+      };
+    }
+  } else if (!isFirstWeek && isHordeDay && hour >= hordeStartHour) {
+    return {
+      type: "active",
+      icon: "💀",
+      title: "BLOOD MOON ACTIVE",
+      message: "The horde is rampaging! Maximum zombie aggression in effect!",
+      urgency: "extreme"
+    };
+  } else if (!isFirstWeek && daysFromHorde === 1 && hour < hordeEndHour) {
+    return {
+      type: "active",
+      icon: "💀", 
+      title: "BLOOD MOON ACTIVE",
+      message: "The horde continues! Zombies remain highly aggressive!",
+      urgency: "extreme"
+    };
+  } else {
+    const daysToHorde = hordeFreq - daysFromHorde;
+    return {
+      type: "countdown",
+      icon: "🗓️",
+      title: "Next Blood Moon",
+      message: `${daysToHorde} day${daysToHorde === 1 ? '' : 's'} until the next horde arrives`,
+      urgency: "low"
+    };
+  }
 }
 
 function analyzeGroupActivity(players, timeOfDay, hordeInfo) {
@@ -1522,8 +1779,9 @@ function handleActivityFromButton(interaction) {
             processTelnetResponse(timeResponse, (timeLine) => {
               if (timeLine.startsWith("Day")) {
                 d7dtdState.activityData.time = timeLine;
-                const hordeMsg = calculateHordeStatus(timeLine);
-                d7dtdState.activityData.hordeTime = hordeMsg;
+                const hordeInfo = getAdvancedHordeInfo(timeLine);
+                d7dtdState.activityData.hordeTime = hordeInfo ? 
+                  `${hordeInfo.icon} **${hordeInfo.title}**: ${hordeInfo.message}` : null;
                 
                 const playerNames = d7dtdState.activityData.players.map(p => p.name);
                 trackPlayerCount(d7dtdState.activityData.players.length, playerNames);
@@ -1721,9 +1979,10 @@ function handleActivity(msg) {
             if (timeLine.startsWith("Day")) {
               d7dtdState.activityData.time = timeLine;
               
-              // Calculate horde information
-              const hordeMsg = calculateHordeStatus(timeLine);
-              d7dtdState.activityData.hordeTime = hordeMsg;
+              // Calculate enhanced horde information
+              const hordeInfo = getAdvancedHordeInfo(timeLine);
+              d7dtdState.activityData.hordeTime = hordeInfo ? 
+                `${hordeInfo.icon} **${hordeInfo.title}**: ${hordeInfo.message}` : null;
               
               // Track player count for trends (before generating message)
               const playerNames = d7dtdState.activityData.players.map(p => p.name);
