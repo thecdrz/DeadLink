@@ -1,6 +1,6 @@
 # HordeComms
 
-Adays to Die Discord Integration
+Advys to Die Discord Integration
 
 **Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
