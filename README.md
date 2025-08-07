@@ -52,8 +52,8 @@ This CDRZ fork adds intelligent analysis capabilities that monitor player activi
 - Blood moon cycles provide strategic warnings and preparation advice
 
 # Authors
-**Original Dishorde**: LakeYS (contact@lakeys.net)  
-**HordeComms**: CDRZ | Discord: <@217012303063678978>
+**HordeComms**: CDRZ | Discord: <@217012303063678978>  
+**Original Dishorde**: LakeYS (contact@lakeys.net)
 
 # Terminal Commands
 `exit`
