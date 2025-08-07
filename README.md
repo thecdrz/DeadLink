@@ -1,14 +1,20 @@
-# HordeCo## 🚀 **NEW FEATURES in HordeComms:**
+# HordeComms
+
+Advanced 7 Days to Die Discord Integration
+
+**Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
+------------ | ------------- | -------------
+
+HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enterprise-grade security.
+
+## 🚀 **NEW FEATURES in HordeComms:**
 - 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
 - 📊 **Player Trends Analytics**: 24-hour tracking with visual charts and peak time analysis
 - 🎯 **Intelligent Activity Reports**: Smart analysis with biome detection and survival insights
 - 🔒 **Enterprise Security**: Environment variable support for credential protection
 - 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
 - 📱 **Rich Discord Embeds**: Professional formatting with organized sections
-- 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activitiesdvanced 7 Days to Die Discord Integration
-
-**Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
------------- | ------------- | -------------
+- 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activities
 
 HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enterprise-grade security.
 
