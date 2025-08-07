@@ -1,4 +1,81 @@
-# 📊 Chart Visualization Examples
+# 📊 Chart Visualization Examples & Dynamic Narrative Samples
+
+## Current Implementation (Enhanced Unicode Bar Chart)
+```
+📈 Recent Activity (2 hours)
+▁▂▃▄▅▆▇█ ▇▆▅▄▃▂▁▂ (3/8) 📈 Growing
+```
+- Uses 8 different height blocks: `▁▂▃▄▅▆▇█`
+- Shows current/peak context: `(3/8)` = 3 current, 8 peak
+- Clear trend indicators: 📈 Growing, 📉 Declining, ➡️ Steady
+- Perfect for small servers (5-10 players)
+- Compact and Discord-friendly
+- **Enhanced in v2.4.2**: Contextual information added
+
+## NEW in v2.5.0 - Dynamic Narrative Examples
+
+### Empty Server Narratives (Time-Aware)
+```
+🌙 **The Witching Hour Chronicles**
+Day 7, 23:45
+
+The server lies dormant under a blanket of digital darkness. Even the virtual 
+crickets have logged off. It's so quiet you can hear the server's hard drive 
+thinking 'Is anyone still out there?'
+
+📰 **Last Known Activity**: PlayerName was last spotted 2 hours ago, probably 
+off living their best life somewhere with actual people
+
+📉 **Population Trend**: Players seem to be migrating elsewhere. Perhaps they 
+discovered the outside world still exists.
+
+🩸 **Blood Moon Approaches**: The horde is preparing for an epic battle... 
+against absolutely nobody. Even the zombies seem confused by this tactical situation.
+```
+
+### Solo Player Adventures
+```
+🐺 **Lone Wolf Chronicles**
+**PlayerName** — ❤️ 85% HP | 📊 Level 23 | 🧟 156 kills
+🏜️ *The distant southern desert wasteland where heat kills*
+🕒 Day 5, 14:30
+
+"*in excellent health and battling the heat while exploring the distant southern 
+desert wasteland where heat kills during the afternoon heat.*"
+
+💡 **Tactical Recommendations**
+🛡️ Find water sources as priority - desert survival is critical
+🛡️ Seek shelter during peak heat hours to avoid overheating
+🛡️ Watch for scorpions and desert-dwelling zombies
+
+✅ **Status Good**: Managing well - maintain vigilance in this dangerous world
+```
+
+### Group Dynamics Storytelling
+```
+🤝 **Group Adventure** (3 survivors)
+**Alice, Bob, Charlie**
+⏰ Day 7, 21:45
+
+🤝 Supporting Each Other: Alice and Bob lead the group while Charlie follows 
+courageously despite their injuries with the blood moon approaching - racing 
+against time as shadows grow longer, making final preparations before the 
+darkness arrives.
+
+🔴 **Blood Moon Incoming**
+🛡️ The group must prepare for the approaching horde!
+```
+
+### Enhanced Survival Suggestions
+```
+⚠️ **Critical Alerts**
+🔴 Emergency medical attention needed - find shelter and heal immediately!
+
+💡 **Tactical Recommendations**  
+🛡️ Extremely dangerous - seek fortified shelter or prepare for combat
+🛡️ Find secure position - zombies are most active in darkness
+🛡️ Ensure good lighting and weapons ready for night encounters
+```
 
 ## Current Implementation (Enhanced Unicode Bar Chart)
 ```

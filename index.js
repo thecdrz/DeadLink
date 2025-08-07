@@ -579,7 +579,7 @@ function generateActivityMessage(players, time, hordeInfo) {
     
     activityMsg = `**Solo Survivor Report**\n\n`;
     activityMsg += `**${player.name}** — ${playerStats ? `${playerStats}` : ""}\n`;
-    activityMsg += `📍 *${location.charAt(0).toUpperCase() + location.slice(1)}*\n`;
+    activityMsg += `🌍 *${location.charAt(0).toUpperCase() + location.slice(1)}*\n`;
     activityMsg += `🕒 ${time || "Unknown"}\n\n`;
     activityMsg += `"*${healthCondition} and ${activity} ${location}.*"\n\n`;
     
@@ -1293,8 +1293,7 @@ function generateChangesReport() {
          `🎯 **Smart Activity Analysis** - Intelligent player activity reports with survival insights\n` +
          `📊 **Player Trends Analytics** - 24-hour player count tracking and trend analysis\n` +
          `🎮 **Interactive Dashboard** - Button-based GUI for quick server access\n` +
-         `🔒 **Enhanced Security** - Environment variable support for credentials\n` +
-         `⏰ **Consistent Timestamps** - Military time format with dates\n\n` +
+         `🔒 **Enhanced Security** - Environment variable support for credentials\n\n` +
          
          `**⚡ Enhanced Commands**\n` +
          `🎯 \`7d!activity\` - Detailed activity with location insights and survival tips\n` +

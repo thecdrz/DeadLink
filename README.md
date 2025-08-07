@@ -8,20 +8,22 @@ HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the sol
 ## 🚀 **NEW FEATURES in HordeComms:**
 - 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
 - 📊 **Player Trends Analytics**: 24-hour tracking with enhanced visual charts and peak time analysis
-- 🎯 **Intelligent Activity Reports**: Smart analysis with biome detection and survival insights
+- 🎯 **Dynamic Narrative Engine**: Intelligent storytelling with humor, time-aware scenarios, and contextual atmosphere ⭐ **NEW in v2.5.0!**
+- 🎭 **Enhanced Empty Server Stories**: Witty narratives with time-specific scenarios and player history ⭐ **NEW in v2.5.0!**
+- 🏃 **Multi-Scenario Support**: Specialized narratives for 0, 1, or multiple players with group dynamics ⭐ **NEW in v2.5.0!**
 - 🔒 **Enhanced Security**: Environment variable support for credential protection
 - 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
 - 📱 **Rich Discord Embeds**: Professional formatting with organized sections
-- 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activities
-- 📈 **Enhanced Chart Display**: Contextual player count visualization with trend indicators ⭐ **NEW in v2.4.2!**
-- 🚪 **Enhanced Player Messages**: Rich embeds for join/leave/death events with contextual descriptions ⭐ **NEW!**
+- 🧠 **Smart Biome Detection**: Location-aware storytelling with environmental context
+- 📈 **Enhanced Chart Display**: Contextual player count visualization with trend indicators
+- 🚪 **Enhanced Player Messages**: Rich embeds for join/leave/death events with contextual descriptions
 
 HordeComms runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
 
 ## 🎮 Commands
 
 - `7d!dashboard` - Interactive GUI with clickable buttons ⭐ **NEW!**
-- `7d!activity` - Intelligent activity reports with survival insights
+- `7d!activity` - Dynamic narrative reports with humor and intelligent storytelling ⭐ **ENHANCED in v2.5.0!**
 - `7d!trends` - Player count analytics with visual charts ⭐ **NEW!**
 - `7d!players` - Current online players
 - `7d!time` - Current game time
@@ -51,10 +53,14 @@ HordeComms works by connecting to your server's telnet console and monitoring it
 
 # Enhanced Features
 This CDRZ fork adds intelligent analysis capabilities that monitor player activity and provide contextual insights:
-- Players' locations are analyzed for biome detection and danger assessment
-- Health conditions trigger appropriate survival suggestions
-- Time of day affects activity descriptions and safety recommendations
-- Blood moon cycles provide strategic warnings and preparation advice
+- **Dynamic Narrative Engine**: Generates humorous, time-aware stories with multiple scenario templates
+- **Empty Server Storytelling**: Witty atmospheric descriptions that entertain even when nobody's online
+- **Multi-Player Scenarios**: Specialized narratives for solo players, small groups, and larger communities
+- **Biome Detection & Analysis**: Players' locations are analyzed for environmental context and danger assessment
+- **Health-Aware Suggestions**: Conditions trigger appropriate survival recommendations with priority alerts
+- **Time-Contextual Stories**: Activity descriptions adapt to morning, afternoon, evening, and night scenarios
+- **Blood Moon Integration**: Strategic warnings and preparation advice during horde events
+- **Historical Context**: Incorporates recent player activity and server trends into storytelling
 
 # Authors
 **HordeComms**: CDRZ | Discord: <@217012303063678978>  

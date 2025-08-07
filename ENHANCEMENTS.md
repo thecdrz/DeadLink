@@ -2,6 +2,18 @@
 
 ## 📋 Changelog
 
+### Version 2.5.0 (August 6, 2025) - "Dynamic Narrative Engine" 🎭
+- **🎯 Dynamic Narrative Engine**: Complete overhaul of activity reporting with intelligent, humorous storytelling
+- **🎭 Enhanced Empty Server Stories**: Witty, time-specific narratives that entertain even when nobody's online
+- **🏃 Multi-Scenario Support**: Specialized storytelling for empty servers, solo players, and group dynamics
+- **⏰ Time-Aware Narratives**: Stories adapt to morning, afternoon, evening, and night with appropriate atmosphere
+- **🎪 Atmospheric Descriptions**: Rich environmental storytelling with biome-specific context and humor
+- **🎲 Template Variety**: Multiple narrative templates ensure unique stories every time
+- **📚 Enhanced Story Generation**: Dynamic solo stories with health-aware suggestions and survival advice
+- **🤝 Group Dynamics Analysis**: Intelligent team storytelling based on player health and group composition
+- **💀 Blood Moon Storytelling**: Special narratives during horde events with tactical preparation advice
+- **📰 Historical Context Integration**: Incorporates recent player activity and server trends into stories
+
 ### Version 2.4.2 (August 6, 2025)
 - **📈 Enhanced Chart Display**: Charts now show contextual information with current/peak player ratios
 - **🎯 Trend Indicators**: Added clear trend visualization with emoji indicators (📈 Growing, 📉 Declining, ➡️ Steady)
@@ -40,14 +52,19 @@
 - **Trend Indicators**: Shows if player count is trending up, down, or stable
 - **Rich Discord Embeds**: Professional-looking analytics dashboard
 
-### 🎯 Enhanced Activity Command (`7d!activity`)
-- **Intelligent Narrative**: Generates dynamic, context-aware stories about player activities
-- **Health Status Integration**: Analyzes player health conditions and provides appropriate suggestions
-- **Group Activity Analysis**: Sophisticated logic for multi-player scenarios
-- **Blood Moon Integration**: Special messaging during blood moon events
-- **Solo Survivor Reports**: Detailed individual player analysis
-- **Clean Formatting**: Organized sections with professional Discord formatting
-- **Rich Embeds**: Enhanced visual presentation with embeds
+### 🎯 Enhanced Activity Command (`7d!activity`) - **MAJOR UPDATE v2.5.0!**
+- **Dynamic Narrative Engine**: Revolutionary storytelling system with humor and contextual awareness
+- **Empty Server Entertainment**: Witty, time-specific stories that are actually fun to read when nobody's online
+- **Multi-Scenario Intelligence**: Specialized narratives for 0, 1, or multiple players with unique storytelling approaches
+- **Template Variety**: Multiple story templates ensure every activity report feels fresh and engaging
+- **Atmospheric Storytelling**: Rich environmental descriptions with biome-specific context and humor
+- **Time-Aware Narratives**: Stories dynamically adapt to morning, afternoon, evening, and nighttime scenarios
+- **Health Status Integration**: Analyzes player health conditions and provides appropriate suggestions with priority alerts
+- **Group Activity Analysis**: Sophisticated logic for multi-player scenarios with team dynamics analysis
+- **Blood Moon Integration**: Special messaging during blood moon events with tactical preparation advice
+- **Solo Survivor Reports**: Detailed individual player analysis with enhanced survival suggestions
+- **Historical Context**: Incorporates recent server activity, player trends, and last-seen information
+- **Clean Formatting**: Organized sections with professional Discord formatting and rich embeds
 
 ## 🔧 Technical Improvements
 
@@ -84,14 +101,19 @@
   - Professional Discord interface
   - Smart button states (disabled when server offline)
 
-### Activity Command
+### Activity Command - **REVOLUTIONIZED in v2.5.0!**
 - **Usage**: `7d!activity`, `7d!a`, `7d!act`
 - **Features**: 
-  - Real-time player analysis
-  - Intelligent narrative generation
-  - Health status monitoring
-  - Blood moon preparation alerts
-  - Group dynamics analysis
+  - **Dynamic Narrative Engine**: Revolutionary storytelling with humor and variety
+  - **Empty Server Entertainment**: Witty stories even when nobody's online
+  - **Multi-Scenario Intelligence**: Specialized narratives for 0, 1, or multiple players
+  - **Time-Aware Storytelling**: Stories adapt to time of day with appropriate atmosphere
+  - **Template Variety**: Multiple story templates for unique experiences every time
+  - **Health-Aware Analysis**: Real-time player health monitoring with survival suggestions
+  - **Blood Moon Preparation**: Tactical alerts during horde events
+  - **Group Dynamics Analysis**: Intelligent team storytelling based on player states
+  - **Historical Context**: Incorporates recent activity and server trends
+  - **Rich Atmospheric Descriptions**: Environmental storytelling with biome-specific context
 
 ### Trends Command
 - **Usage**: `7d!trends`, `7d!t`, `7d!trend`
