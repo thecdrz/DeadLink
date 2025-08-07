@@ -1,6 +1,6 @@
 # HordeComms
 
-Advanced 7 Days to Die Discord Integration
+Adays to Die Discord Integration
 
 **Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
@@ -10,6 +10,7 @@ HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the sol
 ## 🚀 **NEW FEATURES in HordeComms:**
 - 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
 - 📊 **Player Trends Analytics**: 24-hour tracking with visual charts and peak time analysis
+- 💾 **Persistent Analytics**: Data survives bot restarts with automatic save/load functionality
 - 🎯 **Intelligent Activity Reports**: Smart analysis with biome detection and survival insights
 - 🔒 **Enterprise Security**: Environment variable support for credential protection
 - 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
@@ -57,10 +58,14 @@ This CDRZ fork adds intelligent analysis capabilities that monitor player activi
 # Commands
 Commands can be sent via DM or in the specified chat channel.
 
-`7d!info` - Complete feature overview, changelog, and server status
+`7d!dashboard` - Interactive GUI with clickable buttons for all functions ⭐ **NEW!**
+`7d!info` - Complete feature overview, changelog, and server status ⭐ **ENHANCED!**
+`7d!activity` - Intelligent activity reports with survival insights and biome detection
+`7d!trends` - Player count analytics with visual charts and peak time analysis ⭐ **NEW!**
 `7d!time` - Shows current game day/time and blood moon information  
 `7d!players` - Shows total number of players online
-`7d!activity` - Shows clever insights about current player activity, locations, and survival tips
+
+💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
 # Terminal Commands
 `exit`
@@ -97,7 +102,7 @@ The bot can be configured by editing config.json. Here's a list of the preferenc
 `https://discord.com/oauth2/authorize?client_id=APP_ID&scope=bot`
 
 ## Setting up the bot
-1. [Download](https://github.com/LakeYS/Dishorde/releases/download/v2.2.0/Dishorde.zip) this repository and extract it somewhere on your server's system.
+1. [Download](https://github.com/thecdrz/HordeComms/releases/latest) this repository and extract it somewhere on your server's system.
 2. Install Node.js LTS from [this website](https://nodejs.org/en/download/).
 3. Once Node.js is finished installing, run install.bat in the bot's folder. This will automatically install the required modules for the bot.
 4. Now you'll need to edit your server's config xml file. If you're using the Steam dedicated server, it should be located in `C:\Program Files (x86)\Steam\steamapps\common\7 Days to Die Dedicated Server`.
@@ -123,8 +128,8 @@ You may want to create a shortcut to run.bat or run_silent.vbs in your Startup f
 ## Setting up the bot
 1. Open a terminal on your system.
 2. Install Node.js and NPM. Install build tools if instructed. [[How to install via package manager]](https://nodejs.org/en/download/package-manager/). **Skip this step if installing to a Raspberry Pi device.**
-3. Type `curl -L https://github.com/LakeYS/Dishorde/releases/download/v2.2.0/Dishorde.tar.gz > 7dtdbot.tar.gz` to download the bot's files to an archive named `7dtdbot.tar.gz`.
-4. Type `tar -xzf 7dtdbot.tar.gz` to extract the archive. This will create a directory named "7DTD-Discord-master". Navigate to the directory with `cd 7DTD-Discord-master`.
+3. Type `curl -L https://github.com/thecdrz/HordeComms/releases/latest/download/HordeComms.tar.gz > hordecomms.tar.gz` to download the bot's files to an archive named `hordecomms.tar.gz`.
+4. Type `tar -xzf hordecomms.tar.gz` to extract the archive. This will create a directory named "HordeComms". Navigate to the directory with `cd HordeComms`.
 5. Type `sudo chmod +x run.sh`. This gives you permission to execute run.sh. (If this does not work, try `chmod +x run.sh`)
 6. Type `npm install` to install the required packages for the bot to run.
 
