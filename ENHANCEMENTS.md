@@ -2,6 +2,18 @@
 
 ## 📋 Changelog
 
+### Version 2.6.0 (August 7, 2025) - "Environmental Intelligence System" 🌍
+- **🌦️ Weather Integration**: Dynamic weather system with 8 weather types affecting all narratives
+- **🗺️ Biome-Specific Stories**: Desert survival vs Forest dangers vs Snow biome challenges
+- **🏭 POI Recognition System**: Smart landmark detection (Shotgun Messiah Factory, Hospital, etc.)
+- **⏰ Enhanced Blood Moon Predictions**: Multi-tier alert system with precise timing warnings
+- **🌟 Immersive Environmental Combinations**: Weather + biome + POI create unique scenario storytelling
+- **🎮 World-Aware Narratives**: Every player report includes rich environmental context
+- **📍 Coordinate-Based Intelligence**: Automatic biome detection and POI identification from locations
+- **🌪️ Weather Danger Assessment**: Environmental conditions affect threat levels and survival recommendations
+- **🏞️ Atmospheric Storytelling**: "Fighting through a thunderstorm in the frozen wasteland" level immersion
+- **⚡ Advanced Environmental Functions**: `getCurrentWeather()`, `getBiomeSpecificNarrative()`, `identifyPOI()`, `getAdvancedHordeInfo()`
+
 ### Version 2.5.0 (August 6, 2025) - "Dynamic Narrative Engine" 🎭
 - **🎯 Dynamic Narrative Engine**: Complete overhaul of activity reporting with intelligent, humorous storytelling
 - **🎭 Enhanced Empty Server Stories**: Witty, time-specific narratives that entertain even when nobody's online

@@ -1323,6 +1323,19 @@ function announceNewVersion(version) {
   }
   
   const releaseNotes = {
+    "2.6.0": {
+      title: "🌍 HordeComms v2.6.0 - Environmental Intelligence System!",
+      description: "Revolutionary update bringing complete world-aware storytelling to 7 Days to Die monitoring",
+      features: [
+        "🌦️ **Weather Integration** - Dynamic weather system with 8 weather types affecting all narratives",
+        "🗺️ **Biome-Specific Stories** - Desert survival vs Forest dangers vs Snow biome challenges",
+        "🏭 **POI Recognition** - Smart landmark detection (Shotgun Messiah Factory, Hospital, etc.)",
+        "⏰ **Enhanced Blood Moon Predictions** - Multi-tier alert system with precise timing",
+        "🌟 **Immersive Combinations** - Weather + biome + POI create unique environmental storytelling",
+        "🎮 **World-Aware Narratives** - Every report includes rich atmospheric context"
+      ],
+      color: 0x00d4aa // Teal for environmental theme
+    },
     "2.4.0": {
       title: "🎉 HordeComms v2.4.0 Released!",
       description: "Major update with persistent analytics and UI improvements",
@@ -1547,35 +1560,36 @@ function generateChangesReport() {
   });
   
   return `**🆕 Latest Features & Updates** *(${currentDate})*\n` +
-         `🎯 **Smart Activity Analysis** - Intelligent player activity reports with survival insights\n` +
-         `📊 **Player Trends Analytics** - 24-hour player count tracking and trend analysis\n` +
-         `🎮 **Interactive Dashboard** - Button-based GUI for quick server access\n` +
-         `🔒 **Enhanced Security** - Environment variable support for credentials\n\n` +
+         `� **Environmental Intelligence System v2.6.0** - Complete world-aware storytelling\n` +
+         `🌦️ **Weather Integration** - Dynamic weather conditions affect all narratives\n` +
+         `🗺️ **Biome-Specific Stories** - Desert, forest, and snow environment storytelling\n` +
+         `� **POI Recognition** - Smart landmark detection and location-specific narratives\n` +
+         `⏰ **Enhanced Blood Moon Predictions** - Multi-tier horde warning system\n\n` +
          
          `**⚡ Enhanced Commands**\n` +
-         `🎯 \`7d!activity\` - Detailed activity with location insights and survival tips\n` +
-         `📊 \`7d!trends\` - Player count analytics with visual trends\n` +
-         `🎮 \`7d!dashboard\` - Interactive control panel with clickable buttons\n` +
+         `🎯 \`7d!activity\` - Environmental narratives with weather, biome, and POI context\n` +
+         `📊 \`7d!trends\` - Player analytics with environmental trend visualization\n` +
+         `🎮 \`7d!dashboard\` - Interactive control panel with environmental insights\n` +
          `ℹ️ \`7d!info\` - Complete feature overview and server information\n\n` +
          
-         `**🛡️ Intelligent Features**\n` +
-         `🧠 **Context-Aware Suggestions** - Smart survival advice based on game state\n` +
-         `🩸 **Blood Moon Integration** - Automatic horde warnings and prep advice\n` +
-         `🏥 **Health Monitoring** - Player condition analysis and medical alerts\n` +
-         `📍 **Location Intelligence** - Area-specific survival recommendations\n` +
-         `📈 **Trend Visualization** - Player activity patterns and server health\n\n` +
+         `**🌟 Environmental Intelligence Features**\n` +
+         `🌦️ **Weather System** - 8 dynamic weather types from clear skies to sandstorms\n` +
+         `🗺️ **Biome Detection** - Coordinate-based environment recognition\n` +
+         `�️ **POI Awareness** - Shotgun Messiah Factory, Hospital landmark detection\n` +
+         `📍 **Location Context** - Area-specific survival recommendations\n` +
+         `🩸 **Advanced Horde Warnings** - Precise timing with environmental context\n\n` +
          
-         `**🎨 Visual Improvements**\n` +
-         `📋 **Organized Sections** - Clean, hierarchical information display\n` +
-         `🎯 **Rich Embeds** - Professional Discord formatting with consistent styling\n` +
-         `🔔 **Smart Notifications** - Context-aware alerts and status updates\n` +
-         `📊 **Data Visualization** - Graphs and charts for trend analysis\n\n` +
+         `**🎨 Immersive Storytelling**\n` +
+         `� **Dynamic Narratives** - Every message includes rich environmental context\n` +
+         `� **Atmospheric Descriptions** - Weather and biome-specific storytelling\n` +
+         `🏞️ **World-Aware Content** - Stories that respond to player locations\n` +
+         `⚡ **Real-time Context** - Environmental conditions update dynamically\n\n` +
          
-         `**🔧 Technical Enhancements**\n` +
-         `⚡ **Performance Optimized** - Faster response times and better error handling\n` +
+         `**🔧 Technical Excellence**\n` +
          `🔒 **Security Hardened** - Environment variables and credential protection\n` +
-         `📱 **Mobile Friendly** - Responsive design for Discord mobile apps\n` +
-         `🔄 **Real-time Updates** - Live data synchronization with game server`;
+         `⚡ **Performance Optimized** - Efficient environmental data processing\n` +
+         `🌐 **Cross-Platform** - Works seamlessly across all Discord platforms\n` +
+         `🔄 **Real-time Intelligence** - Live environmental analysis and storytelling`;
 }
 
 function createDashboardEmbed() {

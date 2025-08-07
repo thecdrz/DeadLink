@@ -1,33 +1,38 @@
 # HordeComms
 
-HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
+HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an Environmental Intelligence System, interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
 
 **Based on Dishorde by LakeYS** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
 
 ## 🚀 **NEW FEATURES in HordeComms:**
-- 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
+- � **Environmental Intelligence System**: Complete world-aware storytelling with weather, biome, and POI integration ⭐ **NEW in v2.6.0!**
+- 🌦️ **Weather Integration**: Dynamic weather conditions affect all narratives (clear skies to sandstorms) ⭐ **NEW in v2.6.0!**
+- 🗺️ **Biome-Specific Stories**: Desert survival vs Forest dangers vs Snow biome challenges ⭐ **NEW in v2.6.0!**
+- 🏭 **POI Recognition**: Smart landmark detection (Shotgun Messiah Factory, Hospital, etc.) ⭐ **NEW in v2.6.0!**
+- ⏰ **Enhanced Blood Moon Predictions**: Multi-tier alert system with environmental context ⭐ **NEW in v2.6.0!**
+- �🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
 - 📊 **Player Trends Analytics**: 24-hour tracking with enhanced visual charts and peak time analysis
-- 🎯 **Dynamic Narrative Engine**: Intelligent storytelling with humor, time-aware scenarios, and contextual atmosphere ⭐ **NEW in v2.5.0!**
-- 🎭 **Enhanced Empty Server Stories**: Witty narratives with time-specific scenarios and player history ⭐ **NEW in v2.5.0!**
-- 🏃 **Multi-Scenario Support**: Specialized narratives for 0, 1, or multiple players with group dynamics ⭐ **NEW in v2.5.0!**
+- 🎯 **Dynamic Narrative Engine**: Intelligent storytelling with humor, time-aware scenarios, and atmospheric context
+- 🎭 **Enhanced Empty Server Stories**: Witty narratives with time-specific scenarios and environmental flavor
+- 🏃 **Multi-Scenario Support**: Specialized narratives for 0, 1, or multiple players with environmental immersion
 - 🔒 **Enhanced Security**: Environment variable support for credential protection
-- 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
+- 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice with environmental awareness
 - 📱 **Rich Discord Embeds**: Professional formatting with organized sections
-- 🧠 **Smart Biome Detection**: Location-aware storytelling with environmental context
+- 🧠 **Smart Environmental Detection**: Weather, biome, and POI-aware storytelling with atmospheric context
 - 📈 **Enhanced Chart Display**: Contextual player count visualization with trend indicators
-- 🚪 **Enhanced Player Messages**: Rich embeds for join/leave/death events with contextual descriptions
+- 🚪 **Enhanced Player Messages**: Rich embeds for join/leave/death events with environmental descriptions
 
 HordeComms runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
 
 ## 🎮 Commands
 
 - `7d!dashboard` - Interactive GUI with clickable buttons ⭐ **NEW!**
-- `7d!activity` - Dynamic narrative reports with humor and intelligent storytelling ⭐ **ENHANCED in v2.5.0!**
-- `7d!trends` - Player count analytics with visual charts ⭐ **NEW!**
-- `7d!players` - Current online players
-- `7d!time` - Current game time
-- `7d!info` - Complete feature overview and server information ⭐ **ENHANCED!**
+- `7d!activity` - Environmental narratives with weather, biome, and POI context ⭐ **ENHANCED in v2.6.0!**
+- `7d!trends` - Player analytics with environmental trend visualization ⭐ **NEW!**
+- `7d!players` - Current online players with environmental context
+- `7d!time` - Current game time with weather conditions
+- `7d!info` - Complete feature overview and Environmental Intelligence System information ⭐ **ENHANCED!**
 
 💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
