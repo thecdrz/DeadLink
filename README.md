@@ -1,21 +1,14 @@
-# HordeComms
-
-Advys to Die Discord Integration
-
-**Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
------------- | ------------- | -------------
-
-HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enterprise-grade security.
-
-## 🚀 **NEW FEATURES in HordeComms:**
+# HordeCo## 🚀 **NEW FEATURES in HordeComms:**
 - 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
 - 📊 **Player Trends Analytics**: 24-hour tracking with visual charts and peak time analysis
-- 💾 **Persistent Analytics**: Data survives bot restarts with automatic save/load functionality
 - 🎯 **Intelligent Activity Reports**: Smart analysis with biome detection and survival insights
 - 🔒 **Enterprise Security**: Environment variable support for credential protection
 - 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
 - 📱 **Rich Discord Embeds**: Professional formatting with organized sections
-- 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activities
+- 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activitiesdvys to Die Discord Integration
+
+**Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
+------------ | ------------- | -------------
 
 HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enterprise-grade security.
 
@@ -54,18 +47,6 @@ This CDRZ fork adds intelligent analysis capabilities that monitor player activi
 # Authors
 **Original Dishorde**: LakeYS (contact@lakeys.net)  
 **HordeComms Enhancements**: Scott Moreau (CDRZ) - Discord: <@217012303063678978>
-
-# Commands
-Commands can be sent via DM or in the specified chat channel.
-
-`7d!dashboard` - Interactive GUI with clickable buttons for all functions ⭐ **NEW!**
-`7d!info` - Complete feature overview, changelog, and server status ⭐ **ENHANCED!**
-`7d!activity` - Intelligent activity reports with survival insights and biome detection
-`7d!trends` - Player count analytics with visual charts and peak time analysis ⭐ **NEW!**
-`7d!time` - Shows current game day/time and blood moon information  
-`7d!players` - Shows total number of players online
-
-💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
 # Terminal Commands
 `exit`
