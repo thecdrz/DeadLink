@@ -2,7 +2,13 @@
 
 ## 📋 Changelog
 
-### Version 2.4.0 (August 6, 2025)
+### Version 2.4.2 (August 6, 2025)
+- **📈 Enhanced Chart Display**: Charts now show contextual information with current/peak player ratios
+- **🎯 Trend Indicators**: Added clear trend visualization with emoji indicators (📈 Growing, 📉 Declining, ➡️ Steady)
+- **⏰ Fixed Time Display**: Corrected analytics time tracking to show proper hours instead of "0h"
+- **🏢 Small Server Optimization**: Enhanced chart format perfect for small communities (5-10 players)
+
+### Version 2.4.1 (August 6, 2025)
 - **🔄 Persistent Analytics**: Analytics data now saves to `analytics.json` and survives bot restarts
 - **🎯 UI Polish**: Removed duplicate emoji and attribution text for cleaner visual experience
 - **🧹 Code Cleanup**: Removed "Powered by discord.js" references and streamlined documentation

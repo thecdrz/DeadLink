@@ -1201,8 +1201,11 @@ function generateTrendsReport() {
   report += `📋 **24h Average**: ${avgCount} players\n`;
   report += `🔝 **Peak**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
   
-  // Visual chart
-  report += `📈 **Recent Activity** (2 hours)\n\`\`\`\n${chart}\n\`\`\`\n`;
+  // Visual chart with current status
+  const maxInChart = Math.max(...chartData.map(d => d.count));
+  const trendIcon = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
+  const trendText = recentTrend > 0 ? "Growing" : recentTrend < 0 ? "Declining" : "Steady";
+  report += `📈 **Recent Activity** (2 hours)\n\`\`\`\n${chart} (${currentCount}/${maxInChart > 0 ? maxInChart : currentCount}) ${trendIcon} ${trendText}\n\`\`\`\n`;
   
   // Peak times analysis
   if (peakHour && lowHour) {
@@ -1222,7 +1225,7 @@ function generateTrendsReport() {
   }
   
   // Data collection info
-  const dataAge = Math.round((Date.now() - history[0].timestamp) / (1000 * 60 * 60 * 10)) / 10;
+  const dataAge = Math.round((Date.now() - history[0].timestamp) / (1000 * 60 * 60) * 10) / 10;
   report += `\n📡 *Tracking ${history.length} data points over ${dataAge}h*`;
   
   return report;
