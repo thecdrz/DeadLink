@@ -485,7 +485,21 @@ function handleTime(line, msg) {
     hordeMsg = `The blood moon horde begins on Day ${day+daysToHorde} (in ${daysToHorde} day${daysToHorde === 1 ? "" : "s"}).`;
   }
 
-  msg.channel.send(`${line}\n${hordeMsg}`);
+  // Create consistent embed format
+  const embed = {
+    color: 0x3498db, // Blue color
+    title: "⏰ Current Game Time",
+    description: `${line}\n${hordeMsg}`,
+    footer: {
+      text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+    }
+  };
+
+  msg.channel.send({ embeds: [embed] })
+    .catch(() => {
+      // Fallback to plain text if embed fails
+      msg.channel.send(`${line}\n${hordeMsg}`);
+    });
 }
 
 function handlePlayerCount(line, msg) {
@@ -1331,7 +1345,7 @@ function createDashboardButtons() {
     components: [
       {
         type: 2, // Button
-        style: 3, // Green (Success)
+        style: 1, // Blue (Primary)
         label: "🎯 Activity",
         custom_id: "dashboard_activity",
         disabled: d7dtdState.connStatus !== 1
@@ -1345,26 +1359,75 @@ function createDashboardButtons() {
       },
       {
         type: 2, // Button
-        style: 2, // Gray (Secondary)
+        style: 3, // Green (Success)
         label: "👥 Players",
         custom_id: "dashboard_players",
         disabled: d7dtdState.connStatus !== 1
       },
       {
         type: 2, // Button
-        style: 2, // Gray (Secondary)
+        style: 1, // Blue (Primary)
         label: "⏰ Time",
         custom_id: "dashboard_time",
         disabled: d7dtdState.connStatus !== 1
       },
       {
         type: 2, // Button
-        style: 2, // Gray (Secondary)
+        style: 4, // Red (Danger) - High contrast for Info
         label: "ℹ️ Info",
         custom_id: "dashboard_info",
         disabled: false
       }
     ]
+  };
+}
+
+// Create navigation buttons for feature screens
+function createNavigationButtons(currentFeature) {
+  const buttons = [];
+  
+  // Define all features with consistent styling and fixed positions
+  const features = [
+    { id: 'dashboard_activity', label: '🎯 Activity', style: 1, position: 0 }, // Blue (Primary)
+    { id: 'dashboard_trends', label: '📊 Trends', style: 1, position: 1 }, // Blue (Primary)
+    { id: 'dashboard_players', label: '👥 Players', style: 3, position: 2 }, // Green (Success)
+    { id: 'dashboard_time', label: '⏰ Time', style: 1, position: 3 }, // Blue (Primary)
+    { id: 'dashboard_info', label: 'ℹ️ Info', style: 4, position: 4 } // Red (Danger)
+  ];
+  
+  // Create buttons maintaining original positions, but skip current feature
+  features.forEach(feature => {
+    if (feature.id !== currentFeature) {
+      buttons.push({
+        type: 2, // Button
+        style: feature.style,
+        label: feature.label,
+        custom_id: feature.id,
+        disabled: feature.id.includes('activity') || feature.id.includes('players') || feature.id.includes('time') ? d7dtdState.connStatus !== 1 : false,
+        position: feature.position // Keep track of original position for consistency
+      });
+    } else {
+      // Add a "Back to Dashboard" button in place of current feature
+      buttons.push({
+        type: 2, // Button
+        style: 1, // Primary (blue)
+        label: '🏠 Dashboard',
+        custom_id: 'back_to_dashboard',
+        disabled: false,
+        position: feature.position
+      });
+    }
+  });
+  
+  // Sort buttons by position to maintain consistent layout
+  buttons.sort((a, b) => a.position - b.position);
+  
+  // Remove position property before returning (Discord doesn't need it)
+  buttons.forEach(button => delete button.position);
+  
+  return {
+    type: 1, // Action Row
+    components: buttons.slice(0, 5) // Discord limit of 5 buttons per row
   };
 }
 
@@ -1411,9 +1474,24 @@ function handleButtonInteraction(interaction) {
       handleInfoFromButton(interaction);
       break;
       
+    case 'back_to_dashboard':
+      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Back to Dashboard button`);
+      handleBackToDashboard(interaction);
+      break;
+      
     default:
       interaction.reply("❌ Unknown button interaction.").catch(console.error);
   }
+}
+
+function handleBackToDashboard(interaction) {
+  const embed = createDashboardEmbed();
+  const buttons = createDashboardButtons();
+  
+  interaction.update({
+    embeds: [embed],
+    components: [buttons]
+  }).catch(console.error);
 }
 
 function handleActivityFromButton(interaction) {
@@ -1463,7 +1541,11 @@ function handleActivityFromButton(interaction) {
                   }
                 };
                 
-                interaction.editReply({ embeds: [embed] }).catch(console.error);
+                const navigationButtons = createNavigationButtons('dashboard_activity');
+                interaction.editReply({ 
+                  embeds: [embed],
+                  components: [navigationButtons]
+                }).catch(console.error);
               }
             });
           } else {
@@ -1490,7 +1572,11 @@ function handleTrendsFromButton(interaction) {
       }
     };
     
-    interaction.editReply({ embeds: [embed] }).catch(console.error);
+    const navigationButtons = createNavigationButtons('dashboard_trends');
+    interaction.editReply({ 
+      embeds: [embed],
+      components: [navigationButtons]
+    }).catch(console.error);
   }).catch(console.error);
 }
 
@@ -1512,7 +1598,20 @@ function handlePlayersFromButton(interaction) {
         });
         
         if (playerData) {
-          interaction.editReply(playerData).catch(console.error);
+          const embed = {
+            color: 0x2ecc71,
+            title: "👥 Online Players",
+            description: playerData,
+            footer: {
+              text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+            }
+          };
+          
+          const navigationButtons = createNavigationButtons('dashboard_players');
+          interaction.editReply({ 
+            embeds: [embed],
+            components: [navigationButtons]
+          }).catch(console.error);
         } else {
           interaction.editReply("❌ No player data received.").catch(console.error);
         }
@@ -1535,7 +1634,20 @@ function handleTimeFromButton(interaction) {
         });
         
         if (timeData) {
-          interaction.editReply(`⏰ **Current Game Time**\n${timeData}`).catch(console.error);
+          const embed = {
+            color: 0x3498db,
+            title: "⏰ Current Game Time",
+            description: timeData,
+            footer: {
+              text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+            }
+          };
+          
+          const navigationButtons = createNavigationButtons('dashboard_time');
+          interaction.editReply({ 
+            embeds: [embed],
+            components: [navigationButtons]
+          }).catch(console.error);
         } else {
           interaction.editReply("❌ No time data received.").catch(console.error);
         }
@@ -1565,7 +1677,11 @@ function handleInfoFromButton(interaction) {
       }
     };
     
-    interaction.editReply({ embeds: [embed] }).catch(console.error);
+    const navigationButtons = createNavigationButtons('dashboard_info');
+    interaction.editReply({ 
+      embeds: [embed],
+      components: [navigationButtons]
+    }).catch(console.error);
   }).catch(console.error);
 }
 
@@ -2253,8 +2369,8 @@ if(!config["skip-discord-auth"]) {
   client.on("interactionCreate", (interaction) => {
     if (!interaction.isButton()) return;
     
-    // Only handle dashboard button interactions
-    if (interaction.customId.startsWith("dashboard_")) {
+    // Handle all dashboard and navigation button interactions
+    if (interaction.customId.startsWith("dashboard_") || interaction.customId === "back_to_dashboard") {
       handleButtonInteraction(interaction);
     }
   });
