@@ -14,6 +14,7 @@ HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the sol
 - 📱 **Rich Discord Embeds**: Professional formatting with organized sections
 - 🧠 **Smart Narrative Generation**: Context-aware storytelling about player activities
 - 📈 **Enhanced Chart Display**: Contextual player count visualization with trend indicators ⭐ **NEW in v2.4.2!**
+- 🚪 **Enhanced Player Messages**: Rich embeds for join/leave/death events with contextual descriptions ⭐ **NEW!**
 
 HordeComms runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
 
@@ -40,6 +41,7 @@ HordeComms runs as a completely separate application, so no mods are required. *
 
 ### Analytics & Trends
 ![Analytics Dashboard](screenshots/analytics-dashboard.png)
+
 *Real-time player analytics with trend tracking and visual data representation*
 
 # How it Works
