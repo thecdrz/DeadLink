@@ -1205,7 +1205,7 @@ function generateTrendsReport() {
   const maxInChart = Math.max(...chartData.map(d => d.count));
   const trendIcon = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
   const trendText = recentTrend > 0 ? "Growing" : recentTrend < 0 ? "Declining" : "Steady";
-  report += `📈 **Recent Activity** (2 hours)\n\`\`\`\n${chart} (${currentCount}/${maxInChart > 0 ? maxInChart : currentCount}) ${trendIcon} ${trendText}\n\`\`\`\n`;
+  report += `📈 **Activity Chart** (last 2 hours, 10-min intervals)\n\`\`\`\n${chart} (${currentCount}/${maxInChart > 0 ? maxInChart : currentCount}) ${trendIcon} ${trendText}\n\`\`\`\n`;
   
   // Peak times analysis
   if (peakHour && lowHour) {
