@@ -33,10 +33,12 @@ HordeComms runs as a completely separate application, so no mods are required. *
 
 ### Interactive Dashboard
 ![Server Dashboard](screenshots/server-dashboard.png)
+
 *Clean, intuitive interface with clickable buttons for all server functions*
 
 ### Comprehensive Information Display
 ![Information Dashboard](screenshots/info-dashboard.png)
+
 *Detailed feature overview with organized sections and professional formatting*
 
 ### Analytics & Trends

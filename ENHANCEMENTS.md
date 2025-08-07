@@ -7,6 +7,7 @@
 - **🎯 Trend Indicators**: Added clear trend visualization with emoji indicators (📈 Growing, 📉 Declining, ➡️ Steady)
 - **⏰ Fixed Time Display**: Corrected analytics time tracking to show proper hours instead of "0h"
 - **🏢 Small Server Optimization**: Enhanced chart format perfect for small communities (5-10 players)
+- **🚪 Enhanced Player Messages**: Rich embeds for join/leave/death events with contextual descriptions
 
 ### Version 2.4.1 (August 6, 2025)
 - **🔄 Persistent Analytics**: Analytics data now saves to `analytics.json` and survives bot restarts
