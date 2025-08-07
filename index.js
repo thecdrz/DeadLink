@@ -193,8 +193,8 @@ if(config["allow-exec-command"] === true) {
 
 ////// # Init/Version Check # //////
 const configPrivate = {
-  githubAuthor: "LakeYS",
-  githubName: "Dishorde",
+  githubAuthor: "thecdrz",
+  githubName: "HordeComms",
   socketPort: 7383
 };
 
