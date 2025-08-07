@@ -2,7 +2,7 @@
 
 HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
 
-**Built on Dishorde by LakeYS, Enhanced by CDRZ** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
+**Based on Dishorde by LakeYS** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
 
 ## 🚀 **NEW FEATURES in HordeComms:**
@@ -27,6 +27,20 @@ HordeComms runs as a completely separate application, so no mods are required. *
 
 💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
+## 📸 Screenshots
+
+### Interactive Dashboard
+![Server Dashboard](screenshots/server-dashboard.png)
+*Clean, intuitive interface with clickable buttons for all server functions*
+
+### Comprehensive Information Display
+![Information Dashboard](screenshots/info-dashboard.png)
+*Detailed feature overview with organized sections and professional formatting*
+
+### Analytics & Trends
+![Analytics Dashboard](screenshots/analytics-dashboard.png)
+*Real-time player analytics with trend tracking and visual data representation*
+
 # How it Works
 HordeComms works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
 
@@ -39,7 +53,7 @@ This CDRZ fork adds intelligent analysis capabilities that monitor player activi
 
 # Authors
 **Original Dishorde**: LakeYS (contact@lakeys.net)  
-**HordeComms Enhancements**: Scott Moreau (CDRZ) - Discord: <@217012303063678978>
+**HordeComms**: CDRZ | Discord: <@217012303063678978>
 
 # Terminal Commands
 `exit`

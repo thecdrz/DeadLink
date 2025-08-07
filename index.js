@@ -9,7 +9,7 @@ const Logger = require("./lib/log.js");
 const { Client, Intents } = Discord;
 var intents = ["GUILDS", "GUILD_MESSAGES"];
 
-console.log("\x1b[7m# HordeComms v" + pjson.version + " (Based on Dishorde by LakeYS, Enhanced by CDRZ) #\x1b[0m");
+console.log("\x1b[7m# HordeComms v" + pjson.version + " (Based on Dishorde by LakeYS) #\x1b[0m");
 console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
 
 const lineSplit = /\n|\r/g;
@@ -618,7 +618,7 @@ function generateActivityMessage(players, time, hordeInfo) {
         } else if (line.includes('✅') || line.includes('👍') || line.includes('💪') || line.includes('🎯')) {
           if (currentSection !== 'status') {
             if (currentSection) activityMsg += '\n';
-            activityMsg += `✅ **Status Check**\n`;
+            activityMsg += `📊 **Status Check**\n`;
             currentSection = 'status';
           }
           activityMsg += `✅ ${line.replace(/✅ |👍 |💪 |🎯 /, '')}\n`;
@@ -1087,7 +1087,7 @@ function announceNewVersion(version) {
       title: `🚀 HordeComms v${version} Released!`,
       description: "The bot has been updated with new features and improvements!",
       footer: {
-        text: `HordeComms v${version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
+        text: `HordeComms v${version} • Original: LakeYS • Expanded: CDRZ`,
       },
       timestamp: new Date().toISOString()
     };
@@ -1114,7 +1114,7 @@ function announceNewVersion(version) {
       }
     ],
     footer: {
-      text: `HordeComms v${version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
+      text: `HordeComms v${version} • Original: LakeYS • Expanded: CDRZ`,
     },
     timestamp: new Date().toISOString()
   };
@@ -1334,7 +1334,7 @@ function createDashboardEmbed() {
                  `⏰ **Time** - Check current game time\n` +
                  `ℹ️ **Info** - Server version and details`,
     footer: {
-      text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
+      text: `HordeComms v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
     }
   };
 }
@@ -1673,7 +1673,7 @@ function handleInfoFromButton(interaction) {
       title: "🎮 HordeComms Information & Features",
       description: infoContent,
       footer: {
-        text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
+        text: `HordeComms v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
       }
     };
     
@@ -1992,7 +1992,7 @@ function parseDiscordCommand(msg, mentioned) {
         title: "🎮 HordeComms Information & Features",
         description: infoContent,
         footer: {
-          text: `HordeComms v${pjson.version} - Based on Dishorde by LakeYS, Enhanced by CDRZ`,
+          text: `HordeComms v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
         }
       };
       
