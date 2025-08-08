@@ -570,37 +570,24 @@ function generateActivityMessage(players, time, hordeInfo) {
     const weather = getWeatherAtmosphere(timeOfDay);
     const healthCondition = getHealthCondition(player.health);
     const activity = getSoloActivity(player, timeOfDay);
-    const activityStatus = getPlayerActivityStatus(player, timeOfDay);
     const suggestions = getSurvivalSuggestions(player, time, hordeInfo);
     
-    // Build comprehensive player stats
+    // Build narrative-focused player stats (only key stats for storytelling)
     let playerStats = "";
     if (player.health) playerStats += `❤️ ${player.health}% HP`;
     if (player.level) playerStats += ` | 📊 Level ${player.level}`;
     if (player.zombiesKilled) playerStats += ` | 🧟 ${player.zombiesKilled} kills`;
-    if (player.deaths) playerStats += ` | 💀 ${player.deaths} deaths`;
-    if (player.score) playerStats += ` | 🏆 ${player.score} score`;
-    if (player.ping) playerStats += ` | 📡 ${player.ping}ms`;
     
     activityMsg = `**Solo Survivor Report**\n\n`;
     activityMsg += `**${player.name}** — ${playerStats ? `${playerStats}` : ""}\n`;
     activityMsg += `🌍 *${location.charAt(0).toUpperCase() + location.slice(1)}*\n`;
     activityMsg += `🌤️ *${weather}* | 🕒 ${time || "Unknown"}\n\n`;
     activityMsg += `"*${healthCondition} and ${activity} ${location}.*"\n\n`;
-    activityMsg += `📊 **Activity Status**\n${activityStatus}\n\n`;
     
-    // Add server performance metrics if available
-    const performanceMetrics = getServerPerformanceMetrics(players);
-    if (performanceMetrics) {
-      activityMsg += `🖥️ **Server Performance**\n`;
-      activityMsg += `${performanceMetrics.status}\n`;
-      activityMsg += `📊 Average: ${performanceMetrics.avgPing}ms | Range: ${performanceMetrics.minPing}-${performanceMetrics.maxPing}ms\n\n`;
-    }
-    
-    // Add player achievements if available
+    // Add player achievements if available (narrative-focused)
     const achievements = getPlayerAchievements(player);
     if (achievements.length > 0) {
-      activityMsg += `🏅 **Achievements**\n`;
+      activityMsg += `🏅 **Recognition**\n`;
       achievements.forEach(achievement => {
         activityMsg += `${achievement}\n`;
       });
@@ -669,7 +656,6 @@ function generateActivityMessage(players, time, hordeInfo) {
   } else {
     const timeOfDay = time ? getTimeOfDay(time) : "unknown time";
     const groupActivity = analyzeGroupActivity(players, timeOfDay, hordeInfo);
-    const performanceMetrics = getServerPerformanceMetrics(players);
     
     // Build player names list
     const playerNames = players.map(player => player.name).join(", ");
@@ -678,13 +664,6 @@ function generateActivityMessage(players, time, hordeInfo) {
     activityMsg += `**${playerNames}**\n`;
     activityMsg += `⏰ ${time || "Unknown"}\n\n`;
     activityMsg += `${groupActivity}`;
-    
-    // Add server performance metrics for groups
-    if (performanceMetrics) {
-      activityMsg += `\n\n🖥️ **Server Performance**\n`;
-      activityMsg += `${performanceMetrics.status}\n`;
-      activityMsg += `📊 Average: ${performanceMetrics.avgPing}ms | Range: ${performanceMetrics.minPing}-${performanceMetrics.maxPing}ms`;
-    }
     
     if (hordeInfo && !groupActivity.includes("blood moon") && !groupActivity.includes("aftermath")) {
       activityMsg += `\n\n${hordeInfo}`;
@@ -2710,62 +2689,6 @@ function getWeatherAtmosphere(timeOfDay) {
   else if (timeOfDay.includes("night")) timeKey = "night";
 
   return getRandomElement(weatherConditions[timeKey]);
-}
-
-function getPlayerActivityStatus(player, timeOfDay) {
-  // Estimate activity status based on player data and time
-  let status = "";
-  
-  if (player.health) {
-    const hp = parseInt(player.health);
-    if (hp < 30) {
-      status = "🚨 **Critical Condition** - Immediate medical attention required";
-    } else if (hp < 60) {
-      status = "⚠️ **Injured** - Needs healing and rest";
-    } else if (hp < 90) {
-      status = "🟡 **Minor Wounds** - Some damage sustained";
-    } else {
-      status = "✅ **Healthy** - In good condition";
-    }
-  }
-  
-  // Add time-based activity context
-  if (timeOfDay.includes("night")) {
-    status += " | 🌙 **Night Operations** - High risk activity";
-  } else if (timeOfDay.includes("afternoon")) {
-    status += " | ☀️ **Day Operations** - Optimal conditions";
-  }
-  
-  return status;
-}
-
-function getServerPerformanceMetrics(players) {
-  if (players.length === 0) return null;
-  
-  const pings = players.filter(p => p.ping).map(p => parseInt(p.ping));
-  if (pings.length === 0) return null;
-  
-  const avgPing = Math.round(pings.reduce((a, b) => a + b, 0) / pings.length);
-  const maxPing = Math.max(...pings);
-  const minPing = Math.min(...pings);
-  
-  let performanceStatus = "";
-  if (avgPing < 50) {
-    performanceStatus = "🟢 **Excellent** - Optimal server performance";
-  } else if (avgPing < 100) {
-    performanceStatus = "🟡 **Good** - Normal server performance";
-  } else if (avgPing < 200) {
-    performanceStatus = "🟠 **Fair** - Some latency detected";
-  } else {
-    performanceStatus = "🔴 **Poor** - High latency detected";
-  }
-  
-  return {
-    avgPing,
-    maxPing,
-    minPing,
-    status: performanceStatus
-  };
 }
 
 function getPlayerAchievements(player) {
