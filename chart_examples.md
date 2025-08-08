@@ -1,5 +1,7 @@
 # 📊 Chart Visualization Examples & Dynamic Narrative Samples
 
+> **Note**: The Activity Chart visualization has been removed from the `7d!trends` command in favor of enhanced analytics and insights. The narrative examples below remain relevant for the `7d!activity` command.
+
 ## Current Implementation (Enhanced Unicode Bar Chart)
 ```
 📈 Recent Activity (2 hours)

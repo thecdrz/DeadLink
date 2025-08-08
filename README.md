@@ -7,7 +7,7 @@ HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the sol
 
 ## 🚀 **NEW FEATURES in HordeComms:**
 - 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
-- 📊 **Player Trends Analytics**: 24-hour tracking with enhanced visual charts and peak time analysis
+- 📊 **Player Trends Analytics**: 24-hour tracking with enhanced insights and peak time analysis
 - 🎯 **Dynamic Narrative Engine**: Intelligent storytelling with humor, time-aware scenarios, and contextual atmosphere ⭐ **NEW in v2.5.0!**
 - 🎭 **Enhanced Empty Server Stories**: Witty narratives with time-specific scenarios and player history ⭐ **NEW in v2.5.0!**
 - 🏃 **Multi-Scenario Support**: Specialized narratives for 0, 1, or multiple players with group dynamics ⭐ **NEW in v2.5.0!**
@@ -15,7 +15,7 @@ HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the sol
 - 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
 - 📱 **Rich Discord Embeds**: Professional formatting with organized sections
 - 🧠 **Smart Biome Detection**: Location-aware storytelling with environmental context
-- 📈 **Enhanced Chart Display**: Contextual player count visualization with trend indicators
+- 📈 **Enhanced Analytics**: Comprehensive player activity insights with session analysis and pattern recognition
 - 🚪 **Enhanced Player Messages**: Rich embeds for join/leave/death events with contextual descriptions
 
 HordeComms runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
@@ -24,7 +24,7 @@ HordeComms runs as a completely separate application, so no mods are required. *
 
 - `7d!dashboard` - Interactive GUI with clickable buttons ⭐ **NEW!**
 - `7d!activity` - Dynamic narrative reports with humor and intelligent storytelling ⭐ **ENHANCED in v2.5.0!**
-- `7d!trends` - Player count analytics with visual charts ⭐ **NEW!**
+- `7d!trends` - Player count analytics with enhanced insights and pattern analysis ⭐ **ENHANCED!**
 - `7d!players` - Current online players
 - `7d!time` - Current game time
 - `7d!info` - Complete feature overview and server information ⭐ **ENHANCED!**

@@ -47,9 +47,10 @@
 ### 📊 Player Count Trends & Analytics (`7d!trends`)
 - **Real-time Tracking**: Automatically tracks player counts every 10 minutes
 - **Historical Analysis**: Stores up to 144 data points (24 hours of data)
-- **Visual Charts**: ASCII charts showing recent player activity trends
+- **Enhanced Analytics**: Comprehensive activity insights with session analysis and pattern recognition
 - **Peak Time Analysis**: Identifies busiest and quietest server hours
 - **Trend Indicators**: Shows if player count is trending up, down, or stable
+- **Activity Insights**: Detailed analysis of player activity levels, session patterns, and consistency metrics
 - **Rich Discord Embeds**: Professional-looking analytics dashboard
 
 ### 🎯 Enhanced Activity Command (`7d!activity`) - **MAJOR UPDATE v2.5.0!**
@@ -118,11 +119,13 @@
 ### Trends Command
 - **Usage**: `7d!trends`, `7d!t`, `7d!trend`
 - **Features**:
-  - 24-hour player statistics
-  - Visual trend charts
+  - 24-hour player statistics with enhanced analytics
+  - Activity insights with session analysis and pattern recognition
   - Peak/quiet time analysis
   - Current vs historical comparison
   - Data collection timeline
+  - Player retention and session length estimates
+  - Activity consistency metrics
 
 ### Enhanced Info Command ⭐ **UPDATED!**
 - **Usage**: `7d!info`, `7d!i`
@@ -152,7 +155,7 @@
 
 ### Trends Dashboard
 - **Analytics Overview**: Complete server statistics at a glance
-- **Visual Charts**: ASCII bar charts for trend visualization
+- **Enhanced Insights**: Detailed activity analysis with session patterns and consistency metrics
 - **Time Analysis**: Peak and quiet hours identification
 - **Trend Arrows**: Visual indicators for player count direction
 
@@ -213,7 +216,7 @@
 
 **HordeComms Enhancements**: by Scott Moreau (CDRZ)
 - Interactive dashboard with clickable buttons
-- Player trends analytics and visual charts
+- Player trends analytics with enhanced insights and pattern analysis
 - Intelligent activity analysis with narrative storytelling
 - Comprehensive security features with environment variables
 - Rich Discord embeds and modern UI/UX improvements

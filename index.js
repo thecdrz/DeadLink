@@ -1188,9 +1188,8 @@ function generateTrendsReport() {
   const recentTrend = recentData.length > 1 ? 
     recentData[recentData.length - 1].count - recentData[0].count : 0;
   
-  // Generate visual chart
-  const chartData = history.slice(-12); // Last 12 data points (2 hours)
-  const chart = generateMiniChart(chartData.map(d => d.count));
+  // Enhanced analytics
+  const enhancedAnalytics = generateEnhancedAnalytics(history);
   
   // Build report
   let report = ``;
@@ -1201,11 +1200,12 @@ function generateTrendsReport() {
   report += `📋 **24h Average**: ${avgCount} players\n`;
   report += `🔝 **Peak**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
   
-  // Visual chart with current status
-  const maxInChart = Math.max(...chartData.map(d => d.count));
-  const trendIcon = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
-  const trendText = recentTrend > 0 ? "Growing" : recentTrend < 0 ? "Declining" : "Steady";
-  report += `📈 **Activity Chart** (last 2 hours, 10-min intervals)\n\`\`\`\n${chart} (${currentCount}/${maxInChart > 0 ? maxInChart : currentCount}) ${trendIcon} ${trendText}\n\`\`\`\n`;
+  // Enhanced activity insights
+  report += `🎯 **Activity Insights**\n`;
+  report += enhancedAnalytics;
+  report += `\n`;
+  
+
   
   // Peak times analysis
   if (peakHour && lowHour) {
@@ -1229,6 +1229,223 @@ function generateTrendsReport() {
   report += `\n📡 *Tracking ${history.length} data points over ${dataAge}h*`;
   
   return report;
+}
+
+function generateEnhancedAnalytics(history) {
+  if (history.length < 3) return "📊 *Insufficient data for detailed analysis*";
+  
+  const now = Date.now();
+  const oneHourAgo = now - (60 * 60 * 1000);
+  const threeHoursAgo = now - (3 * 60 * 60 * 1000);
+  const sixHoursAgo = now - (6 * 60 * 60 * 1000);
+  
+  // Filter recent data
+  const lastHour = history.filter(h => h.timestamp >= oneHourAgo);
+  const last3Hours = history.filter(h => h.timestamp >= threeHoursAgo);
+  const last6Hours = history.filter(h => h.timestamp >= sixHoursAgo);
+  
+  // Calculate activity metrics
+  const currentActivity = calculateActivityLevel(lastHour);
+  const recentActivity = calculateActivityLevel(last3Hours);
+  const extendedActivity = calculateActivityLevel(last6Hours);
+  
+  // Player session analysis
+  const sessionInsights = analyzePlayerSessions(history);
+  
+  // Activity patterns
+  const activityPatterns = analyzeActivityPatterns(history);
+  
+  let analytics = "";
+  
+  // Activity levels
+  analytics += `🕐 **Last Hour**: ${currentActivity.level} (${currentActivity.avg} avg)\n`;
+  analytics += `⏰ **Last 3 Hours**: ${recentActivity.level} (${recentActivity.avg} avg)\n`;
+  analytics += `📅 **Last 6 Hours**: ${extendedActivity.level} (${extendedActivity.avg} avg)\n`;
+  
+  // Session insights
+  if (sessionInsights) {
+    analytics += `\n👥 **Session Insights**\n`;
+    analytics += sessionInsights;
+  }
+  
+  // Activity patterns
+  if (activityPatterns) {
+    analytics += `\n📊 **Activity Patterns**\n`;
+    analytics += activityPatterns;
+  }
+  
+  return analytics;
+}
+
+function calculateActivityLevel(dataPoints) {
+  if (dataPoints.length === 0) return { level: "No Data", avg: 0 };
+  
+  const counts = dataPoints.map(d => d.count);
+  const avg = Math.round(counts.reduce((a, b) => a + b, 0) / counts.length * 10) / 10;
+  const max = Math.max(...counts);
+  
+  let level = "Low";
+  if (avg >= 5) level = "High";
+  else if (avg >= 2) level = "Moderate";
+  
+  return { level, avg, max };
+}
+
+function analyzePlayerSessions(history) {
+  if (history.length < 6) return null;
+  
+  // Find unique players across recent data
+  const recentPlayers = new Set();
+  const last24Hours = history.filter(h => h.timestamp >= Date.now() - (24 * 60 * 60 * 1000));
+  
+  last24Hours.forEach(entry => {
+    if (entry.players && Array.isArray(entry.players)) {
+      entry.players.forEach(player => recentPlayers.add(player));
+    }
+  });
+  
+  const uniquePlayers = recentPlayers.size;
+  const currentPlayers = history[history.length - 1].players || [];
+  
+  let insights = "";
+  
+  // Player retention
+  if (uniquePlayers > 0) {
+    const retentionRate = Math.round((currentPlayers.length / uniquePlayers) * 100);
+    insights += `🎯 **Retention**: ${retentionRate}% of recent players still online\n`;
+  }
+  
+  // Session duration estimate
+  if (currentPlayers.length > 0) {
+    const avgSessionLength = estimateSessionLength(history, currentPlayers);
+    if (avgSessionLength) {
+      insights += `⏱️ **Avg Session**: ~${avgSessionLength} hours\n`;
+    }
+  }
+  
+  // Player activity patterns
+  const activityPattern = getActivityPattern(history);
+  if (activityPattern) {
+    insights += `📈 **Pattern**: ${activityPattern}\n`;
+  }
+  
+  return insights || null;
+}
+
+function analyzeActivityPatterns(history) {
+  if (history.length < 12) return null;
+  
+  const recent = history.slice(-6);
+  const previous = history.slice(-12, -6);
+  
+  const recentAvg = recent.reduce((sum, h) => sum + h.count, 0) / recent.length;
+  const previousAvg = previous.reduce((sum, h) => sum + h.count, 0) / previous.length;
+  
+  const change = recentAvg - previousAvg;
+  const changePercent = Math.round((change / (previousAvg || 1)) * 100);
+  
+  let patterns = "";
+  
+  // Activity change
+  if (Math.abs(changePercent) > 10) {
+    const direction = changePercent > 0 ? "increasing" : "decreasing";
+    patterns += `📊 **Activity ${direction}** by ${Math.abs(changePercent)}%\n`;
+  } else {
+    patterns += `📊 **Stable activity** (±${Math.abs(changePercent)}%)\n`;
+  }
+  
+  // Peak detection
+  const peakTime = findPeakActivityTime(history);
+  if (peakTime) {
+    patterns += `⏰ **Peak Activity**: ${peakTime}\n`;
+  }
+  
+  // Consistency
+  const consistency = calculateConsistency(history);
+  patterns += `🎯 **Consistency**: ${consistency}\n`;
+  
+  return patterns;
+}
+
+function estimateSessionLength(history, currentPlayers) {
+  if (currentPlayers.length === 0 || history.length < 2) return null;
+  
+  // Simple estimation based on how long players have been consistently online
+  let sessionStart = Date.now();
+  
+  for (let i = history.length - 1; i >= 0; i--) {
+    const entry = history[i];
+    const entryPlayers = entry.players || [];
+    
+    // Check if any current players were present
+    const hasCurrentPlayers = currentPlayers.some(player => 
+      entryPlayers.includes(player)
+    );
+    
+    if (hasCurrentPlayers) {
+      sessionStart = entry.timestamp;
+    } else {
+      break;
+    }
+  }
+  
+  const sessionHours = Math.round((Date.now() - sessionStart) / (1000 * 60 * 60) * 10) / 10;
+  return sessionHours > 0 ? sessionHours : null;
+}
+
+function getActivityPattern(history) {
+  if (history.length < 6) return null;
+  
+  const recent = history.slice(-6);
+  const counts = recent.map(h => h.count);
+  
+  // Check for patterns
+  const increasing = counts.every((count, i) => i === 0 || count >= counts[i - 1]);
+  const decreasing = counts.every((count, i) => i === 0 || count <= counts[i - 1]);
+  const stable = counts.every((count, i) => i === 0 || Math.abs(count - counts[i - 1]) <= 1);
+  
+  if (increasing) return "Steadily increasing";
+  if (decreasing) return "Gradually declining";
+  if (stable) return "Consistent activity";
+  
+  return "Variable activity";
+}
+
+function findPeakActivityTime(history) {
+  if (history.length < 6) return null;
+  
+  const hourlyActivity = {};
+  history.forEach(entry => {
+    const hour = new Date(entry.timestamp).getHours();
+    if (!hourlyActivity[hour]) hourlyActivity[hour] = [];
+    hourlyActivity[hour].push(entry.count);
+  });
+  
+  const hourlyAvgs = Object.keys(hourlyActivity).map(hour => ({
+    hour: parseInt(hour),
+    avg: hourlyActivity[hour].reduce((a, b) => a + b, 0) / hourlyActivity[hour].length
+  })).sort((a, b) => b.avg - a.avg);
+  
+  if (hourlyAvgs.length > 0) {
+    return formatHour(hourlyAvgs[0].hour);
+  }
+  
+  return null;
+}
+
+function calculateConsistency(history) {
+  if (history.length < 6) return "Insufficient data";
+  
+  const counts = history.map(h => h.count);
+  const avg = counts.reduce((a, b) => a + b, 0) / counts.length;
+  const variance = counts.reduce((sum, count) => sum + Math.pow(count - avg, 2), 0) / counts.length;
+  const stdDev = Math.sqrt(variance);
+  const coefficient = (stdDev / avg) * 100;
+  
+  if (coefficient < 20) return "Very consistent";
+  if (coefficient < 40) return "Moderately consistent";
+  if (coefficient < 60) return "Variable";
+  return "Highly variable";
 }
 
 function generateMiniChart(data) {
@@ -1312,7 +1529,7 @@ function generateChangesReport() {
          `📋 **Organized Sections** - Clean, hierarchical information display\n` +
          `🎯 **Rich Embeds** - Professional Discord formatting with consistent styling\n` +
          `🔔 **Smart Notifications** - Context-aware alerts and status updates\n` +
-         `📊 **Data Visualization** - Graphs and charts for trend analysis\n\n` +
+         `📊 **Enhanced Analytics** - Comprehensive player activity insights and pattern analysis\n\n` +
          
          `**🔧 Technical Enhancements**\n` +
          `⚡ **Performance Optimized** - Faster response times and better error handling\n` +

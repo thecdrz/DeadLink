@@ -12,7 +12,7 @@
 
   "allow-exec-command": false,
   "allow-links-from-game": false,
-  "allow-multiple-instances": false,
+  "allow-multiple-instances": true,
   "disable-commands": false,
   "disable-chatmsgs": false,
   "disable-join-leave-gmsgs": false,
