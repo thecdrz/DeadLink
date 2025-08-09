@@ -1159,14 +1159,14 @@ function generateTrendsReport() {
   if (history.length < 2) {
     return "📊 **Player Trends**\n\n❌ Not enough data yet. Trends will be available after a few hours of monitoring.\n\n*Check back later for detailed analytics!*";
   }
-  
+
   // Calculate statistics
   const counts = history.map(h => h.count);
   const currentCount = counts[counts.length - 1];
   const avgCount = Math.round(counts.reduce((a, b) => a + b, 0) / counts.length * 10) / 10;
   const maxCount = Math.max(...counts);
   const minCount = Math.min(...counts);
-  
+
   // Find peak times
   const hourlyStats = {};
   history.forEach(entry => {
@@ -1174,39 +1174,28 @@ function generateTrendsReport() {
     if (!hourlyStats[hour]) hourlyStats[hour] = [];
     hourlyStats[hour].push(entry.count);
   });
-  
+
   const hourlyAvgs = Object.keys(hourlyStats).map(hour => ({
     hour: parseInt(hour),
     avg: hourlyStats[hour].reduce((a, b) => a + b, 0) / hourlyStats[hour].length
   })).sort((a, b) => b.avg - a.avg);
-  
+
   const peakHour = hourlyAvgs[0];
   const lowHour = hourlyAvgs[hourlyAvgs.length - 1];
-  
+
   // Recent trend (last 6 data points)
   const recentData = history.slice(-6);
-  const recentTrend = recentData.length > 1 ? 
+  const recentTrend = recentData.length > 1 ?
     recentData[recentData.length - 1].count - recentData[0].count : 0;
-  
-  // Generate visual chart
-  const chartData = history.slice(-12); // Last 12 data points (2 hours)
-  const chart = generateMiniChart(chartData.map(d => d.count));
-  
+
   // Build report
   let report = ``;
-  
   // Current status with trend indicator
   const trendEmoji = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
   report += `${trendEmoji} **Current**: ${currentCount} player${currentCount === 1 ? '' : 's'}\n`;
   report += `📋 **24h Average**: ${avgCount} players\n`;
   report += `🔝 **Peak**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
-  
-  // Visual chart with current status
-  const maxInChart = Math.max(...chartData.map(d => d.count));
-  const trendIcon = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
-  const trendText = recentTrend > 0 ? "Growing" : recentTrend < 0 ? "Declining" : "Steady";
-  report += `📈 **Activity Chart** (last 2 hours, 10-min intervals)\n\`\`\`\n${chart} (${currentCount}/${maxInChart > 0 ? maxInChart : currentCount}) ${trendIcon} ${trendText}\n\`\`\`\n`;
-  
+
   // Peak times analysis
   if (peakHour && lowHour) {
     const peakTime = formatHour(peakHour.hour);
@@ -1214,7 +1203,7 @@ function generateTrendsReport() {
     report += `⏰ **Peak Time**: ${peakTime} (${Math.round(peakHour.avg * 10) / 10} avg)\n`;
     report += `🌙 **Quiet Time**: ${lowTime} (${Math.round(lowHour.avg * 10) / 10} avg)\n\n`;
   }
-  
+
   // Trend analysis
   if (recentTrend > 0) {
     report += `🚀 **Trending Up**: +${recentTrend} player${Math.abs(recentTrend) === 1 ? '' : 's'} in recent activity\n`;
@@ -1223,11 +1212,11 @@ function generateTrendsReport() {
   } else {
     report += `🔄 **Stable**: Consistent player count recently\n`;
   }
-  
+
   // Data collection info
   const dataAge = Math.round((Date.now() - history[0].timestamp) / (1000 * 60 * 60) * 10) / 10;
   report += `\n📡 *Tracking ${history.length} data points over ${dataAge}h*`;
-  
+
   return report;
 }
 
