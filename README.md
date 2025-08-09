@@ -75,6 +75,7 @@ The bot can be configured by editing config.json. Here's a list of the preferenc
 - `allow-exec-command` - Enables a command called `7d!exec`. This allows anybody with the 'manage server' permission to execute commands on the server. The command works in any channel. **WARNING: Enabling this may pose a security risk for your server.**
 - `allow-multiple-instances` - By default, the bot will not start if there is another copy of it already running. Enabling this will allow multiple instances of the bot to run on one system.
 - `allow-links-from-game` - Allows players in-game to post links into Discord. When set to false, links will still show up, but will not be clickable. When enabled, links may include embeds in Discord unless you configure the bot's permissions otherwise.
+- `debug-mode` - Enables detailed debug logging for message processing and bot operations. Useful for troubleshooting.
 - `disable-commands` - Disable Discord commands such as 7d!time. Does not disable 7d!info.
 - `disable-chatmsgs` - Disable chat messages to and from the server. Does not disable other in-game messages such as join/leave and deaths.
 - `disable-join-leave-gmsgs` - Disables player join/leave messages.
