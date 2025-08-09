@@ -116,7 +116,7 @@
   - **Rich Atmospheric Descriptions**: Environmental storytelling with biome-specific context
 
 ### Trends Command
-- **Usage**: `7d!trends`, `7d!t`, `7d!trend`
+- **Usage**: `7d!trends`, `7d!tr`, `7d!trend`
 - **Features**:
   - 24-hour player statistics
   - Visual trend charts
