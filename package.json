@@ -1,7 +1,7 @@
 {
   "name": "hordecomms",
-  "version": "2.5.0",
-  "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, dynamic narrative storytelling, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by CDRZ.",
+  "version": "2.7.0",
+  "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, dynamic narrative storytelling, intelligent activity tracking, and world-aware environmental intelligence (weather, biome, POI). Built on Dishorde by LakeYS with comprehensive enhancements by CDRZ.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

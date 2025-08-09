@@ -250,8 +250,11 @@ function handleMsgFromGame(line) {
   var content = { name: null, text: null, from: null, to: null, entityId: null };
 
   if(dataRaw === null) {
+    if(config["debug-mode"]) console.log(`[DEBUG] Line did not match message format: ${line}`);
     return;
   }
+  
+  if(config["debug-mode"]) console.log(`[DEBUG] Processing game message: ${JSON.stringify(dataRaw)}`);
 
   // Evaluate the source info (i.e. " (from '-non-player-', entity id '-1', to 'Global'): 'Server'") separately because it may not exist.
   // Source info includes the sender name (i.e. 'Server')
@@ -341,24 +344,58 @@ function handleMsgFromGame(line) {
 }
 
 function sendEnhancedGameMessage(message) {
+  console.log(`[DEBUG] Attempting to send enhanced message: ${message}`);
   // Check if this is a special game event that should get rich embed treatment
   if (message.includes("joined the game")) {
+    console.log(`[DEBUG] Detected join game message`);
     const playerMatch = message.match(/Player '([^']+)' joined the game/);
     if (playerMatch) {
       const playerName = playerMatch[1];
+      // Send dramatic welcome messages to the game
+      const welcomeMessages = [
+        `say "🌟 A new survivor, ${playerName}, emerges from the wasteland..."`,
+        `say "Welcome to our sanctuary! Join us on Discord to unite with fellow survivors: discord.gg/1401667068172042350"`,
+        `say "Stay alert, stay alive, and may fortune favor your journey, ${playerName}!"`
+      ];
+
+      // Send messages with a slight delay between them for dramatic effect
+      welcomeMessages.forEach((msg, index) => {
+        setTimeout(() => {
+          telnet.exec(msg, (err) => {
+            if (err) {
+              console.log(`[ERROR] Failed to send in-game welcome message ${index + 1}: ${err.message}`);
+            }
+          });
+        }, index * 1500); // 1.5 second delay between messages
+      });
+
+      // Send Discord embed
       const embed = {
         color: 0x2ecc71, // Green for joins
-        title: "🚪 Player Joined",
-        description: `🎉 **${playerName}** has entered the wasteland!\n> Welcome to the apocalypse, survivor. Stay alert and stay alive.`,
+        title: "🚪 New Survivor Arrived",
+        description: `🎉 **${playerName}** has entered the wasteland!\n> Welcome to the apocalypse, survivor. Stay alert and stay alive.\n\n🏰 **Join our Survivor's Haven!**\nConnect with fellow survivors in our Discord community: https://discord.gg/1401667068172042350\nShare stories, coordinate missions, and survive together!`,
         footer: {
           text: `Player joined on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
         }
       };
       
+      if (!channel) {
+        console.log('[ERROR] No Discord channel configured for sending messages');
+        return;
+      }
+
+      console.log(`[DEBUG] Attempting to send join message to channel ${channel.id}`);
+      
       channel.send({ embeds: [embed] })
-        .catch(() => {
+        .then(() => {
+          console.log(`[DEBUG] Successfully sent join message for ${playerName}`);
+        })
+        .catch((error) => {
+          console.log(`[ERROR] Failed to send embed message: ${error.message}`);
           // Fallback to plain text if embed fails
-          channel.send(message);
+          channel.send(message).catch((err) => {
+            console.log(`[ERROR] Failed to send fallback message: ${err.message}`);
+          });
         });
       return;
     }
@@ -1087,7 +1124,7 @@ function getAdvancedHordeInfo(timeStr) {
         type: "imminent",
         icon: "🚨",
         title: "BLOOD MOON IMMINENT",
-        message: `Blood moon begins in ${minutesToHorde} minutes - FINAL PREPARATIONS NOW!`,
+        message: `🌑 The sky turns crimson as the blood moon rises in ${minutesToHorde} minutes! The air grows thick with the stench of the undead. FINAL PREPARATIONS NOW! May your walls stand strong and your aim be true...`,
         urgency: "critical"
       };
     } else if (hoursToHorde <= 3) {
@@ -1120,7 +1157,7 @@ function getAdvancedHordeInfo(timeStr) {
       type: "active",
       icon: "💀", 
       title: "BLOOD MOON ACTIVE",
-      message: "The horde continues! Zombies remain highly aggressive!",
+      message: "🩸 THE NIGHT OF TERROR CONTINUES! The hordes of undead still roam with unnatural vigor! Stay vigilant - dawn has not yet come to cleanse this cursed night!",
       urgency: "extreme"
     };
   } else {
@@ -1323,6 +1360,17 @@ function announceNewVersion(version) {
   }
   
   const releaseNotes = {
+    "2.7.0": {
+      title: "🎭 HordeComms v2.7.0 - Theatrical Welcome System!",
+      description: "Introducing dramatic in-game welcomes for a more immersive player experience",
+      features: [
+        "👋 **Dramatic Welcomes** - Theatrical multi-part welcome messages in-game",
+        "🤝 **Community Integration** - Automatic Discord community invitations",
+        "⏱️ **Sequential Messaging** - Timed message delivery for better readability",
+        "🎨 **Thematic Content** - Messages that match the game's atmosphere"
+      ],
+      color: 0x9b59b6 // Purple for theatrical theme
+    },
     "2.6.0": {
       title: "🌍 HordeComms v2.6.0 - Environmental Intelligence System!",
       description: "Revolutionary update bringing complete world-aware storytelling to 7 Days to Die monitoring",
@@ -2277,7 +2325,7 @@ function parseDiscordCommand(msg, mentioned) {
     // TODO: Refactor
     if(!config["disable-commands"]) {
       // 7d!time
-      if(cmd === "TIME" || cmd === "T" || cmd === "DAY") {
+      if(cmd === "TIME" || cmd === "DAY") {
         telnet.exec("gettime", (err, response) => {
           if(!err) {
             processTelnetResponse(response, (line) => {
@@ -2328,7 +2376,7 @@ function parseDiscordCommand(msg, mentioned) {
       }
 
       // 7d!trends
-      if(cmd === "TRENDS" || cmd === "T" || cmd === "TREND") {
+      if(cmd === "TRENDS" || cmd === "TR" || cmd === "TREND") {
         console.log("User " + msg.author.tag + " (" + msg.author.id + ") executed command: " + cmd);
         handleTrends(msg);
       }
