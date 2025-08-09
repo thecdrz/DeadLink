@@ -82,6 +82,7 @@ The bot can be configured by editing config.json. Here's a list of the preferenc
 - `disable-misc-gmsgs` - Disables all other global messages (player deaths, etc.)
 - `disable-non-player-chatmsgs` - Disables chat messages sent by non-players. (Including the "say" console command and mods)
 - `disable-status-updates` - Disable the bot's presence and online status display.
+- `disable-blood-moon-alerts` - Disable automatic Discord alerts when the blood moon is imminent/starts/ends.
 - `hide-prefix` - Hides all chat messages that start with a forward slash. This may be useful if your server uses commands.
 - `log-console` - Enables logging of the bot's console to a file, console.log.
 - `log-messages` - Chat messages will show up in the terminal.

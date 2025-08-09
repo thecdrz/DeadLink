@@ -51,7 +51,16 @@ var d7dtdState = {
   // Connection status
   // -1 = Error, 0 = No connection/connecting, 1 = Online
   // -100 = Override or N/A (value is ignored)
-  connStatus: -100
+  connStatus: -100,
+
+  // Blood moon monitoring state
+  hordeMonitor: {
+    intervalId: null,
+    isActive: false,
+    imminentAnnounced: false,
+    lastStateChangeAt: 0,
+    lastObserved: { day: null, hour: null, minute: null }
+  }
 };
 
 ////// # Arguments # //////
@@ -782,6 +791,109 @@ function getTimeOfDay(timeStr) {
   if (hour >= 12 && hour < 18) return "afternoon heat";
   if (hour >= 18 && hour < 22) return "evening twilight";
   return "dark of night";
+}
+
+// --- Blood Moon Monitor Helpers ---
+function parseTimeLine(timeStr) {
+  const m = timeStr.match(/Day\s+(\d+),\s+(\d+):(\d+)/);
+  if (!m) return null;
+  return { day: parseInt(m[1]), hour: parseInt(m[2]), minute: parseInt(m[3]) };
+}
+
+function isBloodMoonActive(day, hour) {
+  const freq = config["horde-frequency"] != null ? parseInt(config["horde-frequency"]) : 7;
+  const daysFromHorde = day % freq;
+  const isFirstWeek = day === 1 || day === 2;
+  // Blood moon hours: day%freq==0 and hour>=22, or daysFromHorde==1 and hour<4 (carryover)
+  const active = (!isFirstWeek && ((daysFromHorde === 0 && hour >= 22) || (daysFromHorde === 1 && hour < 4)));
+  return active;
+}
+
+function minutesUntilBloodMoon(day, hour, minute) {
+  const freq = config["horde-frequency"] != null ? parseInt(config["horde-frequency"]) : 7;
+  const daysFromHorde = day % freq;
+  const isHordeDay = daysFromHorde === 0;
+  const hordeStartHour = 22;
+  if (!isHordeDay || hour >= hordeStartHour) return null;
+  return (hordeStartHour - hour) * 60 - minute;
+}
+
+function sendHordeEmbed(type, context) {
+  if (!channel) return;
+  let color = 0xbd2c00; // default red/orange
+  let title = "";
+  let description = "";
+  if (type === "start") {
+    color = 0xe74c3c;
+    title = "💀 Blood Moon Has Begun";
+    description = "Maximum aggression engaged! Seek shelter or prepare to fight!";
+  } else if (type === "end") {
+    color = 0x2ecc71;
+    title = "🌅 Blood Moon Ended";
+    description = "The night of terror has passed. Tend to wounds and rebuild.";
+  } else if (type === "imminent") {
+    color = 0xf1c40f;
+    title = "🚨 Blood Moon Imminent";
+    const mins = context?.minutes ?? "a few";
+    description = `The sky turns crimson in ${mins} minute${mins === 1 ? "" : "s"}. Final preparations!`;
+  }
+  const embed = {
+    color,
+    title,
+    description,
+    footer: { text: `Reported at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+  };
+  channel.send({ embeds: [embed] }).catch(() => {/* ignore */});
+}
+
+function startHordeMonitor() {
+  // Allow opt-out
+  if (config["disable-blood-moon-alerts"]) return;
+  // Avoid duplicate intervals
+  if (d7dtdState.hordeMonitor.intervalId) return;
+  if (config["debug-mode"]) console.log("[DEBUG] Starting blood moon monitor...");
+  d7dtdState.hordeMonitor.isActive = false;
+  d7dtdState.hordeMonitor.imminentAnnounced = false;
+  d7dtdState.hordeMonitor.intervalId = setInterval(() => {
+    // Poll server time via telnet
+    telnet.exec("gettime", (err, response) => {
+      if (err) return; // transient
+      processTelnetResponse(response, (line) => {
+        if (!line.startsWith("Day")) return;
+        const t = parseTimeLine(line);
+        if (!t) return;
+        d7dtdState.hordeMonitor.lastObserved = t;
+
+        // Imminent alert when <= 10 minutes before start
+        const mins = minutesUntilBloodMoon(t.day, t.hour, t.minute);
+        if (mins !== null && mins <= 10 && mins >= 0 && !d7dtdState.hordeMonitor.imminentAnnounced) {
+          d7dtdState.hordeMonitor.imminentAnnounced = true;
+          sendHordeEmbed("imminent", { minutes: mins });
+        }
+
+        // Active state detection
+        const active = isBloodMoonActive(t.day, t.hour);
+        if (active && !d7dtdState.hordeMonitor.isActive) {
+          d7dtdState.hordeMonitor.isActive = true;
+          d7dtdState.hordeMonitor.lastStateChangeAt = Date.now();
+          d7dtdState.hordeMonitor.imminentAnnounced = true; // suppress duplicate
+          sendHordeEmbed("start");
+        } else if (!active && d7dtdState.hordeMonitor.isActive) {
+          d7dtdState.hordeMonitor.isActive = false;
+          d7dtdState.hordeMonitor.lastStateChangeAt = Date.now();
+          sendHordeEmbed("end");
+        }
+      });
+    });
+  }, 60 * 1000); // poll every minute
+}
+
+function stopHordeMonitor() {
+  if (d7dtdState.hordeMonitor.intervalId) {
+    clearInterval(d7dtdState.hordeMonitor.intervalId);
+    d7dtdState.hordeMonitor.intervalId = null;
+    if (config["debug-mode"]) console.log("[DEBUG] Stopped blood moon monitor.");
+  }
 }
 
 function getLocationDescription(position) {
@@ -2449,6 +2561,9 @@ telnet.on("ready", () => {
   if(!config["skip-discord-auth"]) {
     updateStatus(1);
   }
+
+  // Start blood moon monitor when telnet is ready
+  startHordeMonitor();
 });
 
 telnet.on("failedlogin", () => {
@@ -2469,6 +2584,9 @@ telnet.on("close", () => {
     telnet.end(); // Just in case
     setTimeout(() => { telnet.connect(params); }, 5000);
   }
+
+  // Stop monitor on disconnect
+  stopHordeMonitor();
 });
 
 telnet.on("data", (data) => {

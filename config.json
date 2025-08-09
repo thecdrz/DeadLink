@@ -23,6 +23,7 @@
   "show-discord-bot-msgs": false,
   "disable-status-updates": false,
   "disable-version-check": false,
+  "disable-blood-moon-alerts": false,
   "hide-prefix": false,
   "horde-frequency": "7",
   "log-console": false,
