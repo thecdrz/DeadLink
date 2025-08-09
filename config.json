@@ -11,6 +11,7 @@
   "ip": "yourserverip",
 
   "allow-exec-command": false,
+  "debug-mode": false,
   "allow-links-from-game": false,
   "allow-multiple-instances": false,
   "disable-commands": false,
@@ -29,6 +30,7 @@
   "log-telnet": true,
   "prefix": "7d!",
   "demo-mode": false
+  
 }
 
 
