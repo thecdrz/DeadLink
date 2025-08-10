@@ -35,19 +35,29 @@ HordeComms runs as a completely separate application, so no mods are required. *
 ## 📸 Screenshots
 
 ### Interactive Dashboard
-![Server Dashboard](screenshots/server-dashboard.png)
+![HordeComms Dashboard](screenshots/HC_Dashboard.png)
 
 *Clean, intuitive interface with clickable buttons for all server functions*
 
 ### Comprehensive Information Display
-![Information Dashboard](screenshots/info-dashboard.png)
+![HordeComms Info](screenshots/HC_Info.png)
 
 *Detailed feature overview with organized sections and professional formatting*
 
-### Analytics & Trends
-![Analytics Dashboard](screenshots/analytics-dashboard.png)
+### Game Time & Blood Moon Context
+![HordeComms Time](screenshots/HC_Time.png)
 
-*Real-time player analytics with trend tracking and visual data representation*
+*Clear in-game time with contextual notes for horde nights and next events*
+
+### Player Activity Snapshot
+![HordeComms Activity](screenshots/HC_Activity.png)
+
+*Live activity view with recent events and presence*
+
+### Analytics & Trends
+![HordeComms Trends](screenshots/HC_Trends.png)
+
+*24-hour trends with peaks and history*
 
 # How it Works
 HordeComms works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
