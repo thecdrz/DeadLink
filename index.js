@@ -2147,6 +2147,69 @@ function handleActivity(msg) {
   });
 }
 
+function handleTrends(msg) {
+  try {
+    const trendsReport = generateTrendsReport();
+    const embed = {
+      color: 0x3498db,
+      title: "📊 Server Analytics Dashboard",
+      description: trendsReport,
+      footer: {
+        text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+      }
+    };
+    msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(trendsReport));
+  } catch (_) {}
+}
+
+function handlePlayers(msg) {
+  try {
+    telnet.exec("lp", { timeout: 7000 }, (err, response) => {
+      if (err) return handleCmdError(err);
+      let playerData = "";
+      processTelnetResponse(response, (line) => {
+        if (line.startsWith("Total of ")) {
+          playerData = line;
+          const match = line.match(/Total of (\d+) players/);
+          if (match) trackPlayerCount(parseInt(match[1]));
+        }
+      });
+      if (playerData) {
+        const embed = {
+          color: 0x2ecc71,
+          title: "👥 Current Players Online",
+          description: playerData,
+          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+        };
+        msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(playerData));
+      } else {
+        msg.channel.send("❌ No player data received.").catch(() => {});
+      }
+    });
+  } catch (_) {}
+}
+
+function handleTime(msg) {
+  try {
+    telnet.exec("gettime", { timeout: 5000 }, (err, response) => {
+      if (err) return handleCmdError(err);
+      let timeData = "";
+      processTelnetResponse(response, (line) => { if (line.startsWith("Day")) timeData = line; });
+      if (timeData) {
+        const embed = {
+          color: 0x3498db,
+          title: "⏰ Current Game Time",
+          description: timeData,
+          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+        };
+        msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(timeData));
+      } else {
+        msg.channel.send("❌ No time data received.").catch(() => {});
+      }
+    });
+  } catch (_) {}
+}
+
 function parsePlayerData(line) {
   try {
     // Parse player data from lines like:
@@ -2237,6 +2300,28 @@ client.on('messageCreate', async (msg) => {
     if (!content.startsWith(p)) return;
     const args = content.slice(p.length).trim().split(/\s+/);
     const cmd = (args.shift() || '').toLowerCase();
+
+    // Public dashboard and info suite
+    if (cmd === 'dashboard') {
+      handleDashboard(msg);
+      return;
+    }
+    if (cmd === 'trends') {
+      try { handleTrends(msg); } catch (_) {}
+      return;
+    }
+    if (cmd === 'activity') {
+      try { handleActivity(msg); } catch (_) {}
+      return;
+    }
+    if (cmd === 'players') {
+      try { handlePlayers(msg); } catch (_) {}
+      return;
+    }
+    if (cmd === 'time') {
+      try { handleTime(msg); } catch (_) {}
+      return;
+    }
 
     // Hidden admin command: 7d!bloodmoon test <imminent|start|end>
     if (cmd === 'bloodmoon' && args[0] === 'test') {
