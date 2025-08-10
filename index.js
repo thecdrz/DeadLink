@@ -2029,14 +2029,21 @@ function handleTimeFromButton(interaction) {
 }
 
 function handleInfoFromButton(interaction) {
-  interaction.deferReply().then(() => {
+  interaction.deferReply().then(async () => {
     const statusMsg = d7dtdState.connStatus === 1 ? ":green_circle: Online" : 
                      d7dtdState.connStatus === 0 ? ":white_circle: Connecting..." : 
                      ":red_circle: Error";
     
     // Use the comprehensive changes content for info (same as main info command)
     const changesReport = generateChangesReport();
-    const infoContent = `Server connection: ${statusMsg}\n\n${changesReport}`;
+    let latestLine = '';
+    try {
+      const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+      if (info && info.tag && info.url) {
+        latestLine = `\n\n**Updates**\nLatest release: ${info.tag} • ${info.url}`;
+      }
+    } catch (_) { /* ignore fetch errors */ }
+    const infoContent = `Server connection: ${statusMsg}\n\n${changesReport}${latestLine}`;
     
     const embed = {
       color: 0x7289da, // Discord blurple for info
