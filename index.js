@@ -1653,35 +1653,35 @@ function generateChangesReport() {
     `**ℹ️ HordeComms v${v}** *(${currentDate})*\n` +
     `Built on Dishorde by LakeYS • CDRZ enhancements\n\n` +
 
-    `**🆕 New in v2.8.0**\n` +
-    `🩸 **Blood Moon Monitor** — Imminent/Start/End alerts with rich embeds\n` +
-    `🧪 **Admin Test** — \`7d!bloodmoon test imminent|start|end\` (optional in-game broadcast)\n` +
-    `🔌 **Telnet Robustness** — Auto-reconnect, per-command timeouts, safe handling of prompt-less servers\n` +
-    `�️ **Security/Config** — Prefer environment variables for secrets\n\n` +
+  `**🆕 New in v2.9.0**\n` +
+  `⬆️ **Updates Service** — Private checks for new releases with admin helpers\n` +
+  `📢 **Public Announcements** — Auto-post to a configured channel (updates.notifyMode/channel)\n` +
+  `�️ **On-demand Announce** — \`7d!update announce\` posts the rich update embed\n` +
+  `📗 **Upgrade Guides** — OS-specific steps reference the actual release tag\n\n` +
 
-    `**🛠️ Admin Utilities (private)**\n` +
-    `🔎 \`7d!update check\` — Check latest release\n` +
-    `� \`7d!update notes\` — View release notes\n` +
-    `⬇️ \`7d!update guide [windows|linux]\` — Step-by-step upgrade\n` +
-    `📣 \`7d!update announce\` — Post the update embed on demand\n\n` +
+  `**🛠️ Update Helpers (admin-only)**\n` +
+  `🔎 \`7d!update check\` — Check latest release\n` +
+  `📝 \`7d!update notes\` — View release notes\n` +
+  `⬇️ \`7d!update guide [windows|linux]\` — Step-by-step upgrade\n` +
+  `📣 \`7d!update announce\` — Post the update embed on demand\n\n` +
 
     `**🎮 Core Commands**\n` +
     `🎮 \`7d!dashboard\` — Interactive control panel\n` +
     `📊 \`7d!trends\` — Player count analytics & trends\n` +
-    `🎯 \`7d!activity\` — Narrative activity with survival tips\n` +
-    `� \`7d!players\` — Who’s online\n` +
+  `🎯 \`7d!activity\` — Narrative activity with survival tips\n` +
+  `👥 \`7d!players\` — Who’s online\n` +
     `⏰ \`7d!time\` — Current game time & horde context\n` +
     `ℹ️ \`7d!info\` — This overview\n\n` +
 
-    `**🤖 Intelligent Features**\n` +
-    `🧠 Context-aware survival guidance\n` +
-    `� Location intelligence & player status parsing\n` +
-    `� Trend visualization and session insights\n\n` +
+  `**🤖 Intelligent Features**\n` +
+  `🧠 Context-aware survival guidance\n` +
+  `📍 Location intelligence & player status parsing\n` +
+  `📈 Trend visualization and session insights\n\n` +
 
-    `**⚙️ Reliability & Security**\n` +
-    `� Telnet connect/reconnect lifecycle with basic auth\n` +
-    `⏱️ Per-command timeouts; soft-success when servers don’t echo\n` +
-    `🔒 Secrets via environment variables; single-instance protection\n\n` +
+  `**⚙️ Reliability & Security**\n` +
+  `🔌 Telnet connect/reconnect lifecycle with basic auth\n` +
+  `⏱️ Per-command timeouts; soft-success when servers don’t echo\n` +
+  `🔒 Secrets via environment variables; single-instance protection\n\n` +
 
     `**🧩 Optional Config Snippets**\n` +
     `bloodMoon: { enabled, intervalSeconds, frequency, broadcastInGame }\n` +
