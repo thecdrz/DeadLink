@@ -329,11 +329,21 @@ function buildUpdateEmbed(info, currentVersion, opts = {}) {
 }
 if (config.updates.enabled === true) {
   updates.startSchedule({ intervalHours: config.updates.intervalHours || 24, includePrerelease: !!config.updates.prerelease }, (info) => {
-    // Private-only: do not post publicly unless notifyMode configured
-    if (config.updates.notifyMode === 'channel' && config.updates.notifyChannel && channel && channel.id === config.updates.notifyChannel) {
-  const embed = buildUpdateEmbed(info, pjson.version);
-  channel.send({ embeds: [embed] }).catch(() => {});
-    }
+    // Public announcement: post to the configured updates.notifyChannel, independent of the bound default channel
+    try {
+      if (config.updates.notifyMode === 'channel' && config.updates.notifyChannel && client && client.channels) {
+        const embed = buildUpdateEmbed(info, pjson.version);
+        const targetId = config.updates.notifyChannel.toString();
+        const fetched = client.channels.fetch(targetId);
+        if (fetched && typeof fetched.then === 'function') {
+          fetched.then((ch) => {
+            if (ch && typeof ch.isText === 'function' && ch.isText()) {
+              ch.send({ embeds: [embed] }).catch(() => {});
+            }
+          }).catch(() => {});
+        }
+      }
+    } catch (_) { /* ignore */ }
   });
 }
 
@@ -590,6 +600,23 @@ function handleCmdError(err) {
       channel.send(`Command failed with error "${err.message}"`);
     }
   }
+}
+
+// Helper to process raw telnet response text into meaningful lines
+function processTelnetResponse(response, onLine) {
+  try {
+    if (!response || typeof response !== 'string') return;
+    const lines = response.split(lineSplit);
+    for (let i = 0; i < lines.length; i++) {
+      const raw = lines[i];
+      if (typeof raw !== 'string') continue;
+      const line = raw.trim();
+      if (!line) continue; // skip blanks
+      // skip common non-data noise/echoes if present
+      if (/^(Executed command|Command|Login|Logon)/i.test(line)) continue;
+      onLine(line);
+    }
+  } catch (_) { /* ignore parse errors */ }
 }
 
 function handleTime(line, msg) {
@@ -2306,10 +2333,9 @@ client.on('messageCreate', async (msg) => {
     }
 
   const content = msg.content || '';
-  const primaryPrefix = (config.prefix ? config.prefix : '7d!');
-  // Backward-compat: also allow legacy '!' unless it's already the primary
-  const prefixes = primaryPrefix === '!' ? ['!'] : [primaryPrefix, '!'];
-  const usedPrefix = prefixes.find(px => content.startsWith(px));
+  // Only accept the configured prefix (default '7d!')
+  const primaryPrefix = (typeof prefix === 'string' && prefix.length) ? prefix : '7d!';
+  const usedPrefix = content.startsWith(primaryPrefix) ? primaryPrefix : null;
   if (!usedPrefix) return;
   const args = content.slice(usedPrefix.length).trim().split(/\s+/);
     const cmd = (args.shift() || '').toLowerCase();
