@@ -214,7 +214,7 @@
 - Base Discord bot framework and 7DTD telnet integration
 - Core command structure and reliable foundation
 
-**DeadLink Enhancements**: by Scott Moreau (CDRZ)
+**DeadLink Enhancements**: by CDRZ
 - Interactive dashboard with clickable buttons
 - Player trends analytics with enhanced insights and pattern analysis
 - Intelligent activity analysis with narrative storytelling

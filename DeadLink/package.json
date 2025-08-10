@@ -7,7 +7,7 @@
     "start": "node index.js",
     "test": "jest --runInBand"
   },
-  "author": "CDRZ (built on Dishorde by LakeYS)",
+  "author": "Scott Moreau (CDRZ) - built on Dishorde by LakeYS",
   "license": "MIT",
   "repository": {
     "type": "git",

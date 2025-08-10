@@ -1,3 +1,5 @@
+![DeadLink Logo](../screenshots/Hc_Logo.png)
+
 # DeadLink v2.11.0
 
 Highlights
