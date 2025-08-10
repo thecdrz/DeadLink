@@ -299,16 +299,37 @@ const updates = new UpdatesService({
   currentVersion: pjson.version,
   storageDir: '.'
 });
+
+function buildUpdateEmbed(info, currentVersion) {
+  const title = `Update available: v${info.version}`;
+  const url = info.url;
+  // Extract first few bullet points or a short excerpt
+  let whatsNew = '';
+  if (info.body) {
+    const lines = info.body.split(/\r?\n/).filter(l => l.trim() !== '');
+    const bullets = lines.filter(l => /^[-*•]/.test(l.trim())).slice(0, 6);
+    if (bullets.length) {
+      whatsNew = bullets.join('\n');
+    } else {
+      whatsNew = (info.body || '').slice(0, 600);
+    }
+  }
+  const description = `You're running v${currentVersion}. A new release is available.\n\n${url}`;
+  const embed = {
+    color: 0x7289da,
+    title,
+    description,
+    fields: whatsNew ? [{ name: "What's new", value: whatsNew }] : [],
+    timestamp: new Date().toISOString()
+  };
+  return embed;
+}
 if (config.updates.enabled === true) {
   updates.startSchedule({ intervalHours: config.updates.intervalHours || 24, includePrerelease: !!config.updates.prerelease }, (info) => {
     // Private-only: do not post publicly unless notifyMode configured
     if (config.updates.notifyMode === 'channel' && config.updates.notifyChannel && channel && channel.id === config.updates.notifyChannel) {
-      const embed = {
-        color: 0x7289da,
-        title: `Update available: v${info.version}`,
-        description: `You're running v${pjson.version}. New release is available.\n\nRelease: ${info.url}`
-      };
-      channel.send({ embeds: [embed] }).catch(() => {});
+  const embed = buildUpdateEmbed(info, pjson.version);
+  channel.send({ embeds: [embed] }).catch(() => {});
     }
   });
 }
@@ -2257,6 +2278,14 @@ client.on('messageCreate', async (msg) => {
           return msg.reply(`Latest: ${info.name}\n${info.url}\n\n${body}`).catch(() => {});
         } catch (_) { return msg.reply('Could not fetch notes.').catch(() => {}); }
       }
+      if (sub === 'announce') {
+        try {
+          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+          if (!info) return msg.reply('No release info.').catch(() => {});
+          const embed = buildUpdateEmbed(info, pjson.version);
+          return msg.channel.send({ embeds: [embed] }).catch(() => {});
+        } catch (_) { return msg.reply('Announce failed.').catch(() => {}); }
+      }
       if (sub === 'guide') {
         const osArg = (args.shift() || '').toLowerCase();
         const os = osArg.includes('lin') ? 'linux' : 'windows';
@@ -2270,7 +2299,7 @@ client.on('messageCreate', async (msg) => {
           return msg.reply(`Upgrade guide (${os}):\n\n${guide}`).catch(() => {});
         }
       }
-      return msg.reply('Usage: 7d!update check|notes|guide [windows|linux]').catch(() => {});
+  return msg.reply('Usage: 7d!update check|notes|guide [windows|linux]|announce').catch(() => {});
     }
   } catch (err) {
     // ignore
