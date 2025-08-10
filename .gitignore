@@ -65,6 +65,11 @@ Dishorde.tar.gz
 Dishorde.zip
 console.log
 
+# DeadLink packaging artifacts
+DeadLink/
+DeadLink.tar.gz
+DeadLink.zip
+
 # Analytics data storage
 analytics.json
 
