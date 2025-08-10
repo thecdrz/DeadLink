@@ -3,6 +3,7 @@ const fs = require("fs");
 const pjson = require("./package.json");
 const Discord = require("discord.js");
 const createBloodMoonMonitor = require("./lib/bloodmoon.js");
+const UpdatesService = require("./lib/updates.js");
 var TelnetClient = require("telnet-client");
 const DishordeInitializer = require("./lib/init.js");
 const Logger = require("./lib/log.js");
@@ -289,6 +290,28 @@ const bloodMoon = createBloodMoonMonitor({
   config,
   getChannel: () => channel
 });
+
+// Prepare updates service (private by default; no auto-posts)
+config.updates = config.updates || { enabled: false, intervalHours: 24, prerelease: false, notifyMode: 'off' };
+const updates = new UpdatesService({
+  repoAuthor: configPrivate.githubAuthor,
+  repoName: configPrivate.githubName,
+  currentVersion: pjson.version,
+  storageDir: '.'
+});
+if (config.updates.enabled === true) {
+  updates.startSchedule({ intervalHours: config.updates.intervalHours || 24, includePrerelease: !!config.updates.prerelease }, (info) => {
+    // Private-only: do not post publicly unless notifyMode configured
+    if (config.updates.notifyMode === 'channel' && config.updates.notifyChannel && channel && channel.id === config.updates.notifyChannel) {
+      const embed = {
+        color: 0x7289da,
+        title: `Update available: v${info.version}`,
+        description: `You're running v${pjson.version}. New release is available.\n\nRelease: ${info.url}`
+      };
+      channel.send({ embeds: [embed] }).catch(() => {});
+    }
+  });
+}
 
 ////// # Functions # //////
 function sanitizeMsgFromGame(msg) {
@@ -2208,6 +2231,39 @@ client.on('messageCreate', async (msg) => {
         }
       } catch (_) { /* ignore */ }
       return;
+    }
+
+    // Admin-only update helpers (private)
+    if (cmd === 'update') {
+      if (!msg.member || !msg.member.permissions || !msg.member.permissions.has('MANAGE_GUILD')) {
+        return; // silent for non-admins
+      }
+      const sub = (args.shift() || '').toLowerCase();
+      if (sub === 'check') {
+        try {
+          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+          if (!info) return msg.reply('No release info.').catch(() => {});
+          const newer = updates.isNewer(info.version);
+          return msg.reply(newer ? `New version available: v${info.version}\n${info.url}` : `You are on the latest: v${pjson.version}`).catch(() => {});
+        } catch (e) {
+          return msg.reply('Update check failed.').catch(() => {});
+        }
+      }
+      if (sub === 'notes') {
+        try {
+          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+          if (!info) return msg.reply('No release info.').catch(() => {});
+          const body = (info.body || '').slice(0, 1500) || '(no notes)';
+          return msg.reply(`Latest: ${info.name}\n${info.url}\n\n${body}`).catch(() => {});
+        } catch (_) { return msg.reply('Could not fetch notes.').catch(() => {}); }
+      }
+      if (sub === 'guide') {
+        const osArg = (args.shift() || '').toLowerCase();
+        const os = osArg.includes('lin') ? 'linux' : 'windows';
+        const guide = updates.getGuide(os).replace(/%LATEST%/g, 'latest');
+        return msg.reply(`Upgrade guide (${os}):\n\n${guide}`).catch(() => {});
+      }
+      return msg.reply('Usage: 7d!update check|notes|guide [windows|linux]').catch(() => {});
     }
   } catch (err) {
     // ignore

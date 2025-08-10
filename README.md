@@ -32,6 +32,7 @@ HordeComms runs as a completely separate application, so no mods are required. *
 
 Admin-only utilities (requires Manage Server permission):
 - `7d!bloodmoon test imminent|start|end` — Send a test Blood Moon alert (also broadcasts in-game if enabled)
+ - `7d!update check|notes|guide [windows|linux]` — Private update helpers (no public posts)
 
 💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
