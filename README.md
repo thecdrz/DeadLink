@@ -13,20 +13,10 @@
 
 </details>
 
-> Changelog: See the v2.7.1 notes at https://github.com/thecdrz/HordeComms/releases/tag/v2.7.1
-
 HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
 
 **Based on Dishorde by LakeYS** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
 ------------ | ------------- | -------------
-
-## Latest Release: v2.7.1 (Docs Refresh)
-
-- Docs-only refresh based on stable v2.7.0
-- README updated to showcase five new screenshots (below)
-- No runtime changes vs 2.7.0
-
-Release notes: https://github.com/thecdrz/HordeComms/releases/tag/v2.7.1
 
 ## NEW FEATURES in HordeComms:
 - 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
@@ -76,6 +66,14 @@ HordeComms runs as a completely separate application, so no mods are required. *
 ![HordeComms Trends](screenshots/HC_Trends.png)
 
 *Real-time player analytics with trend tracking and visual data representation*
+
+## Latest Release: v2.7.1 (Docs Refresh)
+
+- Docs-only refresh based on stable v2.7.0
+- README updated to showcase five new screenshots (above)
+- No runtime changes vs 2.7.0
+
+Release notes: https://github.com/thecdrz/HordeComms/releases/tag/v2.7.1
 
 # How it Works
 HordeComms works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
