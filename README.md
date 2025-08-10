@@ -2,7 +2,16 @@
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/HordeComms?sort=semver)](https://github.com/thecdrz/HordeComms/releases/latest)
 
-> Quick links: [Releases](https://github.com/thecdrz/HordeComms/releases) • [Latest](https://github.com/thecdrz/HordeComms/releases/latest) • [Changelog v2.7.1](https://github.com/thecdrz/HordeComms/releases/tag/v2.7.1) • [License](LICENSE.md) • [Report issue](https://github.com/thecdrz/HordeComms/issues/new)
+<details>
+  <summary>Quick links</summary>
+
+- [Releases](https://github.com/thecdrz/HordeComms/releases)
+- [Latest](https://github.com/thecdrz/HordeComms/releases/latest)
+- [Changelog v2.7.1](https://github.com/thecdrz/HordeComms/releases/tag/v2.7.1)
+- [License](LICENSE.md)
+- [Report issue](https://github.com/thecdrz/HordeComms/issues/new)
+
+</details>
 
 > Changelog: See the v2.7.1 notes at https://github.com/thecdrz/HordeComms/releases/tag/v2.7.1
 
