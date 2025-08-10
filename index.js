@@ -300,8 +300,9 @@ const updates = new UpdatesService({
   storageDir: '.'
 });
 
-function buildUpdateEmbed(info, currentVersion) {
-  const title = `Update available: v${info.version}`;
+function buildUpdateEmbed(info, currentVersion, opts = {}) {
+  const upToDate = !!opts.upToDate;
+  const title = upToDate ? `Latest release (already installed): v${info.version}` : `Update available: v${info.version}`;
   const url = info.url;
   // Extract first few bullet points or a short excerpt
   let whatsNew = '';
@@ -314,9 +315,11 @@ function buildUpdateEmbed(info, currentVersion) {
       whatsNew = (info.body || '').slice(0, 600);
     }
   }
-  const description = `You're running v${currentVersion}. A new release is available.\n\n${url}`;
+  const description = upToDate
+    ? `You're running v${currentVersion}. This is the latest release.\n\n${url}`
+    : `You're running v${currentVersion}. A new release is available.\n\n${url}`;
   const embed = {
-    color: 0x7289da,
+    color: upToDate ? 0x2ecc71 : 0x7289da,
     title,
     description,
     fields: whatsNew ? [{ name: "What's new", value: whatsNew }] : [],
@@ -2282,7 +2285,8 @@ client.on('messageCreate', async (msg) => {
         try {
           const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
           if (!info) return msg.reply('No release info.').catch(() => {});
-          const embed = buildUpdateEmbed(info, pjson.version);
+          const upToDate = !updates.isNewer(info.version);
+          const embed = buildUpdateEmbed(info, pjson.version, { upToDate });
           return msg.channel.send({ embeds: [embed] }).catch(() => {});
         } catch (_) { return msg.reply('Announce failed.').catch(() => {}); }
       }
