@@ -2260,8 +2260,15 @@ client.on('messageCreate', async (msg) => {
       if (sub === 'guide') {
         const osArg = (args.shift() || '').toLowerCase();
         const os = osArg.includes('lin') ? 'linux' : 'windows';
-        const guide = updates.getGuide(os).replace(/%LATEST%/g, 'latest');
-        return msg.reply(`Upgrade guide (${os}):\n\n${guide}`).catch(() => {});
+        try {
+          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+          const tag = info && info.tag ? info.tag : ('v' + pjson.version);
+          const guide = updates.getGuide(os, tag);
+          return msg.reply(`Upgrade guide (${os}) for ${tag}:\n\n${guide}`).catch(() => {});
+        } catch (_) {
+          const guide = updates.getGuide(os, 'v' + pjson.version);
+          return msg.reply(`Upgrade guide (${os}):\n\n${guide}`).catch(() => {});
+        }
       }
       return msg.reply('Usage: 7d!update check|notes|guide [windows|linux]').catch(() => {});
     }
