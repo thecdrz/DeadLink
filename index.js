@@ -1207,6 +1207,14 @@ function checkAndAnnounceVersion() {
 }
 
 function announceNewVersion(version) {
+  if (!channel && config.channel && client && client.channels) {
+    try {
+      const tryFetch = client.channels.fetch(config.channel.toString());
+      if (tryFetch && typeof tryFetch.then === 'function') {
+        tryFetch.then((ch) => { if (ch && ch.isText()) channel = ch; }).catch(() => {});
+      }
+    } catch (_) {}
+  }
   if (!channel) {
     console.log('Channel not ready for version announcement');
     return;
