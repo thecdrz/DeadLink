@@ -2295,10 +2295,13 @@ client.on('messageCreate', async (msg) => {
       } catch (_) {}
     }
 
-    const content = msg.content || '';
-    const p = (config.prefix ? config.prefix : '7d!');
-    if (!content.startsWith(p)) return;
-    const args = content.slice(p.length).trim().split(/\s+/);
+  const content = msg.content || '';
+  const primaryPrefix = (config.prefix ? config.prefix : '7d!');
+  // Backward-compat: also allow legacy '!' unless it's already the primary
+  const prefixes = primaryPrefix === '!' ? ['!'] : [primaryPrefix, '!'];
+  const usedPrefix = prefixes.find(px => content.startsWith(px));
+  if (!usedPrefix) return;
+  const args = content.slice(usedPrefix.length).trim().split(/\s+/);
     const cmd = (args.shift() || '').toLowerCase();
 
     // Public dashboard and info suite
