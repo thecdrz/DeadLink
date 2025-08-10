@@ -54,7 +54,9 @@ run_private*.sh
 run*.bat
 config_*.json
 run*.vbs
+# Keep ignoring root-level update.sh, but allow scripts/update.sh
 update.sh
+!scripts/update.sh
 update_private.sh
 7DTD-Discord/
 7DTD-Discord.tar.gz
