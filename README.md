@@ -32,7 +32,7 @@ HordeComms runs as a completely separate application, so no mods are required. *
 
 Admin-only utilities (requires Manage Server permission):
 - `7d!bloodmoon test imminent|start|end` — Send a test Blood Moon alert (also broadcasts in-game if enabled)
- - `7d!update check|notes|guide [windows|linux]` — Private update helpers (no public posts)
+- `7d!update check|notes|guide [windows|linux]|announce` — Update helpers and on-demand announcement
 
 💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
@@ -58,6 +58,11 @@ Admin-only utilities (requires Manage Server permission):
 ![HordeComms Trends](screenshots/HC_Trends.png)
 
 *Real-time player analytics with trend tracking and visual data representation*
+
+### Version Update Announcement (Admin test)
+![HordeComms Update Check](screenshots/HC_UpdateCheck.png)
+
+*Rich embed showing the latest release. Use `7d!update announce` to print this on demand; auto-posts can be enabled via the `updates` config.*
 
 ## Latest Release: v2.8.0
 
@@ -121,6 +126,23 @@ Optional Blood Moon configuration block in `config.json` (all optional):
 – intervalSeconds: how often to poll gettime
 – frequency: override global `horde-frequency` if needed
 – broadcastInGame: also announce transitions inside the game chat
+
+Optional Updates configuration block in `config.json` (all optional):
+
+```
+"updates": {
+	"enabled": true,
+	"intervalHours": 24,
+	"prerelease": false,
+	"notifyMode": "channel",
+	"notifyChannel": "<channel id>"
+}
+```
+– enabled: enable automatic checks
+– intervalHours: how often to check GitHub releases
+– prerelease: include prereleases when true
+– notifyMode: set to "channel" for public announcements; leave off/omit to stay silent
+– notifyChannel: channel ID to post updates into
 
 ## Environment configuration (recommended)
 You can keep secrets out of `config.json` by using environment variables. On Windows PowerShell:
