@@ -4,8 +4,7 @@
 
 HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
 
-**Based on Dishorde by LakeYS** | [Original Dishorde](https://github.com/LakeYS/Dishorde) | [HordeComms Repository](https://github.com/thecdrz/HordeComms)
------------- | ------------- | -------------
+> Credit: Based on Dishorde by LakeYS — Original project: https://github.com/LakeYS/Dishorde
 
 ## NEW FEATURES in HordeComms:
 - 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
