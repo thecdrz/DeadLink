@@ -206,7 +206,7 @@
 
 ---
 
-*HordeComms - Built on the solid foundation of Dishorde by LakeYS, Enhanced by CDRZ*
+*DeadLink - Built on the solid foundation of Dishorde by LakeYS, Enhanced by CDRZ*
 
 ## 🙏 Credits
 
@@ -214,7 +214,7 @@
 - Base Discord bot framework and 7DTD telnet integration
 - Core command structure and reliable foundation
 
-**HordeComms Enhancements**: by Scott Moreau (CDRZ)
+**DeadLink Enhancements**: by Scott Moreau (CDRZ)
 - Interactive dashboard with clickable buttons
 - Player trends analytics with enhanced insights and pattern analysis
 - Intelligent activity analysis with narrative storytelling

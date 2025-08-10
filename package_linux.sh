@@ -1,11 +1,14 @@
 #!/bin/sh
-mkdir Dishorde
-cp config.example.json Dishorde
-cp package.json Dishorde
-cp index.js Dishorde
-cp run.sh Dishorde
-cp run_silent.sh Dishorde
-cp README.md Dishorde
-cp lib Dishorde/lib -r
-tar -zcvf Dishorde.tar.gz Dishorde
-read -p "Press enter to continue"
+set -e
+name=DeadLink
+rm -rf "$name" "$name.tar.gz"
+mkdir "$name"
+cp -v config.example.json "$name"/
+cp -v package.json "$name"/
+cp -v index.js "$name"/
+cp -v run.sh "$name"/
+cp -v run_silent.sh "$name"/
+cp -v README.md "$name"/
+cp -rv lib "$name"/lib
+tar -zcvf "$name.tar.gz" "$name"
+echo "Created $name.tar.gz"

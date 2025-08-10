@@ -1,17 +1,17 @@
 {
-  "name": "hordecomms",
-  "version": "2.9.1",
+  "name": "deadlink",
+  "version": "2.11.0",
   "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, dynamic narrative storytelling, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by CDRZ.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest --runInBand"
   },
   "author": "Scott Moreau (CDRZ) - built on Dishorde by LakeYS",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thecdrz/HordeComms"
+  "url": "https://github.com/thecdrz/DeadLink"
   },
   "keywords": [
     "discord",
@@ -28,5 +28,15 @@
     "minimist": "^1.2.5",
     "semver-compare": "^1.0.0",
     "telnet-client": "^0.15.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0"
+  },
+  "optionalDependencies": {
+    "canvas": "^2.11.2",
+    "chart.js": "^4.5.0",
+    "chartjs-node-canvas": "^5.3.0",
+    "zod": "^3.23.8"
   }
 }

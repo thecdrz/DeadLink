@@ -1,8 +1,8 @@
 param(
-	[string]$Tag = 'v2.9.0'
+	[string]$Tag = 'v2.11.0'
 )
 
-# HordeComms update helper (manual)
+# DeadLink update helper (manual)
 # Usage:
 #   powershell -ExecutionPolicy Bypass -File .\scripts\update.ps1 [-Tag vX.Y.Z]
 # Run from the repo folder in PowerShell (admin only if your service manager requires it).
@@ -12,8 +12,8 @@ Copy-Item -Path config.json -Destination config.backup.json -ErrorAction Silentl
 Copy-Item -Path analytics.json -Destination analytics.backup.json -ErrorAction SilentlyContinue
 
 $owner = 'thecdrz'
-$repo = 'HordeComms'
-$zip = "HordeComms_$Tag.zip"
+$repo = 'DeadLink'
+$zip = "DeadLink_$Tag.zip"
 $url = "https://github.com/$owner/$repo/archive/refs/tags/$Tag.zip"
 
 Write-Host "Downloading release archive for $Tag ..."

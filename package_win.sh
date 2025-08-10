@@ -1,12 +1,15 @@
 #!/bin/sh
-mkdir Dishorde
-cp config.example.json Dishorde
-cp package.json Dishorde
-cp index.js Dishorde
-cp install.bat Dishorde
-cp run.bat Dishorde
-cp profile.png Dishorde
-cp README.md Dishorde
-cp lib Dishorde/lib -r
-cp run_silent.vbs Dishorde
-pause
+set -e
+name=DeadLink
+rm -rf "$name" "$name.zip"
+mkdir "$name"
+cp -v config.example.json "$name"/
+cp -v package.json "$name"/
+cp -v index.js "$name"/
+cp -v install.bat "$name"/
+cp -v run.bat "$name"/
+cp -v README.md "$name"/
+cp -rv lib "$name"/lib
+echo "Creating $name.zip (requires PowerShell on Windows)..."
+powershell -NoProfile -Command "Compress-Archive -Path '$name/*' -DestinationPath '$name.zip' -Force"
+echo "Created $name.zip"

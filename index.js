@@ -7,11 +7,15 @@ const UpdatesService = require("./lib/updates.js");
 var TelnetClient = require("telnet-client");
 const DishordeInitializer = require("./lib/init.js");
 const Logger = require("./lib/log.js");
+const { TelnetQueue, friendlyError } = require("./lib/telnetQueue.js");
+const { renderTrendPng } = require("./lib/charts.js");
+const { validateConfig } = require("./lib/configSchema.js");
 
 const { Client, Intents } = Discord;
-var intents = ["GUILDS", "GUILD_MESSAGES"];
+// Request explicit gateway intents via constants (v13)
+const requestedIntents = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
 
-console.log("\x1b[7m# HordeComms v" + pjson.version + " (Based on Dishorde by LakeYS) #\x1b[0m");
+console.log("\x1b[7m# DeadLink v" + pjson.version + " (Based on Dishorde by LakeYS) #\x1b[0m");
 console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
 
 const lineSplit = /\n|\r/g;
@@ -120,6 +124,33 @@ else {
     console.error("ERROR: Server IP not configured. Set TELNET_IP environment variable or update config.json");
     process.exit(1);
   }
+  // Optional schema validation (only logs warnings when zod is present)
+  try {
+    const v = validateConfig(config);
+    if (v && v.ok === false) {
+      console.warn("Config validation warnings:", v.message);
+    }
+  } catch (_) { /* ignore */ }
+}
+
+// Quick health-check mode: validate config and exit without starting services
+if (argv.check) {
+  try {
+    const summary = {
+      version: pjson.version,
+      prefix: typeof config.prefix === 'string' ? config.prefix : '7d!',
+      channel: config.channel ? String(config.channel) : '(unset)',
+      ip: config.ip,
+      port: config.port,
+      updates: config.updates && config.updates.enabled === true ? 'on' : 'off'
+    };
+    console.log('CONFIG OK');
+    console.log(JSON.stringify(summary, null, 2));
+    process.exit(0);
+  } catch (e) {
+    console.error('CONFIG CHECK FAILED:', e && e.message ? e.message : e);
+    process.exit(1);
+  }
 }
 
 // Logging init
@@ -128,6 +159,8 @@ if(config["log-console"]) {
 }
 
 var telnet = config["demo-mode"]?require("./lib/demoServer.js").client:new TelnetClient();
+// Safer command execution queue with light rate limiting
+const telnetQueue = new TelnetQueue(telnet, { minIntervalMs: 350, defaultTimeout: 6000 });
 
 // IP
 // This argument allows you to run the bot on a remote network.
@@ -174,17 +207,17 @@ else {
 var channelid = config.channel.toString();
 
 // Prefix
+// Do not force-case the configured prefix; match user input case-insensitively later
 var prefix;
-if(typeof config.prefix !== "string") {
+if (typeof config.prefix !== "string") {
   prefix = "7d!";
-}
-else {
-  prefix = config.prefix.toUpperCase();
+} else {
+  prefix = config.prefix;
 }
 
 // Load the Discord client
 const client = new Client({
-  intents: new Intents(intents),
+  intents: requestedIntents,
   retryLimit: 3,
   messageCacheMaxSize: 50
 });
@@ -272,7 +305,7 @@ if(config["allow-exec-command"] === true) {
 ////// # Init/Version Check # //////
 const configPrivate = {
   githubAuthor: "thecdrz",
-  githubName: "HordeComms",
+  githubName: "DeadLink",
   socketPort: 7383
 };
 
@@ -589,17 +622,11 @@ function handleMsgToGame(line) {
 }
 
 function handleCmdError(err) {
-  if(err) {
-    if(err.message === "response not received") {
-      channel.send("Command failed because the server is not responding. It may be frozen or loading.");
-    }
-    else if(err.message === "socket not writable") {
-      channel.send("Command failed because the bot is not connected to the server. Type 7d!info to see the current status.");
-    }
-    else {
-      channel.send(`Command failed with error "${err.message}"`);
-    }
-  }
+  if (!err) return;
+  try {
+    const msg = friendlyError(err);
+    if (msg && channel) channel.send(msg).catch(() => {});
+  } catch (_) {}
 }
 
 // Helper to process raw telnet response text into meaningful lines
@@ -1249,7 +1276,7 @@ function announceNewVersion(version) {
   
   const releaseNotes = {
     "2.4.0": {
-      title: "🎉 HordeComms v2.4.0 Released!",
+  title: "🎉 DeadLink v2.4.0 Released!",
       description: "Major update with persistent analytics and UI improvements",
       features: [
         "💾 **Persistent Analytics** - Your server trends now survive bot restarts!",
@@ -1266,10 +1293,10 @@ function announceNewVersion(version) {
     // Generic announcement for versions without specific release notes
     const embed = {
       color: 0x7289da,
-      title: `🚀 HordeComms v${version} Released!`,
+  title: `🚀 DeadLink v${version} Released!`,
       description: "The bot has been updated with new features and improvements!",
       footer: {
-        text: `HordeComms v${version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${version} • Original: LakeYS • Expanded: CDRZ`,
       },
       timestamp: new Date().toISOString()
     };
@@ -1296,7 +1323,7 @@ function announceNewVersion(version) {
       }
     ],
     footer: {
-      text: `HordeComms v${version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${version} • Original: LakeYS • Expanded: CDRZ`,
     },
     timestamp: new Date().toISOString()
   };
@@ -1656,23 +1683,27 @@ function formatHour(hour) {
 }
 
 function handleTrends(msg) {
-  const trendsReport = generateTrendsReport();
-  
-  // Create enhanced embed for trends
-  const embed = {
-    color: 0x3498db, // Blue color
-    title: "📊 Server Analytics Dashboard",
-    description: trendsReport,
-    footer: {
-      text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-    }
-  };
-  
-  msg.channel.send({ embeds: [embed] })
-    .catch(() => {
-      // Fallback to plain text if embed fails
-      msg.channel.send(trendsReport);
-    });
+  try {
+    const trendsReport = generateTrendsReport();
+    const sendAscii = () => msg.channel.send({ embeds: [{
+      color: 0x3498db,
+      title: "📊 Server Analytics Dashboard",
+      description: trendsReport,
+      footer: { text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+    }] }).catch(() => msg.channel.send(trendsReport).catch(()=>{}));
+
+    (async () => {
+      try {
+        const png = await renderTrendPng(d7dtdState.playerTrends.history);
+        if (!png) return sendAscii();
+        await msg.channel.send({ files: [{ attachment: png, name: 'trends.png' }], embeds: [{
+          color: 0x3498db,
+          title: "📊 Server Analytics Dashboard",
+          description: trendsReport.split('\n').slice(0, 12).join('\n')
+        }] });
+      } catch (_) { sendAscii(); }
+    })();
+  } catch (_) { /* ignore */ }
 }
 
 function generateChangesReport() {
@@ -1685,7 +1716,7 @@ function generateChangesReport() {
   const v = pjson.version;
 
   return (
-    `**ℹ️ HordeComms v${v}** *(${currentDate})*\n` +
+  `**ℹ️ DeadLink v${v}** *(${currentDate})*\n` +
     `Built on Dishorde by LakeYS • CDRZ enhancements\n\n` +
 
   `**🆕 New in v2.9.0**\n` +
@@ -1739,7 +1770,7 @@ function createDashboardEmbed() {
                  `⏰ **Time** - Check current game time\n` +
                  `ℹ️ **Info** - Server version and details`,
     footer: {
-      text: `HordeComms v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
     }
   };
 }
@@ -1909,7 +1940,7 @@ function handleActivityFromButton(interaction) {
       hordeTime: null
     };
 
-  telnet.exec("lp", { timeout: 7000 }, (err, response) => {
+  telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (!err) {
         processTelnetResponse(response, (line) => {
           if (line.includes("id=") && line.includes("pos=")) {
@@ -1920,7 +1951,7 @@ function handleActivityFromButton(interaction) {
           }
         });
 
-  telnet.exec("gettime", { timeout: 5000 }, (timeErr, timeResponse) => {
+  telnetQueue.exec("gettime", { timeout: 5000 }).then(({err: timeErr, response: timeResponse}) => {
           if (!timeErr) {
             processTelnetResponse(timeResponse, (timeLine) => {
               if (timeLine.startsWith("Day")) {
@@ -1987,7 +2018,7 @@ function handleTrendsFromButton(interaction) {
 
 function handlePlayersFromButton(interaction) {
   interaction.deferReply().then(() => {
-  telnet.exec("lp", { timeout: 7000 }, (err, response) => {
+  telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (!err) {
         let playerData = "";
         processTelnetResponse(response, (line) => {
@@ -2023,13 +2054,13 @@ function handlePlayersFromButton(interaction) {
       } else {
         interaction.editReply("❌ Failed to get player list.").catch(console.error);
       }
-    });
+  });
   }).catch(console.error);
 }
 
 function handleTimeFromButton(interaction) {
   interaction.deferReply().then(() => {
-  telnet.exec("gettime", { timeout: 5000 }, (err, response) => {
+  telnetQueue.exec("gettime", { timeout: 5000 }).then(({err, response}) => {
       if (!err) {
         let timeData = "";
         processTelnetResponse(response, (line) => {
@@ -2082,10 +2113,10 @@ function handleInfoFromButton(interaction) {
     
     const embed = {
       color: 0x7289da, // Discord blurple for info
-      title: "🎮 HordeComms Information & Features",
+  title: "🎮 DeadLink Information & Features",
       description: infoContent,
       footer: {
-        text: `HordeComms v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
       }
     };
     
@@ -2110,7 +2141,7 @@ function handleActivity(msg) {
   d7dtdState.waitingForActivityMsg = msg;
 
   // Execute multiple commands to gather data
-  telnet.exec("lp", { timeout: 7000 }, (err, response) => {
+  telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
     if (!err) {
       processTelnetResponse(response, (line) => {
         if (line.includes("id=") && line.includes("pos=")) {
@@ -2124,8 +2155,8 @@ function handleActivity(msg) {
         }
       });
 
-      // Get current time
-  telnet.exec("gettime", { timeout: 5000 }, (timeErr, timeResponse) => {
+    // Get current time
+  telnetQueue.exec("gettime", { timeout: 5000 }).then(({err: timeErr, response: timeResponse}) => {
         if (!timeErr) {
           processTelnetResponse(timeResponse, (timeLine) => {
             if (timeLine.startsWith("Day")) {
@@ -2177,21 +2208,30 @@ function handleActivity(msg) {
 function handleTrends(msg) {
   try {
     const trendsReport = generateTrendsReport();
-    const embed = {
+    const sendAscii = () => msg.channel.send({ embeds: [{
       color: 0x3498db,
       title: "📊 Server Analytics Dashboard",
       description: trendsReport,
-      footer: {
-        text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-      }
-    };
-    msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(trendsReport));
-  } catch (_) {}
+      footer: { text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+    }] }).catch(() => msg.channel.send(trendsReport).catch(()=>{}));
+
+    (async () => {
+      try {
+        const png = await renderTrendPng(d7dtdState.playerTrends.history);
+        if (!png) return sendAscii();
+        await msg.channel.send({ files: [{ attachment: png, name: 'trends.png' }], embeds: [{
+          color: 0x3498db,
+          title: "📊 Server Analytics Dashboard",
+          description: trendsReport.split('\n').slice(0, 12).join('\n')
+        }] });
+      } catch (_) { sendAscii(); }
+    })();
+  } catch (_) { /* ignore */ }
 }
 
 function handlePlayers(msg) {
   try {
-    telnet.exec("lp", { timeout: 7000 }, (err, response) => {
+  telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
       let playerData = "";
       processTelnetResponse(response, (line) => {
@@ -2212,13 +2252,13 @@ function handlePlayers(msg) {
       } else {
         msg.channel.send("❌ No player data received.").catch(() => {});
       }
-    });
+  });
   } catch (_) {}
 }
 
 function handleTime(msg) {
   try {
-    telnet.exec("gettime", { timeout: 5000 }, (err, response) => {
+  telnetQueue.exec("gettime", { timeout: 5000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
       let timeData = "";
       processTelnetResponse(response, (line) => { if (line.startsWith("Day")) timeData = line; });
@@ -2303,6 +2343,8 @@ function calculateHordeStatus(timeStr) {
 client.on('ready', async () => {
   try {
     console.log(`Discord logged in as ${client.user.tag}`);
+  console.log(`Commands prefix: '${(typeof prefix==='string'&&prefix)||'7d!'}'`);
+  console.log('If the bot does not respond to text commands, enable "Message Content Intent" in the Discord Developer Portal for this bot.');
   } catch (_) {}
 });
 
@@ -2333,9 +2375,9 @@ client.on('messageCreate', async (msg) => {
     }
 
   const content = msg.content || '';
-  // Only accept the configured prefix (default '7d!')
+  // Only accept the configured prefix (default '7d!'), but compare case-insensitively
   const primaryPrefix = (typeof prefix === 'string' && prefix.length) ? prefix : '7d!';
-  const usedPrefix = content.startsWith(primaryPrefix) ? primaryPrefix : null;
+  const usedPrefix = content.toLowerCase().startsWith(primaryPrefix.toLowerCase()) ? primaryPrefix : null;
   if (!usedPrefix) return;
   const args = content.slice(usedPrefix.length).trim().split(/\s+/);
     const cmd = (args.shift() || '').toLowerCase();
@@ -2424,9 +2466,9 @@ client.on('messageCreate', async (msg) => {
 
         const embed = {
           color: 0x7289da,
-          title: '🎮 HordeComms Information & Features',
+          title: '🎮 DeadLink Information & Features',
           description: `Server connection: ${statusMsg}\n\n${changesReport}${latestLine}`,
-          footer: { text: `HordeComms v${pjson.version} • Original: LakeYS • Expanded: CDRZ` }
+          footer: { text: `DeadLink v${pjson.version} • Original: LakeYS • Expanded: CDRZ` }
         };
         await msg.channel.send({ embeds: [embed] }).catch(() => {});
       } catch (_) { /* ignore */ }

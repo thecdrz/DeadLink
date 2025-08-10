@@ -1,25 +1,25 @@
-# HordeComms
+# DeadLink
 
-[![Latest release](https://img.shields.io/github/v/release/thecdrz/HordeComms?sort=semver)](https://github.com/thecdrz/HordeComms/releases/latest)
+![DeadLink Logo](screenshots/Hc_Logo.png)
 
-HordeComms is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
+[![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
+
+DeadLink is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
 
 > Credit: Based on Dishorde by LakeYS — Original project: https://github.com/LakeYS/Dishorde
 
-## NEW FEATURES in HordeComms:
-- 🎮 **Interactive Dashboard**: Modern GUI with clickable buttons for all functions
-- 📊 **Player Trends Analytics**: 24-hour tracking with enhanced insights and peak time analysis
-- 🎯 **Dynamic Narrative Engine**: Intelligent storytelling with humor, time-aware scenarios, and contextual atmosphere ⭐ **NEW in v2.5.0!**
-- 🎭 **Enhanced Empty Server Stories**: Witty narratives with time-specific scenarios and player history ⭐ **NEW in v2.5.0!**
-- 🏃 **Multi-Scenario Support**: Specialized narratives for 0, 1, or multiple players with group dynamics ⭐ **NEW in v2.5.0!**
-- 🔒 **Enhanced Security**: Environment variable support for credential protection
-- 🌙 **Blood Moon Integration**: Contextual warnings and preparation advice
-- 📱 **Rich Discord Embeds**: Professional formatting with organized sections
-- 🧠 **Smart Biome Detection**: Location-aware storytelling with environmental context
-- 📈 **Enhanced Analytics**: Comprehensive player activity insights with session analysis and pattern recognition
-- 🚪 **Enhanced Player Messages**: Rich embeds for join/leave/death events with contextual descriptions
+## NEW FEATURES in DeadLink:
+### New in v2.10.0
+- Safer telnet commands via a queued executor with light rate limiting
+- Friendlier user errors when the server is loading/not connected/timeouts
+- Optional PNG trend charts in `7d!trends` (falls back to ASCII if deps missing)
+- Optional config validation (zod) with human-readable warnings
+- Test scaffolding (Jest) for quick smoke checks
 
-HordeComms runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
+Note: PNG charts and validation use optional deps; install them with npm if desired:
+`npm i chartjs-node-canvas chart.js canvas zod`
+
+DeadLink runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
 
 ## 🎮 Commands
 
@@ -39,41 +39,41 @@ Admin-only utilities (requires Manage Server permission):
 ## 📸 Screenshots
 
 ### Interactive Dashboard
-![HordeComms Dashboard](screenshots/HC_Dashboard.png)
+![DeadLink Dashboard](screenshots/HC_Dashboard.png)
 
 *Clean, intuitive interface with clickable buttons for all server functions*
 
 ### Comprehensive Information Display
-![HordeComms Info](screenshots/HC_Info.png)
+![DeadLink Info](screenshots/HC_Info.png)
 
 *Detailed feature overview with organized sections and professional formatting*
 
 ### Game Time & Blood Moon Context
-![HordeComms Time](screenshots/HC_Time.png)
+![DeadLink Time](screenshots/HC_Time.png)
 
 ### Player Activity Snapshot
-![HordeComms Activity](screenshots/HC_Activity.png)
+![DeadLink Activity](screenshots/HC_Activity.png)
 
 ### Analytics & Trends
-![HordeComms Trends](screenshots/HC_Trends.png)
+![DeadLink Trends](screenshots/HC_Trends.png)
 
 *Real-time player analytics with trend tracking and visual data representation*
 
 ### Version Update Announcement (Admin test)
-![HordeComms Update Check](screenshots/HC_UpdateCheck.png)
+![DeadLink Update Check](screenshots/HC_UpdateCheck.png)
 
 *Rich embed showing the latest release. Use `7d!update announce` to print this on demand; auto-posts can be enabled via the `updates` config.*
 
-## Latest Release: v2.8.0
+## Latest Release: v2.11.0
 
 - New: Optional Blood Moon monitor with automatic imminent/start/end alerts
 - Hidden admin test command: `7d!bloodmoon test imminent|start|end`
 - Safe defaults (on by default; respects `horde-frequency` and new `bloodMoon` config)
 
-Release notes: https://github.com/thecdrz/HordeComms/releases/tag/v2.8.0
+Release notes: https://github.com/thecdrz/DeadLink/releases/tag/v2.8.0
 
 # How it Works
-HordeComms works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
+DeadLink works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
 
 # Enhanced Features
 This CDRZ fork adds intelligent analysis capabilities that monitor player activity and provide contextual insights:
@@ -87,7 +87,7 @@ This CDRZ fork adds intelligent analysis capabilities that monitor player activi
 - **Historical Context**: Incorporates recent player activity and server trends into storytelling
 
 # Authors
-**HordeComms**: CDRZ | Discord: <@217012303063678978>  
+**DeadLink**: CDRZ | Discord: <@217012303063678978>  
 **Original Dishorde**: LakeYS (contact@lakeys.net)
 
 # Terminal Commands
@@ -159,7 +159,7 @@ node index.js
 The app will automatically prefer these env vars when present.
 
 ## Troubleshooting telnet
-- If in-game broadcast replies with "response not received" but the message shows up in game, this is normal for some servers without a prompt; HordeComms treats it as success.
+- If in-game broadcast replies with "response not received" but the message shows up in game, this is normal for some servers without a prompt; DeadLink treats it as success.
 - If you see repeated "[TELNET] Timeout":
 	- Verify server telnet is enabled and reachable (IP/port/password).
 	- Ensure the telnet port is open on the firewall and forwarded if remote.
@@ -179,7 +179,7 @@ The app will automatically prefer these env vars when present.
 `https://discord.com/oauth2/authorize?client_id=APP_ID&scope=bot`
 
 ## Setting up the bot
-1. [Download](https://github.com/thecdrz/HordeComms/releases/latest) this repository and extract it somewhere on your server's system.
+1. [Download](https://github.com/thecdrz/DeadLink/releases/latest) this repository and extract it somewhere on your server's system.
 2. Install Node.js LTS from [this website](https://nodejs.org/en/download/).
 3. Once Node.js is finished installing, run install.bat in the bot's folder. This will automatically install the required modules for the bot.
 4. Now you'll need to edit your server's config xml file. If you're using the Steam dedicated server, it should be located in `C:\Program Files (x86)\Steam\steamapps\common\7 Days to Die Dedicated Server`.
@@ -205,8 +205,8 @@ You may want to create a shortcut to run.bat or run_silent.vbs in your Startup f
 ## Setting up the bot
 1. Open a terminal on your system.
 2. Install Node.js and NPM. Install build tools if instructed. [[How to install via package manager]](https://nodejs.org/en/download/package-manager/). **Skip this step if installing to a Raspberry Pi device.**
-3. Type `curl -L https://github.com/thecdrz/HordeComms/releases/latest/download/HordeComms.tar.gz > hordecomms.tar.gz` to download the bot's files to an archive named `hordecomms.tar.gz`.
-4. Type `tar -xzf hordecomms.tar.gz` to extract the archive. This will create a directory named "HordeComms". Navigate to the directory with `cd HordeComms`.
+3. Type `curl -L https://github.com/thecdrz/DeadLink/archive/refs/tags/v2.11.0.tar.gz -o deadlink.tar.gz` to download the v2.11.0 archive.
+4. Type `tar -xzf deadlink.tar.gz` to extract the archive. This will create a directory named "DeadLink". Navigate to the directory with `cd DeadLink`.
 5. Type `sudo chmod +x run.sh`. This gives you permission to execute run.sh. (If this does not work, try `chmod +x run.sh`)
 6. Type `npm install` to install the required packages for the bot to run.
 

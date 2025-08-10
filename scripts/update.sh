@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TAG=${TAG:-v2.9.0}
+TAG=${TAG:-v2.11.0}
 
 echo "Backing up config and analytics..."
 cp -f config.json config.backup.json 2>/dev/null || true
 cp -f analytics.json analytics.backup.json 2>/dev/null || true
 
 owner=thecdrz
-repo=HordeComms
+repo=DeadLink
 
 echo "Downloading release archive for $TAG ..."
-curl -fL "https://github.com/$owner/$repo/archive/refs/tags/$TAG.tar.gz" -o HordeComms.tar.gz || {
+curl -fL "https://github.com/$owner/$repo/archive/refs/tags/$TAG.tar.gz" -o DeadLink.tar.gz || {
   echo "Tag download failed; falling back to latest" >&2
-  curl -fL "https://github.com/$owner/$repo/archive/refs/heads/master.tar.gz" -o HordeComms.tar.gz
+  curl -fL "https://github.com/$owner/$repo/archive/refs/heads/master.tar.gz" -o DeadLink.tar.gz
 }
 
 echo "Extracting..."
 mkdir -p ..
-tar -xzf HordeComms.tar.gz -C ..
+tar -xzf DeadLink.tar.gz -C ..
 
 # Detect extracted directory (repo-TAG)
 dest_dir=$(ls -d ../"$repo-$TAG"* 2>/dev/null | head -n1)
@@ -35,5 +35,5 @@ echo "Installing dependencies in $dest_dir ..."
 cd "$dest_dir"
 npm ci || npm install
 
-rm -f ../HordeComms.tar.gz 2>/dev/null || true
+rm -f ../DeadLink.tar.gz 2>/dev/null || true
 echo "Done. Switch your service to the new folder and restart (run.sh)."

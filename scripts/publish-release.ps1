@@ -10,7 +10,7 @@ if (-not $env:GITHUB_TOKEN) {
   exit 1
 }
 
-if (-not $Title) { $Title = "HordeComms $Tag" }
+if (-not $Title) { $Title = "DeadLink $Tag" }
 if (-not (Test-Path $BodyFile)) {
   # Fallback: look for v-prefixed file name
   $alt = ".github/release-body-$($Tag.TrimStart('v')).md"
@@ -38,7 +38,7 @@ $headers = @{
   Accept        = "application/vnd.github+json"
 }
 
-$repo = "thecdrz/HordeComms"
+$repo = "thecdrz/DeadLink"
 
 try {
   # Try create; if exists, PATCH

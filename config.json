@@ -33,7 +33,7 @@
     "enabled": true,
     "intervalHours": 24,
     "prerelease": false,
-    "notifyMode": "channel",
+  "notifyMode": "channel",
   "notifyChannel": "1403960538907676815"
   },
   "bloodMoon": {
