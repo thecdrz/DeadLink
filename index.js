@@ -2274,6 +2274,33 @@ client.on('messageCreate', async (msg) => {
       return;
     }
 
+    // Public info command: 7d!info
+    if (cmd === 'info') {
+      try {
+        const statusMsg = d7dtdState.connStatus === 1 ? ':green_circle: Online' :
+                         d7dtdState.connStatus === 0 ? ':white_circle: Connecting...' :
+                         ':red_circle: Error';
+
+        const changesReport = generateChangesReport();
+        let latestLine = '';
+        try {
+          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+          if (info && info.tag && info.url) {
+            latestLine = `\n\n**Updates**\nLatest release: ${info.tag} • ${info.url}`;
+          }
+        } catch (_) { /* ignore */ }
+
+        const embed = {
+          color: 0x7289da,
+          title: '🎮 HordeComms Information & Features',
+          description: `Server connection: ${statusMsg}\n\n${changesReport}${latestLine}`,
+          footer: { text: `HordeComms v${pjson.version} • Original: LakeYS • Expanded: CDRZ` }
+        };
+        await msg.channel.send({ embeds: [embed] }).catch(() => {});
+      } catch (_) { /* ignore */ }
+      return;
+    }
+
     // Admin-only update helpers (private)
     if (cmd === 'update') {
       if (!msg.member || !msg.member.permissions || !msg.member.permissions.has('MANAGE_GUILD')) {
