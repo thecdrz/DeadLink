@@ -1641,42 +1641,52 @@ function handleTrends(msg) {
 }
 
 function generateChangesReport() {
-  const currentDate = new Date().toLocaleDateString('en-US', { 
-    month: 'long', 
-    day: 'numeric', 
-    year: 'numeric' 
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
   });
-  
-  return `**🆕 Latest Features & Updates** *(${currentDate})*\n` +
-         `🎯 **Smart Activity Analysis** - Intelligent player activity reports with survival insights\n` +
-         `📊 **Player Trends Analytics** - 24-hour player count tracking and trend analysis\n` +
-         `🎮 **Interactive Dashboard** - Button-based GUI for quick server access\n` +
-         `🔒 **Enhanced Security** - Environment variable support for credentials\n\n` +
-         
-         `**⚡ Enhanced Commands**\n` +
-         `🎯 \`7d!activity\` - Detailed activity with location insights and survival tips\n` +
-         `📊 \`7d!trends\` - Player count analytics with visual trends\n` +
-         `🎮 \`7d!dashboard\` - Interactive control panel with clickable buttons\n` +
-         `ℹ️ \`7d!info\` - Complete feature overview and server information\n\n` +
-         
-         `**🛡️ Intelligent Features**\n` +
-         `🧠 **Context-Aware Suggestions** - Smart survival advice based on game state\n` +
-         `🩸 **Blood Moon Integration** - Automatic horde warnings and prep advice\n` +
-         `🏥 **Health Monitoring** - Player condition analysis and medical alerts\n` +
-         `📍 **Location Intelligence** - Area-specific survival recommendations\n` +
-         `📈 **Trend Visualization** - Player activity patterns and server health\n\n` +
-         
-         `**🎨 Visual Improvements**\n` +
-         `📋 **Organized Sections** - Clean, hierarchical information display\n` +
-         `🎯 **Rich Embeds** - Professional Discord formatting with consistent styling\n` +
-         `🔔 **Smart Notifications** - Context-aware alerts and status updates\n` +
-         `📊 **Enhanced Analytics** - Comprehensive player activity insights and pattern analysis\n\n` +
-         
-         `**🔧 Technical Enhancements**\n` +
-         `⚡ **Performance Optimized** - Faster response times and better error handling\n` +
-         `🔒 **Security Hardened** - Environment variables and credential protection\n` +
-         `📱 **Mobile Friendly** - Responsive design for Discord mobile apps\n` +
-         `🔄 **Real-time Updates** - Live data synchronization with game server`;
+
+  const v = pjson.version;
+
+  return (
+    `**ℹ️ HordeComms v${v}** *(${currentDate})*\n` +
+    `Built on Dishorde by LakeYS • CDRZ enhancements\n\n` +
+
+    `**🆕 New in v2.8.0**\n` +
+    `🩸 **Blood Moon Monitor** — Imminent/Start/End alerts with rich embeds\n` +
+    `🧪 **Admin Test** — \`7d!bloodmoon test imminent|start|end\` (optional in-game broadcast)\n` +
+    `🔌 **Telnet Robustness** — Auto-reconnect, per-command timeouts, safe handling of prompt-less servers\n` +
+    `�️ **Security/Config** — Prefer environment variables for secrets\n\n` +
+
+    `**🛠️ Admin Utilities (private)**\n` +
+    `🔎 \`7d!update check\` — Check latest release\n` +
+    `� \`7d!update notes\` — View release notes\n` +
+    `⬇️ \`7d!update guide [windows|linux]\` — Step-by-step upgrade\n` +
+    `📣 \`7d!update announce\` — Post the update embed on demand\n\n` +
+
+    `**🎮 Core Commands**\n` +
+    `🎮 \`7d!dashboard\` — Interactive control panel\n` +
+    `📊 \`7d!trends\` — Player count analytics & trends\n` +
+    `🎯 \`7d!activity\` — Narrative activity with survival tips\n` +
+    `� \`7d!players\` — Who’s online\n` +
+    `⏰ \`7d!time\` — Current game time & horde context\n` +
+    `ℹ️ \`7d!info\` — This overview\n\n` +
+
+    `**🤖 Intelligent Features**\n` +
+    `🧠 Context-aware survival guidance\n` +
+    `� Location intelligence & player status parsing\n` +
+    `� Trend visualization and session insights\n\n` +
+
+    `**⚙️ Reliability & Security**\n` +
+    `� Telnet connect/reconnect lifecycle with basic auth\n` +
+    `⏱️ Per-command timeouts; soft-success when servers don’t echo\n` +
+    `🔒 Secrets via environment variables; single-instance protection\n\n` +
+
+    `**🧩 Optional Config Snippets**\n` +
+    `bloodMoon: { enabled, intervalSeconds, frequency, broadcastInGame }\n` +
+    `updates: { enabled, intervalHours, prerelease, notifyMode, notifyChannel }`
+  );
 }
 
 function createDashboardEmbed() {
