@@ -1,6 +1,6 @@
 # DeadLink
 
-![DeadLink Logo](screenshots/Hc_Logo.png)
+![DeadLink Logo](screenshots/HC_Logo.png)
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
 

@@ -1,4 +1,4 @@
-![DeadLink Logo](../screenshots/Hc_Logo.png)
+![DeadLink Logo](../screenshots/HC_Logo.png)
 
 # DeadLink v2.11.0
 
