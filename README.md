@@ -30,6 +30,9 @@ HordeComms runs as a completely separate application, so no mods are required. *
 - `7d!time` - Current game time
 - `7d!info` - Complete feature overview and server information ⭐ **ENHANCED!**
 
+Admin-only utilities (requires Manage Server permission):
+- `7d!bloodmoon test imminent|start|end` — Send a test Blood Moon alert (also broadcasts in-game if enabled)
+
 💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
 
 ## 📸 Screenshots
@@ -55,13 +58,13 @@ HordeComms runs as a completely separate application, so no mods are required. *
 
 *Real-time player analytics with trend tracking and visual data representation*
 
-## Latest Release: v2.7.1 (Docs Refresh)
+## Latest Release: v2.8.0
 
-- Docs-only refresh based on stable v2.7.0
-- README updated to showcase five new screenshots (above)
-- No runtime changes vs 2.7.0
+- New: Optional Blood Moon monitor with automatic imminent/start/end alerts
+- Hidden admin test command: `7d!bloodmoon test imminent|start|end`
+- Safe defaults (on by default; respects `horde-frequency` and new `bloodMoon` config)
 
-Release notes: https://github.com/thecdrz/HordeComms/releases/tag/v2.7.1
+Release notes: https://github.com/thecdrz/HordeComms/releases/tag/v2.8.0
 
 # How it Works
 HordeComms works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
@@ -102,6 +105,43 @@ The bot can be configured by editing config.json. Here's a list of the preferenc
 - `prefix` - The prefix for bot commands. ('7d!' by default)
 
 - `skip-discord-auth` - The bot will not log in to Discord.
+
+Optional Blood Moon configuration block in `config.json` (all optional):
+
+```
+"bloodMoon": {
+	"enabled": true,
+	"intervalSeconds": 60,
+	"frequency": 7,
+	"broadcastInGame": true
+}
+```
+– enabled: turn the monitor on/off
+– intervalSeconds: how often to poll gettime
+– frequency: override global `horde-frequency` if needed
+– broadcastInGame: also announce transitions inside the game chat
+
+## Environment configuration (recommended)
+You can keep secrets out of `config.json` by using environment variables. On Windows PowerShell:
+
+```powershell
+$env:DISCORD_TOKEN = "<your discord bot token>"
+$env:TELNET_PASSWORD = "<your telnet password>"
+$env:TELNET_IP = "<server host or IP>"
+$env:TELNET_PORT = "<telnet port>"
+$env:DISCORD_CHANNEL = "<channel id>"
+node index.js
+```
+
+The app will automatically prefer these env vars when present.
+
+## Troubleshooting telnet
+- If in-game broadcast replies with "response not received" but the message shows up in game, this is normal for some servers without a prompt; HordeComms treats it as success.
+- If you see repeated "[TELNET] Timeout":
+	- Verify server telnet is enabled and reachable (IP/port/password).
+	- Ensure the telnet port is open on the firewall and forwarded if remote.
+	- Try setting a fixed `TELNET_IP` to the public hostname.
+	- The bot auto-reconnects; it will send when the connection stabilizes.
 
 # How to Install - Windows
 ## Creating the bot account

@@ -2,6 +2,7 @@ const minimist = require("minimist");
 const fs = require("fs");
 const pjson = require("./package.json");
 const Discord = require("discord.js");
+const createBloodMoonMonitor = require("./lib/bloodmoon.js");
 var TelnetClient = require("telnet-client");
 const DishordeInitializer = require("./lib/init.js");
 const Logger = require("./lib/log.js");
@@ -15,6 +16,7 @@ console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypt
 const lineSplit = /\n|\r/g;
 
 var channel = void 0;
+var guild = void 0;
 
 var d7dtdState = {
   doReconnect: 1,
@@ -186,6 +188,81 @@ const client = new Client({
   messageCacheMaxSize: 50
 });
 
+// ---- Telnet connection lifecycle ----
+function scheduleReconnect(delayMs = 5000) {
+  if (!d7dtdState.doReconnect) return;
+  setTimeout(() => {
+    startTelnet();
+  }, delayMs);
+}
+
+function startTelnet() {
+  try {
+    d7dtdState.connStatus = 0;
+    const params = {
+      host: ip,
+      port: port,
+      negotiationMandatory: false,
+      // 7DTD has no interactive shell prompt; treat any newline as prompt end
+      shellPrompt: /\r?\n/,
+      stripShellPrompt: false,
+      ors: '\n',
+      irs: '\n',
+      // Avoid frequent socket idle timeouts; use per-exec timeouts instead
+      timeout: 60000,
+      execTimeout: 5000,
+      sendTimeout: 3000
+    };
+    if (!d7dtdState.telnetListenersAttached) {
+      d7dtdState.telnetListenersAttached = 1;
+      try { telnet.on && telnet.on('close', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) console.log('[TELNET] Closed'); scheduleReconnect(); }); } catch(_) {}
+      try { telnet.on && telnet.on('end', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) console.log('[TELNET] End'); scheduleReconnect(); }); } catch(_) {}
+      try { telnet.on && telnet.on('timeout', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) console.log('[TELNET] Timeout'); scheduleReconnect(); }); } catch(_) {}
+      try { telnet.on && telnet.on('error', (e) => { d7dtdState.connStatus = -1; console.warn('[TELNET] Error:', e && e.message); }); } catch(_) {}
+    }
+    if (typeof telnet.connect === 'function') {
+      telnet.connect(params).then(() => {
+        d7dtdState.connStatus = 1;
+        if (config["log-telnet"]) console.log('[TELNET] Connected');
+        // Best-effort authentication for 7DTD telnet
+        try {
+          if (pass) {
+            // 7DTD usually accepts the raw password once after connect
+            telnet.exec(pass, { timeout: 4000 }, () => {});
+          }
+          // quick health check to warm the session (non-fatal)
+          telnet.exec('version', { timeout: 3000 }, () => {});
+        } catch(_) {}
+      }).catch((e) => {
+        d7dtdState.connStatus = -1;
+        console.warn('[TELNET] Connect failed:', e && e.message);
+        scheduleReconnect(8000);
+      });
+    }
+  } catch (e) {
+    d7dtdState.connStatus = -1;
+    console.warn('[TELNET] Unexpected connect error:', e && e.message);
+    scheduleReconnect(8000);
+  }
+}
+
+// Start telnet connection on boot
+startTelnet();
+
+async function ensureTelnetReady(timeoutMs = 8000) {
+  if (d7dtdState.connStatus === 1) return true;
+  startTelnet();
+  const start = Date.now();
+  return await new Promise((resolve) => {
+    const tick = () => {
+      if (d7dtdState.connStatus === 1) return resolve(true);
+      if (Date.now() - start >= timeoutMs) return resolve(false);
+      setTimeout(tick, 300);
+    };
+    tick();
+  });
+}
+
 // 7d!exec command
 if(config["allow-exec-command"] === true) {
   console.warn("\x1b[33mWARNING: Config option 'allow-exec-command' is enabled. This may pose a security risk for your server.\x1b[0m");
@@ -205,6 +282,13 @@ loadAnalyticsData();
 
 // Check for version updates and announce if needed
 checkAndAnnounceVersion();
+
+// Create Blood Moon monitor (lazy-start after Discord+channel ready)
+const bloodMoon = createBloodMoonMonitor({
+  telnet,
+  config,
+  getChannel: () => channel
+});
 
 ////// # Functions # //////
 function sanitizeMsgFromGame(msg) {
@@ -427,18 +511,23 @@ function sendEnhancedGameMessage(message) {
 function handleMsgToGame(line) {
   if(!config["disable-chatmsgs"]) {
     var msg = sanitizeMsgToGame(line);
-    telnet.exec("say \"" + msg + "\"", (err, response) => {
-      if(err) {
-        console.log("Error while attempting to send message: " + err.message);
-      }
-      else {
-        var lines = response.split(lineSplit);
-        for(var i = 0; i <= lines.length-1; i++) {
-          var lineResponse = lines[i];
-          handleMsgFromGame(lineResponse);
+    const command = `say "${msg}"`;
+    if (typeof telnet.send === 'function') {
+      // Fire-and-forget to avoid waiting for a prompt that doesn't exist
+      try { telnet.send(command + '\n'); } catch (e) { console.log("Error while attempting to send message: " + e.message); }
+    } else {
+      telnet.exec(command, { timeout: 5000, ors: '\n' }, (err, response) => {
+        if(err && err.message !== 'response not received') {
+          console.log("Error while attempting to send message: " + err.message);
+        } else if (!err && response) {
+          var lines = response.split(lineSplit);
+          for(var i = 0; i <= lines.length-1; i++) {
+            var lineResponse = lines[i];
+            handleMsgFromGame(lineResponse);
+          }
         }
-      }
-    });
+      });
+    }
   }
 }
 
@@ -1728,7 +1817,7 @@ function handleActivityFromButton(interaction) {
       hordeTime: null
     };
 
-    telnet.exec("lp", (err, response) => {
+  telnet.exec("lp", { timeout: 7000 }, (err, response) => {
       if (!err) {
         processTelnetResponse(response, (line) => {
           if (line.includes("id=") && line.includes("pos=")) {
@@ -1739,7 +1828,7 @@ function handleActivityFromButton(interaction) {
           }
         });
 
-        telnet.exec("gettime", (timeErr, timeResponse) => {
+  telnet.exec("gettime", { timeout: 5000 }, (timeErr, timeResponse) => {
           if (!timeErr) {
             processTelnetResponse(timeResponse, (timeLine) => {
               if (timeLine.startsWith("Day")) {
@@ -1806,7 +1895,7 @@ function handleTrendsFromButton(interaction) {
 
 function handlePlayersFromButton(interaction) {
   interaction.deferReply().then(() => {
-    telnet.exec("lp", (err, response) => {
+  telnet.exec("lp", { timeout: 7000 }, (err, response) => {
       if (!err) {
         let playerData = "";
         processTelnetResponse(response, (line) => {
@@ -1848,7 +1937,7 @@ function handlePlayersFromButton(interaction) {
 
 function handleTimeFromButton(interaction) {
   interaction.deferReply().then(() => {
-    telnet.exec("gettime", (err, response) => {
+  telnet.exec("gettime", { timeout: 5000 }, (err, response) => {
       if (!err) {
         let timeData = "";
         processTelnetResponse(response, (line) => {
@@ -1922,7 +2011,7 @@ function handleActivity(msg) {
   d7dtdState.waitingForActivityMsg = msg;
 
   // Execute multiple commands to gather data
-  telnet.exec("lp", (err, response) => {
+  telnet.exec("lp", { timeout: 7000 }, (err, response) => {
     if (!err) {
       processTelnetResponse(response, (line) => {
         if (line.includes("id=") && line.includes("pos=")) {
@@ -1937,7 +2026,7 @@ function handleActivity(msg) {
       });
 
       // Get current time
-      telnet.exec("gettime", (timeErr, timeResponse) => {
+  telnet.exec("gettime", { timeout: 5000 }, (timeErr, timeResponse) => {
         if (!timeErr) {
           processTelnetResponse(timeResponse, (timeLine) => {
             if (timeLine.startsWith("Day")) {
@@ -2047,3 +2136,83 @@ function calculateHordeStatus(timeStr) {
 
   return "";
 }
+
+// ---- Discord wiring (minimal to enable hidden command and channel binding) ----
+client.on('ready', async () => {
+  try {
+    console.log(`Discord logged in as ${client.user.tag}`);
+  } catch (_) {}
+});
+
+client.on('messageCreate', async (msg) => {
+  try {
+    if (msg.author.bot) return;
+    // Bind channel by ID if configured and not yet bound
+    if (!channel && config.channel) {
+      try {
+        const ch = await msg.client.channels.fetch(config.channel.toString());
+        if (ch && ch.isText()) {
+          channel = ch;
+          guild = msg.guild || guild;
+          // Start Blood Moon monitor when channel is available
+          bloodMoon.start();
+        }
+      } catch (_) {}
+    }
+
+    const content = msg.content || '';
+    const p = (config.prefix ? config.prefix : '7d!');
+    if (!content.startsWith(p)) return;
+    const args = content.slice(p.length).trim().split(/\s+/);
+    const cmd = (args.shift() || '').toLowerCase();
+
+    // Hidden admin command: 7d!bloodmoon test <imminent|start|end>
+    if (cmd === 'bloodmoon' && args[0] === 'test') {
+      // Restrict: require MANAGE_GUILD permission
+      if (!msg.member || !msg.member.permissions || !msg.member.permissions.has('MANAGE_GUILD')) {
+        return; // silent
+      }
+      const kindMap = { imminent: 'imminent', start: 'active', end: 'ended' };
+      const kind = kindMap[(args[1] || '').toLowerCase()];
+      if (!kind) return;
+      const embed = bloodMoon.makeTestEmbed(kind, 'Admin test');
+      if (embed) {
+        msg.channel.send({ embeds: [embed] }).catch(() => {});
+      }
+      // Also broadcast in-game if enabled (attempt telnet connect on-demand)
+      try {
+        const bmCfg = (config.bloodMoon || {});
+        const broadcastInGame = bmCfg.broadcastInGame !== false;
+        if (broadcastInGame) {
+          const textMap = {
+            imminent: 'Blood Moon imminent! Horde begins in less than an hour.',
+            active: 'The Blood Moon is active! Seek shelter immediately!',
+            ended: 'The Blood Moon has ended. Regroup and rebuild.'
+          };
+          const msgText = textMap[kind];
+          if (msgText) {
+            const ready = await ensureTelnetReady(8000);
+            if (!ready && !(config["demo-mode"])) {
+              msg.reply('In-game broadcast skipped: telnet not connected.').catch(() => {});
+              return;
+            }
+            const cleaned = msgText.replace(/\"/g, '');
+            telnet.exec(`say "${cleaned}"`, { timeout: 5000 }, (err, resp) => {
+              if (err && err.message !== 'response not received') {
+                msg.reply(`In-game broadcast failed: ${err.message || 'unknown error'}`).catch(() => {});
+              } else {
+                msg.reply('In-game broadcast sent.').catch(() => {});
+              }
+            });
+          }
+        }
+      } catch (_) { /* ignore */ }
+      return;
+    }
+  } catch (err) {
+    // ignore
+  }
+});
+
+// Ensure login uses token from config/env earlier
+try { client.login(token); } catch (_) {}

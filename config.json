@@ -28,7 +28,13 @@
   "log-messages": false,
   "log-telnet": true,
   "prefix": "7d!",
-  "demo-mode": false
+  "demo-mode": false,
+  "bloodMoon": {
+    "enabled": true,
+    "intervalSeconds": 60,
+    "frequency": 7,
+    "broadcastInGame": true
+  }
 }
 
 
