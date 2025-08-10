@@ -2279,6 +2279,16 @@ client.on('ready', async () => {
   } catch (_) {}
 });
 
+// Handle button interactions from the dashboard UI
+client.on('interactionCreate', async (interaction) => {
+  try {
+    if (!interaction.isButton()) return;
+    handleButtonInteraction(interaction);
+  } catch (err) {
+    console.error('interaction handling failed:', err.message || err);
+  }
+});
+
 client.on('messageCreate', async (msg) => {
   try {
     if (msg.author.bot) return;
