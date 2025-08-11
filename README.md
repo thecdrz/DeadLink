@@ -64,7 +64,7 @@ Admin-only utilities (requires Manage Server permission):
 
 *Rich embed showing the latest release. Use `7d!update announce` to print this on demand; auto-posts can be enabled via the `updates` config.*
 
-## Latest Release: v2.11.4
+## Latest Release: v2.11.5
 
 - Info: New “Mode” line on Info screen (shows Live or 🧪 Demo)
 - Info: Reordered sections (Core Commands above Update Helpers)
@@ -72,7 +72,7 @@ Admin-only utilities (requires Manage Server permission):
 - UX: Typo helper for `!bloonmoon` → suggests `7d!bloodmoon`
 - Docs: Added alternate landing pages and updated screenshots (logo-L)
 
-Release notes: https://github.com/thecdrz/DeadLink/releases/tag/v2.11.4
+Release notes: https://github.com/thecdrz/DeadLink/releases/tag/v2.11.5
 
 # How it Works
 DeadLink works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
@@ -163,7 +163,7 @@ The app will automatically prefer these env vars when present.
 ## Docker
 DeadLink images are published to GHCR on each tagged release.
 
-Image: `ghcr.io/thecdrz/deadlink:latest` or `ghcr.io/thecdrz/deadlink:v2.11.4`
+Image: `ghcr.io/thecdrz/deadlink:latest` or `ghcr.io/thecdrz/deadlink:v2.11.5`
 
 Example run:
 
