@@ -1,0 +1,34 @@
+﻿:root{
+  --bg:#0b0f14; --panel:#11161d; --text:#e6edf3; --muted:#9fb0c0; --accent:#5cc3ff;
+  --card:#121821; --border:#1d2632; --shadow:rgba(0,0,0,0.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+img{max-width:100%;height:auto}
+a{color:var(--accent);text-decoration:none}
+
+.site-header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border);backdrop-filter:saturate(150%) blur(8px);background:linear-gradient(180deg,rgba(11,15,20,0.9),rgba(11,15,20,0.7))}
+.brand{display:flex;gap:10px;align-items:center;color:var(--text);font-weight:700}
+.brand img{width:28px;height:28px;border-radius:6px}
+.nav a{margin-left:16px;color:var(--muted)}
+.nav a:hover{color:var(--text)}
+
+.hero{padding:64px 20px;background:radial-gradient(800px 400px at 20% -10%,rgba(92,195,255,0.15),transparent),radial-gradient(600px 300px at 80% 0,rgba(137,92,255,0.15),transparent)}
+.hero-inner{max-width:960px;margin:0 auto;text-align:center}
+.hero h1{font-size:40px;line-height:1.1;margin:0 0 12px}
+.subtitle{color:var(--muted);margin:0 0 20px}
+.cta{display:flex;gap:12px;justify-content:center}
+.button{display:inline-block;padding:10px 16px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--text)}
+.button.primary{background:linear-gradient(180deg,#2a7cff,#1a5bd8);border-color:#1f60e3;box-shadow:0 10px 24px -8px rgba(38,120,255,0.5)}
+.button:hover{filter:brightness(1.05)}
+
+main{max-width:960px;margin:0 auto;padding:24px 20px}
+.quickstart pre{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;overflow:auto;box-shadow:0 4px 16px var(--shadow)}
+.quickstart .note{color:var(--muted)}
+
+.features h2,.quickstart h2{margin-top:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 6px 18px var(--shadow)}
+
+.site-footer{border-top:1px solid var(--border);padding:18px 20px;text-align:center;color:var(--muted)}
+.small{font-size:.9em}

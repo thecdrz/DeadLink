@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>DeadLink  Discord  7 Days to Die</title>
+    <meta
+      name="description"
+      content="DeadLink is a modern Docker-first Discord  7 Days to Die bridge with queueing, rate limiting, dashboards, and secure env-based config."
+    />
+    <link rel="preload" href="assets/deadlink-logo.png" as="image" />
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#">
+        <img src="assets/deadlink-logo.png" onerror="this.src='assets/logo.svg'" alt="DeadLink logo" />
+        <span>DeadLink</span>
+      </a>
+      <nav class="nav">
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#features">Features</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-inner">
+          <h1>Discord  7 Days to Die, done right.</h1>
+          <p class="subtitle">
+            Docker-first bridge with safe telnet queueing, clean logs, and a minimal, secure setup.
+          </p>
+          <div class="cta">
+            <a class="button primary" href="#quickstart">Get Started</a>
+            <a class="button" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener"
+              >View on GitHub</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="quickstart" class="quickstart">
+        <h2>Quick Start</h2>
+        <ol>
+          <li>
+            Create a .env file (or docker run -e) with your Discord and server details
+            (see README for all variables):
+            <pre><code>DISCORD_TOKEN=...
+TELNET_HOST=server.example.com
+TELNET_PORT=8081
+TELNET_PASSWORD=...</code></pre>
+          </li>
+          <li>
+            Pull the container:
+            <pre><code>docker pull ghcr.io/thecdrz/deadlink:latest</code></pre>
+          </li>
+          <li>
+            Run it:
+            <pre><code>docker run --name deadlink --restart unless-stopped \
+  --env-file .env \
+  -v %cd%\data:/app/data \
+  -d ghcr.io/thecdrz/deadlink:latest</code></pre>
+            <small>On Linux/macOS, replace %cd% with $(pwd).</small>
+          </li>
+        </ol>
+        <p class="note">
+          Prefer environment variables over command-line flags. No local Node.js required when using Docker.
+        </p>
+      </section>
+
+      <section id="features" class="features">
+        <h2>Highlights</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Docker-first</h3>
+            <p>Zero local deps. Pull and run with a single command. Healthcheck included.</p>
+          </div>
+          <div class="card">
+            <h3>Safe telnet queueing</h3>
+            <p>Rate-limited telnet pipeline keeps your server responsive and stable.</p>
+          </div>
+          <div class="card">
+            <h3>Modern Discord bot</h3>
+            <p>Built on discord.js with clean logging and sensible defaults.</p>
+          </div>
+          <div class="card">
+            <h3>Secure by default</h3>
+            <p>Environment-based configuration. No secrets in source or args.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+         <span id="year"></span> DeadLink 
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">thecdrz/DeadLink</a>
+      </p>
+      <p class="small">Custom domain: deadlink.lol (set via docs/CNAME)</p>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+  </html>
