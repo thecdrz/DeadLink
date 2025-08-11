@@ -2368,8 +2368,24 @@ client.on('ready', async () => {
 // Handle button interactions from the dashboard UI
 client.on('interactionCreate', async (interaction) => {
   try {
-    if (!interaction.isButton()) return;
-    handleButtonInteraction(interaction);
+    if (interaction.isButton()) {
+      handleButtonInteraction(interaction);
+      return;
+    }
+    if (interaction.isCommand && interaction.isCommand()) {
+      const name = interaction.commandName;
+      if (name === 'dashboard') {
+        const embed = createDashboardEmbed();
+        const buttons = createDashboardButtons();
+        return interaction.reply({ embeds: [embed], components: [buttons] }).catch(console.error);
+      }
+      if (name === 'trends') {
+        return handleTrendsFromButton({ deferReply: () => interaction.deferReply(), editReply: (p) => interaction.editReply(p), user: interaction.user });
+      }
+      if (name === 'info') {
+        return handleInfoFromButton(interaction);
+      }
+    }
   } catch (err) {
     console.error('interaction handling failed:', err.message || err);
   }

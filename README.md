@@ -19,6 +19,31 @@ Note: PNG charts and validation use optional deps; install them with npm if desi
 
 DeadLink runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
 
+## Slash Commands (optional)
+DeadLink supports the following slash commands:
+
+- `/dashboard` – Show the interactive dashboard with buttons
+- `/trends` – Show player analytics and trends
+- `/info` – Show DeadLink information and features
+
+To register commands, set these environment variables:
+
+- `DISCORD_TOKEN` – your bot token
+- `DISCORD_CLIENT_ID` – the Application (Client) ID
+- Optional: `DISCORD_GUILD_ID` – to register to one server instantly
+
+Then run one of:
+
+```powershell
+# Global registration (can take up to ~1 hour to propagate)
+npm run slash:global
+
+# Guild registration (instant). Set your guild ID first:
+$env:DISCORD_GUILD_ID = "<your_guild_id>"; npm run slash:guild
+```
+
+Re-run the script any time to update commands (it replaces the set).
+
 ## 🎮 Commands
 
 - `7d!dashboard` - Interactive GUI with clickable buttons ⭐ **NEW!**
