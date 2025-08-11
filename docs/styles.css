@@ -148,26 +148,7 @@ a { color: var(--text); text-decoration: none; }
 .copybtn svg{ display:block }
 .copybtn:active{ transform: translateY(1px); }
 
-/* COMMUNITY */
-.community{ max-width:1040px; margin:16px auto; }
-.community h2{
-  margin:0 0 10px;
-  font-size:22px;
-  color:#fff4e5;
-  font-weight: 700;                       /* calmer */
-}
-.community-inner{
-  display:flex; gap:12px; align-items:stretch; flex-wrap:wrap;
-}
-.discord-widget{
-  width: 100%;
-  max-width: 640px;
-  height: 240px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.30);
-}
-.invite{ align-self:center; white-space:nowrap; }
+/* No longer needed - community section removed */
 
 /* FOOTER BAR */
 .footerbar{
