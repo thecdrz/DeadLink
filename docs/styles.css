@@ -41,10 +41,10 @@ a { color: var(--text); text-decoration: none; }
 }
 
 /* HERO */
-.hero{ text-align:center; padding:18px 0 6px; }
+.hero{ text-align:center; padding:18px 0 6px; margin-bottom: 36px; }
 .hero-logo{
-  width: min(92vw, 620px);
-  max-width: 40svh; /* cap by viewport height so features stay in view */
+  width: min(83vw, 560px); /* reduced by ~10% from 92vw, 620px */
+  max-width: 36svh; /* reduced by 10% from 40svh */
   border-radius: 16px;
   display:block; margin:0 auto 14px;
   box-shadow: 0 22px 80px rgba(0,0,0,0.48), 0 0 0 1px rgba(255,255,255,0.06) inset;
@@ -54,14 +54,14 @@ a { color: var(--text); text-decoration: none; }
   color:#f3e7d2;
   letter-spacing:.22em;
   font-weight: 800;                      /* was 900 */
-  font-size: clamp(14px, 1.9vw, 19px);
+  font-size: clamp(14.7px, 2vw, 20px);  /* increased by ~5% from 14px, 1.9vw, 19px */
   text-transform: uppercase;
   font-family:"Cinzel", system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   opacity:.98;
 }
 
 /* FEATURES */
-.features{ max-width:1040px; margin:18px auto 14px; }
+.features{ max-width:1040px; margin:18px auto 40px; }
 .grid{
   display:grid;
   grid-template-columns: repeat(4, 1fr);
@@ -101,7 +101,7 @@ a { color: var(--text); text-decoration: none; }
 /* GET STARTED PANEL (reduced height) */
 .cta-panel{
   max-width:1040px;
-  margin:14px auto 16px;
+  margin:40px auto 40px;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.10)),
     var(--panel);
@@ -152,7 +152,7 @@ a { color: var(--text); text-decoration: none; }
 
 /* FOOTER BAR */
 .footerbar{
-  max-width:1040px; margin:18px auto 0;
+  max-width:1040px; margin:40px auto 0;
   display:flex; align-items:center; justify-content:space-between;
   padding:12px 14px; border-radius:14px;
   border:1px solid var(--border);
