@@ -1,0 +1,56 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g., v2.11.5)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve tag
+        id: vars
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Locate optional release body
+        id: body
+        shell: bash
+        run: |
+          TAG="${{ steps.vars.outputs.TAG }}"
+          FILE=".github/release-body-${TAG}.md"
+          if [ -f "$FILE" ]; then
+            echo "BODY=$FILE" >> $GITHUB_OUTPUT
+          else
+            echo "BODY=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.TAG }}
+          name: DeadLink ${{ steps.vars.outputs.TAG }}
+          body_path: ${{ steps.body.outputs.BODY }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
