@@ -153,9 +153,9 @@ a { color: var(--text); text-decoration: none; }
 /* FOOTER BAR */
 .footerbar{
   max-width:1040px; margin:24px auto 0;
-  display:flex; align-items:center; justify-content:space-between;
+  display:flex; align-items:center; justify-content:space-between; 
   flex-wrap: wrap; /* Allow wrapping for smaller screens */
-  padding:10px 14px; border-radius:14px;
+  padding:10px 24px; border-radius:14px;
   border:1px solid var(--border);
   background:
     linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.10)),
@@ -169,14 +169,25 @@ a { color: var(--text); text-decoration: none; }
   color:var(--text);
   font-weight: 650;                        /* was 800 */
   box-shadow:0 8px 18px -8px rgba(227,106,40,0.40); /* reduced shadow to match smaller height */
+  margin: 0; /* No additional margin needed */
 }
 .link{ 
   color:#f0e6d6; 
   opacity:.95;
   font-weight: 500;
-  margin: 0 6px;
+  margin: 0; /* No additional margin needed */
 }
 .link:hover{ opacity:1 }
+
+.discord-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.discord-icon {
+  color: #5865F2; /* Discord brand color */
+}
 
 /* Version class no longer needed - using link class for consistency */
 
