@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark" />
   <title>DeadLink – 7 Days to Die Server Companion</title>
-  <meta name="description" content="DeadLink is a modern Docker-first Discord ↔ 7 Days to Die bridge with trends, reports, horde-night alerts, and safe slash commands." />
+  <meta name="description" content="DeadLink is a lightweight 7 Days to Die server companion: trends, reports, horde-night alerts, and safe server controls. Docker-friendly and Discord-integrated." />
 
   <!-- Brand / sharing -->
   <meta name="theme-color" content="#121112">
   <meta property="og:title" content="DeadLink – 7 Days to Die Server Companion">
-  <meta property="og:description" content="Docker-first Discord ↔ 7 Days to Die bridge with trends, reports, alerts, and slash commands.">
+  <meta property="og:description" content="Trends, reports, horde-night alerts, and safe controls for your 7 Days to Die server.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/deadlink-logo.png">
   <link rel="canonical" href="https://thecdrz.github.io/DeadLink/">
@@ -38,24 +38,39 @@
     <section class="features">
       <div class="grid">
         <article class="card">
-          <div class="icon" aria-hidden="true">📈</div>
-          <h3>Trends</h3>
-          <p>Player counts, uptime, and performance over time.</p>
+          <div class="icon" aria-hidden="true" title="Trends">
+            <!-- chart icon -->
+            <svg viewBox="0 0 24 24" width="28" height="28" role="img" aria-label=""><path d="M4 19h16" stroke="currentColor" stroke-width="2" fill="none"/><path d="M6 15l4-4 3 3 5-6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+          </div>
+          <h3>Player & Server Trends</h3>
+          <p>Visualize online counts, restarts, and latency to spot issues early.</p>
         </article>
+
         <article class="card">
-          <div class="icon" aria-hidden="true">🗄️</div>
-          <h3>Activity Reports</h3>
-          <p>Daily summaries of logins, deaths, chat, and events.</p>
+          <div class="icon" aria-hidden="true" title="Reports">
+            <!-- server drawers -->
+            <svg viewBox="0 0 24 24" width="28" height="28"><rect x="3" y="4" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><rect x="3" y="14" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="8" cy="7" r="1" fill="currentColor"/><circle cx="8" cy="17" r="1" fill="currentColor"/></svg>
+          </div>
+          <h3>Daily Activity Reports</h3>
+          <p>Automatic summaries of logins, deaths, chat, and key events to Discord.</p>
         </article>
+
         <article class="card">
-          <div class="icon" aria-hidden="true">🌙</div>
-          <h3>Blood Moon Alerts</h3>
-          <p>Rate-limited horde night warnings—no spam.</p>
+          <div class="icon" aria-hidden="true" title="Horde Night">
+            <!-- moon -->
+            <svg viewBox="0 0 24 24" width="28" height="28"><path d="M21 12.5A8.5 8.5 0 0 1 10.5 2 9 9 0 1 0 22 13.5c-3 .8-5.3-.4-1-1z" fill="currentColor"/></svg>
+          </div>
+          <h3>Horde Night Alerts</h3>
+          <p>Polite, rate-limited blood moon warnings with cool-downs—no spam.</p>
         </article>
+
         <article class="card">
-          <div class="icon" aria-hidden="true">🧰</div>
-          <h3>Slash Commands</h3>
-          <p>Safe server actions from Discord without telnet noise.</p>
+          <div class="icon" aria-hidden="true" title="Controls">
+            <!-- tools -->
+            <svg viewBox="0 0 24 24" width="28" height="28"><path d="M14 7l3 3-7 7H7v-3l7-7z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M14 7l3 3" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <h3>Safe Server Controls</h3>
+          <p>Scoped commands for restart, say, moderation—no raw telnet noise.</p>
         </article>
       </div>
     </section>
@@ -65,14 +80,17 @@
       <h2>Get Started</h2>
       <div class="cta-grid">
         <div class="left">
-          <div class="terminal" id="cmd">
+          <div class="terminal" id="cmd" aria-label="Docker command">
 $ docker run --name deadlink \
   -e DISCORD_TOKEN=... \
   -e TELNET_HOST=... \
   -e TELNET_PASS=... \
   ghcr.io/thecdrz/deadlink:latest
           </div>
-          <button class="copybtn" data-target="cmd" aria-label="Copy command">Copy</button>
+          <button class="copybtn" data-target="cmd" aria-label="Copy command">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="9" y="9" width="10" height="12" rx="2" stroke="currentColor" fill="none" stroke-width="2"/><rect x="5" y="5" width="10" height="12" rx="2" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+            <span>Copy</span>
+          </button>
         </div>
         <div class="right">
           <div class="terminal ghost">$ docker rom  – neme  deadlink</div>
@@ -80,62 +98,68 @@ $ docker run --name deadlink \
       </div>
     </section>
 
+    <!-- COMMUNITY -->
+    <section class="community">
+      <h2>Community</h2>
+      <div class="community-inner">
+        <iframe
+          title="DeadLink Discord"
+          src="https://discord.com/widget?id=1404124534314897518&theme=dark"
+          allowtransparency="true"
+          frameborder="0"
+          class="discord-widget">
+        </iframe>
+        <a class="btn invite" href="https://discord.gg/YjeBPdSp" target="_blank" rel="noopener">Join on Discord</a>
+      </div>
+      <p class="community-note">Widget not loading? Use the invite above.</p>
+    </section>
+
     <!-- FOOTER BAR -->
     <footer class="footerbar">
       <a class="btn" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
-      <a id="discordLink" class="link" href="#" target="_blank" rel="noopener">Join us on Discord</a>
-      <span class="version" id="version">v0</span>
-      <span class="version" id="versionDate" style="opacity:.75; margin-left:8px;"></span>
+      <a class="link" href="https://discord.gg/YjeBPdSp" target="_blank" rel="noopener">Join us on Discord</a>
+      <a id="versionLink" class="version" href="#" target="_blank" rel="noopener">DeadLink v0</a>
+      <span class="version" id="versionDate" style="opacity:.82; margin-left:8px;"></span>
     </footer>
 
   </div>
 
-  <!-- Optional: set this once you create a permanent invite -->
-  <!-- <script>window.DISCORD_INVITE='YOUR_INVITE_CODE';</script> -->
-
-  <!-- Scripts: version/date, Discord link, copy-to-clipboard -->
+  <!-- Scripts: version/date + copy-to-clipboard -->
   <script>
-    // Version from GitHub Releases (latest tag + publish date)
+    // Version from GitHub Releases (latest tag + publish date + link)
     (async () => {
-      const vEl = document.getElementById('version');
+      const vEl = document.getElementById('versionLink');
       const dEl = document.getElementById('versionDate');
       try {
         const r = await fetch('https://api.github.com/repos/thecdrz/DeadLink/releases/latest', { cache: 'no-store' });
         if (r.ok) {
           const j = await r.json();
-          if (j?.tag_name) vEl.textContent = j.tag_name;
+          if (j?.tag_name) vEl.textContent = `DeadLink ${j.tag_name}`;
+          if (j?.html_url) vEl.href = j.html_url;
           if (j?.published_at && dEl) {
             const dt = new Date(j.published_at);
-            dEl.textContent = `· ${dt.toLocaleDateString()}`;
+            dEl.textContent = `— ${dt.toLocaleDateString()}`;
           }
           return;
         }
       } catch {}
-      vEl.textContent = 'v0';
-    })();
-
-    // Discord link: prefer invite URL; fallback to channel deep-link (members only)
-    (function () {
-      const a = document.getElementById('discordLink');
-      const channelURL = 'https://discord.com/channels/1404124534314897518/1404124535900602379';
-      if (window.DISCORD_INVITE) {
-        a.href = `https://discord.com/invite/${window.DISCORD_INVITE}`;
-      } else {
-        a.href = channelURL;
-      }
+      vEl.textContent = 'DeadLink v0';
+      vEl.href = 'https://github.com/thecdrz/DeadLink/releases';
     })();
 
     // Copy-to-clipboard for the Docker command
     document.addEventListener('click', e => {
-      if (!e.target.matches('.copybtn')) return;
-      const id = e.target.getAttribute('data-target');
+      if (!e.target.closest('.copybtn')) return;
+      const btn = e.target.closest('.copybtn');
+      const id = btn.getAttribute('data-target');
       const el = document.getElementById(id);
       if (!el) return;
       const text = el.innerText.replace(/\u00A0/g,' ');
       navigator.clipboard.writeText(text).then(() => {
-        const old = e.target.textContent;
-        e.target.textContent = 'Copied!';
-        setTimeout(() => e.target.textContent = old, 1200);
+        const span = btn.querySelector('span');
+        const old = span.textContent;
+        span.textContent = 'Copied!';
+        setTimeout(() => span.textContent = old, 1200);
       });
     });
   </script>
