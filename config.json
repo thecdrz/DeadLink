@@ -28,6 +28,7 @@
   "log-messages": false,
   "log-telnet": true,
   "prefix": "7d!",
+  "accept-legacy-exclamation-prefix": true,
   "demo-mode": false,
   "updates": {
     "enabled": true,

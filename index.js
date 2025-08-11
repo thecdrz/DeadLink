@@ -2389,7 +2389,13 @@ client.on('messageCreate', async (msg) => {
   const content = msg.content || '';
   // Only accept the configured prefix (default '7d!'), but compare case-insensitively
   const primaryPrefix = (typeof prefix === 'string' && prefix.length) ? prefix : '7d!';
-  const usedPrefix = content.toLowerCase().startsWith(primaryPrefix.toLowerCase()) ? primaryPrefix : null;
+  const acceptLegacyBang = !!config["accept-legacy-exclamation-prefix"]; // optional toggle
+  let usedPrefix = null;
+  if (content.toLowerCase().startsWith(primaryPrefix.toLowerCase())) {
+    usedPrefix = primaryPrefix;
+  } else if (acceptLegacyBang && content.startsWith('!')) {
+    usedPrefix = '!';
+  }
   if (!usedPrefix) {
     // Friendly hint if the user tries legacy '!' prefix with a known command
     const lc = content.toLowerCase();
