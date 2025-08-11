@@ -16,13 +16,24 @@ const Logger = require("./lib/log.js");
 const { TelnetQueue, friendlyError } = require("./lib/telnetQueue.js");
 const { renderTrendPng } = require("./lib/charts.js");
 const { validateConfig } = require("./lib/configSchema.js");
+const c = require("./lib/colors.js");
 
 const { Client, Intents } = Discord;
 // Request explicit gateway intents via constants (v13)
 const requestedIntents = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
 
-console.log("\x1b[7m# DeadLink v" + pjson.version + " #\x1b[0m");
-console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
+// Fancy ASCII banner
+const banner = `
+  ____               _ _ _ _       _
+ |  _ \\ ___  ___ __| (_) | | __ _| |__
+ | | | / _ \\/ __/ _ | | | |/ _ | '_ \\
+ | |_| |  __/ (_| (_| | | | | (_| | | | |
+ |____/ \\___|\\__\\__,_|_|_|_|\\__, |_| |_|
+                               |___/`;
+console.log(banner + "\n" + c.bold(`DeadLink v${pjson.version}`));
+console.log(c.yellow("NOTICE:"), "Remote connections to 7 Days to Die servers are not encrypted.");
+console.log("To keep your server secure, do not run this application on a public network and be sure to use a unique telnet password.\n");
+console.log(c.cyan("Shoutout to LakeYS (Dishorde) for the awesome base!\n"));
 
 const lineSplit = /\n|\r/g;
 
@@ -91,36 +102,45 @@ else {
   // This allows keeping secrets out of the config file
   if (process.env.DISCORD_TOKEN) {
     config.token = process.env.DISCORD_TOKEN;
-    console.log("Using Discord token from environment variable");
+    console.log(c.gray("Using Discord token from environment variable"));
   }
   
   if (process.env.TELNET_PASSWORD) {
     config.password = process.env.TELNET_PASSWORD;
-    console.log("Using telnet password from environment variable");
+    console.log(c.gray("Using telnet password from environment variable"));
   }
   
   if (process.env.TELNET_IP) {
     config.ip = process.env.TELNET_IP;
-    console.log("Using telnet IP from environment variable");
+    console.log(c.gray("Using telnet IP from environment variable"));
   }
   
   if (process.env.TELNET_PORT) {
     config.port = process.env.TELNET_PORT;
-    console.log("Using telnet port from environment variable");
+    console.log(c.gray("Using telnet port from environment variable"));
   }
   
   if (process.env.DISCORD_CHANNEL) {
     config.channel = process.env.DISCORD_CHANNEL;
-    console.log("Using Discord channel from environment variable");
+    console.log(c.gray("Using Discord channel from environment variable"));
   }
   
-  // Allow enabling demo mode via environment variable (DEMO_MODE=true)
-  if (typeof process.env.DEMO_MODE === 'string') {
-    const v = process.env.DEMO_MODE.trim().toLowerCase();
-    if (v === '1' || v === 'true' || v === 'yes' || v === 'on') {
-      config["demo-mode"] = true;
-      console.log("Demo mode enabled via environment variable");
-    }
+  // Allow controlling dev mode via environment variables
+  const parseBool = (s) => {
+    if (typeof s !== 'string') return null;
+    const v = s.trim().toLowerCase();
+    if (['1','true','yes','on'].includes(v)) return true;
+    if (['0','false','no','off',''].includes(v)) return false;
+    return null;
+  };
+  const devFromDEV = parseBool(process.env.DEV_MODE);
+  const devFromDEMO = parseBool(process.env.DEMO_MODE);
+  if (devFromDEV !== null) {
+    config["dev-mode"] = devFromDEV;
+    console.log(devFromDEV ? c.green("Dev mode enabled via environment variable (DEV_MODE)") : c.yellow("Dev mode disabled via environment variable (DEV_MODE)"));
+  } else if (devFromDEMO !== null) {
+    config["dev-mode"] = devFromDEMO;
+    console.log(devFromDEMO ? c.green("Dev mode enabled via environment variable (DEMO_MODE alias)") : c.yellow("Dev mode disabled via environment variable (DEMO_MODE alias)"));
   }
   
   // Validate required configuration
@@ -172,7 +192,7 @@ if(config["log-console"]) {
   d7dtdState.logger = new Logger();
 }
 
-var telnet = config["demo-mode"]?require("./lib/demoServer.js").client:new TelnetClient();
+var telnet = config["dev-mode"]?require("./lib/demoServer.js").client:new TelnetClient();
 // Safer command execution queue with light rate limiting
 const telnetQueue = new TelnetQueue(telnet, { minIntervalMs: 350, defaultTimeout: 6000 });
 
@@ -1235,7 +1255,7 @@ function loadAnalyticsData() {
       // Restore player trends data
       if (analyticsData.playerTrends) {
         d7dtdState.playerTrends = analyticsData.playerTrends;
-        console.log(`Analytics data loaded: ${d7dtdState.playerTrends.history.length} data points restored`);
+  console.log(c.gray(`Analytics data loaded: ${d7dtdState.playerTrends.history.length} data points restored`));
       }
     }
   } catch (error) {
@@ -1732,18 +1752,18 @@ function generateChangesReport() {
   return (
   `**ℹ️ DeadLink v${v}** *(${currentDate})*\n` +
 
-  `**🆕 New in v2.9.0**\n` +
-  `⬆️ **Updates Service** — Private checks for new releases with admin helpers\n` +
-  `📢 **Public Announcements** — Auto-post to a configured channel (updates.notifyMode/channel)\n` +
-  `�️ **On-demand Announce** — \`7d!update announce\` posts the rich update embed\n` +
-  `📗 **Upgrade Guides** — OS-specific steps reference the actual release tag\n\n` +
+  `**🆕 Updates & Releases**\n` +
+  `⬆️ **Update checks** — Private checks for new releases with admin helpers\n` +
+  `📢 **Public announcements** — Auto-post to a configured channel (updates.notifyMode/channel)\n` +
+  `📣 **On-demand announce** — \`7d!update announce\` posts the rich update embed\n` +
+  `📗 **Upgrade guides** — OS-specific steps reference the actual release tag\n\n` +
     `**🎮 Core Commands**\n` +
     `🎮 \`7d!dashboard\` — Interactive control panel\n` +
     `📊 \`7d!trends\` — Player count analytics & trends\n` +
   `🎯 \`7d!activity\` — Narrative activity with survival tips\n` +
   `👥 \`7d!players\` — Who’s online\n` +
     `⏰ \`7d!time\` — Current game time & horde context\n` +
-    `ℹ️ \`7d!info\` — This overview\n\n` +
+  `ℹ️ \`7d!info\` — This overview\n\n` +
 
   `**🛠️ Update Helpers (admin-only)**\n` +
   `🔎 \`7d!update check\` — Check latest release\n` +
@@ -2031,40 +2051,35 @@ function handleTrendsFromButton(interaction) {
 function handlePlayersFromButton(interaction) {
   interaction.deferReply().then(() => {
   telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
-      if (!err) {
-        let playerData = "";
-        processTelnetResponse(response, (line) => {
-          if (line.startsWith("Total of ")) {
-            playerData = line;
-            
-            const match = line.match(/Total of (\d+) players/);
-            if (match) {
-              const playerCount = parseInt(match[1]);
-              trackPlayerCount(playerCount);
-            }
-          }
-        });
-        
-        if (playerData) {
-          const embed = {
-            color: 0x2ecc71,
-            title: "👥 Online Players",
-            description: playerData,
-            footer: {
-              text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-            }
-          };
+      if (err) return handleCmdError(err);
+      let playerData = "";
+      processTelnetResponse(response, (line) => {
+        if (line.startsWith("Total of ")) {
+          playerData = line;
           
-          const navigationButtons = createNavigationButtons('dashboard_players');
-          interaction.editReply({ 
-            embeds: [embed],
-            components: [navigationButtons]
-          }).catch(console.error);
-        } else {
-          interaction.editReply("❌ No player data received.").catch(console.error);
+          const match = line.match(/Total of (\d+) players/);
+          if (match) {
+            const playerCount = parseInt(match[1]);
+            trackPlayerCount(playerCount);
+          }
         }
+      });
+      
+      if (playerData) {
+        const embed = {
+          color: 0x2ecc71,
+          title: "👥 Current Players Online",
+          description: playerData,
+          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+        };
+        
+        const navigationButtons = createNavigationButtons('dashboard_players');
+        interaction.editReply({ 
+          embeds: [embed],
+          components: [navigationButtons]
+        }).catch(console.error);
       } else {
-        interaction.editReply("❌ Failed to get player list.").catch(console.error);
+        interaction.editReply("❌ No player data received.").catch(console.error);
       }
   });
   }).catch(console.error);
@@ -2073,34 +2088,23 @@ function handlePlayersFromButton(interaction) {
 function handleTimeFromButton(interaction) {
   interaction.deferReply().then(() => {
   telnetQueue.exec("gettime", { timeout: 5000 }).then(({err, response}) => {
-      if (!err) {
-        let timeData = "";
-        processTelnetResponse(response, (line) => {
-          if (line.startsWith("Day")) {
-            timeData = line;
-          }
-        });
-        
-        if (timeData) {
-          const embed = {
-            color: 0x3498db,
-            title: "⏰ Current Game Time",
-            description: timeData,
-            footer: {
-              text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-            }
-          };
-          
-          const navigationButtons = createNavigationButtons('dashboard_time');
-          interaction.editReply({ 
-            embeds: [embed],
-            components: [navigationButtons]
-          }).catch(console.error);
-        } else {
-          interaction.editReply("❌ No time data received.").catch(console.error);
-        }
+      if (err) return handleCmdError(err);
+      let timeData = "";
+      processTelnetResponse(response, (line) => { if (line.startsWith("Day")) timeData = line; });
+      if (timeData) {
+        const embed = {
+          color: 0x3498db,
+          title: "⏰ Current Game Time",
+          description: timeData,
+          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+        };
+        const navigationButtons = createNavigationButtons('dashboard_time');
+        interaction.editReply({ 
+          embeds: [embed],
+          components: [navigationButtons]
+        }).catch(console.error);
       } else {
-        interaction.editReply("❌ Failed to get server time.").catch(console.error);
+        interaction.editReply("❌ No time data received.").catch(console.error);
       }
     });
   }).catch(console.error);
@@ -2111,7 +2115,7 @@ function handleInfoFromButton(interaction) {
     const statusMsg = d7dtdState.connStatus === 1 ? ":green_circle: Online" : 
                      d7dtdState.connStatus === 0 ? ":white_circle: Connecting..." : 
                      ":red_circle: Error";
-  const modeMsg = config["demo-mode"] ? "🧪 Demo" : "Live";
+  const modeMsg = config["dev-mode"] ? "🧪 Dev" : "Live";
     
     // Use the comprehensive changes content for info (same as main info command)
     const changesReport = generateChangesReport();
@@ -2121,7 +2125,7 @@ function handleInfoFromButton(interaction) {
       if (info && info.tag && info.url) {
         latestLine = `\n\n**Updates**\nLatest release: ${info.tag} • ${info.url}`;
       }
-    } catch (_) { /* ignore fetch errors */ }
+    } catch (_) { /* ignore */ }
   const infoContent = `Server connection: ${statusMsg}\nMode: ${modeMsg}\n\n${changesReport}${latestLine}`;
     
     const embed = {
@@ -2462,7 +2466,7 @@ client.on('messageCreate', async (msg) => {
           const msgText = textMap[kind];
           if (msgText) {
             const ready = await ensureTelnetReady(8000);
-            if (!ready && !(config["demo-mode"])) {
+            if (!ready && !(config["dev-mode"])) {
               msg.reply('In-game broadcast skipped: telnet not connected.').catch(() => {});
               return;
             }
@@ -2486,7 +2490,7 @@ client.on('messageCreate', async (msg) => {
         const statusMsg = d7dtdState.connStatus === 1 ? ':green_circle: Online' :
                          d7dtdState.connStatus === 0 ? ':white_circle: Connecting...' :
                          ':red_circle: Error';
-        const modeMsg = config["demo-mode"] ? '🧪 Demo' : 'Live';
+  const modeMsg = config["dev-mode"] ? '🧪 Dev' : 'Live';
 
         const changesReport = generateChangesReport();
         let latestLine = '';

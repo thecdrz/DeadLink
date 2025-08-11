@@ -64,7 +64,7 @@ Admin-only utilities (requires Manage Server permission):
 
 ## Latest Release: v2.11.5
 
-- Info: New “Mode” line on Info screen (shows Live or 🧪 Demo)
+- Info: New “Mode” line on Info screen (shows Live or 🧪 Dev)
 - Info: Reordered sections (Core Commands above Update Helpers)
 - UX: Legacy `!` prefix toggle (enabled) and friendly hint for `!command` usage
 - UX: Typo helper for `!bloonmoon` → suggests `7d!bloodmoon`
@@ -176,12 +176,12 @@ docker run --name deadlink -d `
 	-e TELNET_IP=$env:TELNET_IP `
 	-e TELNET_PORT=$env:TELNET_PORT `
 	-e DISCORD_CHANNEL=$env:DISCORD_CHANNEL `
-	-e DEMO_MODE=$env:DEMO_MODE `
+		-e DEV_MODE=$env:DEV_MODE `
 	ghcr.io/thecdrz/deadlink:latest
 ```
 
 Notes:
-- DEMO_MODE=true enables a simulated telnet for screenshots/testing.
+- DEV_MODE=true enables a simulated telnet for screenshots/testing.
 - Logs stream to container stdout; use `docker logs -f deadlink`.
 
 ## Troubleshooting telnet
