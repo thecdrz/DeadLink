@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadLink // Apocalypse HUD</title>
+  <meta name="description" content="DeadLink: 7 Days to Die Server Companion. Apocalypse HUD UI." />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Changa:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #2a2320 url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat;
+      --panel: #3a2f2b;
+      --accent: #e53935;
+      --accent-glow: #e5393588;
+      --health: #43a047;
+      --stamina: #039be5;
+      --text: #f5f5f5;
+      --note: #f9e4b7;
+      --note-border: #bfa76a;
+      --shadow: 0 4px 32px #e5393522;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', 'Changa', monospace;
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .hud-header {
+      background: var(--panel);
+      border-bottom: 3px solid var(--accent);
+      padding: 2rem 0 1.2rem 0;
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    .hud-logo {
+      display: inline-block;
+      background: #2a2320;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 24px var(--accent-glow);
+      padding: 0.7rem;
+      margin-bottom: 0.7rem;
+      animation: logoPulse 2.5s infinite;
+    }
+    @keyframes logoPulse {
+      0%, 100% { box-shadow: 0 0 24px var(--accent-glow); }
+      50% { box-shadow: 0 0 48px var(--accent-glow); }
+    }
+    .hud-logo img {
+      width: 72px;
+      height: 72px;
+      display: block;
+    }
+    .hud-title {
+      font-size: 2.3rem;
+      color: var(--accent);
+      text-shadow: 0 0 18px var(--accent-glow);
+      margin-bottom: 0.3rem;
+      font-family: 'Changa', 'Share Tech Mono', monospace;
+      font-weight: bold;
+      letter-spacing: 0.09em;
+    }
+    .hud-desc {
+      color: var(--health);
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+    .hud-bars {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.2rem;
+    }
+    .bar {
+      background: #1b1816;
+      border-radius: 8px;
+      box-shadow: 0 0 12px #000a;
+      width: 180px;
+      height: 22px;
+      position: relative;
+      border: 2px solid #444;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .bar-label {
+      position: absolute;
+      left: 10px;
+      top: 2px;
+      font-size: 1rem;
+      color: #fff;
+      text-shadow: 0 0 6px #000a;
+      z-index: 2;
+      font-family: 'Changa', 'Share Tech Mono', monospace;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      position: absolute;
+      left: 0; top: 0;
+      z-index: 1;
+    }
+    .bar-health {
+      background: linear-gradient(90deg, var(--health) 0%, #a5d6a7 100%);
+      width: 80%;
+    }
+    .bar-stamina {
+      background: linear-gradient(90deg, var(--stamina) 0%, #81d4fa 100%);
+      width: 65%;
+    }
+    .hud-warning {
+      background: var(--accent);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      border-radius: 8px;
+      padding: 0.5em 1.2em;
+      margin: 1.2rem auto 2rem auto;
+      max-width: 420px;
+      box-shadow: 0 0 18px var(--accent-glow);
+      animation: warningPulse 1.5s infinite;
+    }
+    @keyframes warningPulse {
+      0%, 100% { box-shadow: 0 0 18px var(--accent-glow); }
+      50% { box-shadow: 0 0 36px var(--accent-glow); }
+    }
+    .hud-panel {
+      background: var(--panel);
+      border-radius: 22px;
+      box-shadow: 0 0 40px #000a;
+      max-width: 760px;
+      margin: 2.5rem auto;
+      padding: 2.2rem 2.7rem 2.7rem 2.7rem;
+      position: relative;
+      border: 3px solid var(--accent);
+      overflow: hidden;
+    }
+    .panel-title {
+      font-size: 1.6rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 12px var(--accent-glow);
+      font-family: 'Changa', 'Share Tech Mono', monospace;
+    }
+    .notes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.7rem;
+      margin-bottom: 2.2rem;
+    }
+    @media (max-width: 800px) {
+      .notes { grid-template-columns: 1fr; }
+      .hud-panel { padding: 1.2rem; }
+    }
+    .note-card {
+      background: var(--note);
+      border: 2px solid var(--note-border);
+      border-radius: 12px;
+      box-shadow: 0 0 18px #bfa76a88;
+      padding: 1.3rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Share Tech Mono', monospace;
+      color: #3a2f2b;
+    }
+    .note-card:hover {
+      box-shadow: 0 0 36px #bfa76a88;
+      border-color: var(--accent);
+    }
+    .note-title {
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      font-family: 'Changa', 'Share Tech Mono', monospace;
+    }
+    .note-desc {
+      color: #3a2f2b;
+      font-size: 0.97rem;
+      margin-bottom: 0.5rem;
+    }
+    .note-icon {
+      font-size: 1.7rem;
+      margin-bottom: 0.2rem;
+      color: var(--accent);
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+    .photo-section {
+      margin-top: 2.7rem;
+      text-align: center;
+    }
+    .photo-title {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.04em;
+      font-family: 'Changa', 'Share Tech Mono', monospace;
+    }
+    .photo-frame {
+      display: inline-block;
+      background: #3a2f2b;
+      border: 2px solid var(--accent);
+      border-radius: 14px;
+      box-shadow: 0 0 24px var(--accent-glow);
+      padding: 0.7rem;
+      margin-bottom: 0.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .photo-frame img {
+      width: 340px;
+      max-width: 92vw;
+      border-radius: 9px;
+      display: block;
+      filter: brightness(1.1) contrast(1.1);
+    }
+    .photo-thumbs {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.6rem;
+    }
+    .photo-thumb {
+      border: 2px solid transparent;
+      border-radius: 7px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: border-color 0.2s, opacity 0.2s;
+      width: 54px;
+      height: 36px;
+      overflow: hidden;
+      background: #2a2320;
+    }
+    .photo-thumb.active, .photo-thumb:hover {
+      border-color: var(--accent);
+      opacity: 1;
+    }
+    .photo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(1.1) contrast(1.1);
+    }
+    .install-section {
+      margin-top: 2.7rem;
+      text-align: center;
+    }
+    .install-title {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.04em;
+      font-family: 'Changa', 'Share Tech Mono', monospace;
+    }
+    .install-terminal {
+      background: #2a2320;
+      border: 2px solid var(--health);
+      border-radius: 12px;
+      color: var(--health);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.05rem;
+      padding: 1.3rem 1.1rem;
+      margin: 0 auto 1.3rem auto;
+      max-width: 440px;
+      text-align: left;
+      box-shadow: 0 0 16px var(--health);
+      position: relative;
+      overflow: hidden;
+    }
+    .install-terminal .prompt { color: var(--accent); }
+    .install-terminal .comment { color: #888; }
+    .install-terminal .ok { color: var(--health); }
+    .install-terminal .info { color: var(--accent); }
+    .hud-footer {
+      background: var(--panel);
+      border-top: 3px solid var(--accent);
+      color: var(--text);
+      text-align: center;
+      padding: 1.7rem 0 0.8rem 0;
+      margin-top: 3.2rem;
+      font-size: 1.01rem;
+      letter-spacing: 0.04em;
+      font-family: 'Share Tech Mono', monospace;
+      box-shadow: var(--shadow);
+    }
+    .hud-footer-links {
+      margin-bottom: 0.6rem;
+    }
+    .hud-footer-links a {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 1.3rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+      font-family: 'Changa', 'Share Tech Mono', monospace;
+    }
+    .hud-footer-links a:hover {
+      color: var(--health);
+    }
+  </style>
+</head>
+<body>
+  <div class="hud-header">
+    <div class="hud-logo">
+      <img src="../screenshots/HC_Logo-L.png" alt="DeadLink Logo">
+    </div>
+    <div class="hud-title">DeadLink</div>
+    <div class="hud-desc">Apocalypse HUD // 7 Days to Die Server Companion</div>
+    <div class="hud-bars">
+      <div class="bar">
+        <span class="bar-label">Health</span>
+        <span class="bar-fill bar-health"></span>
+      </div>
+      <div class="bar">
+        <span class="bar-label">Stamina</span>
+        <span class="bar-fill bar-stamina"></span>
+      </div>
+    </div>
+    <div class="hud-warning">Warning: Blood Moon Approaching!</div>
+  </div>
+  <div class="hud-panel">
+    <div class="panel-title">Survivor Notes</div>
+    <div class="notes">
+      <div class="note-card">
+        <div class="note-icon">🧟</div>
+        <div class="note-title">Player & Server Trends</div>
+        <div class="note-desc">Track online counts, restarts, and latency. Spot issues before disaster strikes.</div>
+      </div>
+      <div class="note-card">
+        <div class="note-icon">📋</div>
+        <div class="note-title">Activity Reports</div>
+        <div class="note-desc">Daily summaries of logins, deaths, chat, and events sent to Discord. Stay informed, stay alive.</div>
+      </div>
+      <div class="note-card">
+        <div class="note-icon">🌑</div>
+        <div class="note-title">Horde Night Alerts</div>
+        <div class="note-desc">Polite, rate-limited blood moon warnings. No spam, just survival-critical info.</div>
+      </div>
+      <div class="note-card">
+        <div class="note-icon">🔧</div>
+        <div class="note-title">Safe Server Controls</div>
+        <div class="note-desc">Scoped commands for restart, say, moderation—no raw telnet noise. Control with confidence.</div>
+      </div>
+    </div>
+    <div class="photo-section">
+      <div class="photo-title">Survivor Photos</div>
+      <div class="photo-frame">
+        <img src="../screenshots/analytics-dashboard.png" alt="Analytics Dashboard" id="photo-main-shot">
+      </div>
+      <div class="photo-thumbs" id="photo-shot-thumbs">
+        <div class="photo-thumb active" data-src="../screenshots/analytics-dashboard.png">
+          <img src="../screenshots/analytics-dashboard.png" alt="Analytics Thumb">
+        </div>
+        <div class="photo-thumb" data-src="../screenshots/HC_Trends.png">
+          <img src="../screenshots/HC_Trends.png" alt="Trends Thumb">
+        </div>
+        <div class="photo-thumb" data-src="../screenshots/HC_Activity.png">
+          <img src="../screenshots/HC_Activity.png" alt="Activity Thumb">
+        </div>
+        <div class="photo-thumb" data-src="../screenshots/server-dashboard.png">
+          <img src="../screenshots/server-dashboard.png" alt="Controls Thumb">
+        </div>
+      </div>
+    </div>
+    <div class="install-section">
+      <div class="install-title">Install DeadLink</div>
+      <div class="install-terminal">
+        <div class="comment"># Docker install command</div>
+        <div class="prompt">&gt;</div> <span class="command">docker run --name deadlink \</span><br>
+        <span class="command">  -e DISCORD_TOKEN=... \</span><br>
+        <span class="command">  -e TELNET_HOST=... \</span><br>
+        <span class="command">  -e TELNET_PASS=... \</span><br>
+        <span class="command">  ghcr.io/thecdrz/deadlink:latest</span><br>
+        <div class="comment"># HUD initializing...</div>
+        <div class="ok">[OK] Telnet connection secured.</div>
+        <div class="ok">[OK] Discord link established.</div>
+        <div class="info">[INFO] DeadLink operational. Apocalypse HUD active.</div>
+      </div>
+    </div>
+  </div>
+  <div class="hud-footer">
+    <div class="hud-footer-links">
+      <a href="https://github.com/thecdrz/DeadLink" target="_blank">GitHub</a>
+      <a href="https://discord.gg/YjeBPdSp" target="_blank">Discord</a>
+      <a href="https://github.com/thecdrz/DeadLink/issues" target="_blank">Report Issue</a>
+    </div>
+    <div>DeadLink Apocalypse HUD // Property of CDRZ</div>
+  </div>
+  <script>
+    // Survivor photo screenshot switching
+    const photoMainShot = document.getElementById('photo-main-shot');
+    const photoThumbs = document.querySelectorAll('.photo-thumb');
+    photoThumbs.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        photoMainShot.src = thumb.dataset.src;
+        photoThumbs.forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

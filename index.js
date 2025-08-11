@@ -1,3 +1,9 @@
+// Load environment variables from .env as early as possible
+try {
+  require('dotenv').config();
+  // console.log('Environment variables loaded from .env'); // keep quiet to avoid leaking sensitive info
+} catch (_) { /* dotenv optional */ }
+
 const minimist = require("minimist");
 const fs = require("fs");
 const pjson = require("./package.json");
@@ -15,7 +21,7 @@ const { Client, Intents } = Discord;
 // Request explicit gateway intents via constants (v13)
 const requestedIntents = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
 
-console.log("\x1b[7m# DeadLink v" + pjson.version + " (Based on Dishorde by LakeYS) #\x1b[0m");
+console.log("\x1b[7m# DeadLink v" + pjson.version + " #\x1b[0m");
 console.log("NOTICE: Remote connections to 7 Days to Die servers are not encrypted. To keep your server secure, do not run this application on a public network, such as a public wi-fi hotspot. Be sure to use a unique telnet password.\n");
 
 const lineSplit = /\n|\r/g;
@@ -60,7 +66,6 @@ var d7dtdState = {
   // -100 = Override or N/A (value is ignored)
   connStatus: -100
 };
-
 ////// # Arguments # //////
 // We have to treat the channel ID as a string or the number will parse incorrectly.
 var argv = minimist(process.argv.slice(2), {string: ["channel","port"]});
@@ -107,6 +112,15 @@ else {
   if (process.env.DISCORD_CHANNEL) {
     config.channel = process.env.DISCORD_CHANNEL;
     console.log("Using Discord channel from environment variable");
+  }
+  
+  // Allow enabling demo mode via environment variable (DEMO_MODE=true)
+  if (typeof process.env.DEMO_MODE === 'string') {
+    const v = process.env.DEMO_MODE.trim().toLowerCase();
+    if (v === '1' || v === 'true' || v === 'yes' || v === 'on') {
+      config["demo-mode"] = true;
+      console.log("Demo mode enabled via environment variable");
+    }
   }
   
   // Validate required configuration
@@ -1296,7 +1310,7 @@ function announceNewVersion(version) {
   title: `🚀 DeadLink v${version} Released!`,
       description: "The bot has been updated with new features and improvements!",
       footer: {
-  text: `DeadLink v${version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${version}`,
       },
       timestamp: new Date().toISOString()
     };
@@ -1323,7 +1337,7 @@ function announceNewVersion(version) {
       }
     ],
     footer: {
-  text: `DeadLink v${version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${version}`,
     },
     timestamp: new Date().toISOString()
   };
@@ -1717,20 +1731,12 @@ function generateChangesReport() {
 
   return (
   `**ℹ️ DeadLink v${v}** *(${currentDate})*\n` +
-    `Built on Dishorde by LakeYS • CDRZ enhancements\n\n` +
 
   `**🆕 New in v2.9.0**\n` +
   `⬆️ **Updates Service** — Private checks for new releases with admin helpers\n` +
   `📢 **Public Announcements** — Auto-post to a configured channel (updates.notifyMode/channel)\n` +
   `�️ **On-demand Announce** — \`7d!update announce\` posts the rich update embed\n` +
   `📗 **Upgrade Guides** — OS-specific steps reference the actual release tag\n\n` +
-
-  `**🛠️ Update Helpers (admin-only)**\n` +
-  `🔎 \`7d!update check\` — Check latest release\n` +
-  `📝 \`7d!update notes\` — View release notes\n` +
-  `⬇️ \`7d!update guide [windows|linux]\` — Step-by-step upgrade\n` +
-  `📣 \`7d!update announce\` — Post the update embed on demand\n\n` +
-
     `**🎮 Core Commands**\n` +
     `🎮 \`7d!dashboard\` — Interactive control panel\n` +
     `📊 \`7d!trends\` — Player count analytics & trends\n` +
@@ -1738,6 +1744,12 @@ function generateChangesReport() {
   `👥 \`7d!players\` — Who’s online\n` +
     `⏰ \`7d!time\` — Current game time & horde context\n` +
     `ℹ️ \`7d!info\` — This overview\n\n` +
+
+  `**🛠️ Update Helpers (admin-only)**\n` +
+  `🔎 \`7d!update check\` — Check latest release\n` +
+  `📝 \`7d!update notes\` — View release notes\n` +
+  `⬇️ \`7d!update guide [windows|linux]\` — Step-by-step upgrade\n` +
+  `📣 \`7d!update announce\` — Post the update embed on demand\n\n` +
 
   `**🤖 Intelligent Features**\n` +
   `🧠 Context-aware survival guidance\n` +
@@ -1751,7 +1763,7 @@ function generateChangesReport() {
 
     `**🧩 Optional Config Snippets**\n` +
     `bloodMoon: { enabled, intervalSeconds, frequency, broadcastInGame }\n` +
-    `updates: { enabled, intervalHours, prerelease, notifyMode, notifyChannel }`
+  `updates: { enabled, intervalHours, prerelease, notifyMode, notifyChannel }`
   );
 }
 
@@ -1770,7 +1782,7 @@ function createDashboardEmbed() {
                  `⏰ **Time** - Check current game time\n` +
                  `ℹ️ **Info** - Server version and details`,
     footer: {
-  text: `DeadLink v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${pjson.version}`,
     }
   };
 }
@@ -2116,7 +2128,7 @@ function handleInfoFromButton(interaction) {
   title: "🎮 DeadLink Information & Features",
       description: infoContent,
       footer: {
-  text: `DeadLink v${pjson.version} • Original: LakeYS • Expanded: CDRZ`,
+  text: `DeadLink v${pjson.version}`,
       }
     };
     
@@ -2378,7 +2390,20 @@ client.on('messageCreate', async (msg) => {
   // Only accept the configured prefix (default '7d!'), but compare case-insensitively
   const primaryPrefix = (typeof prefix === 'string' && prefix.length) ? prefix : '7d!';
   const usedPrefix = content.toLowerCase().startsWith(primaryPrefix.toLowerCase()) ? primaryPrefix : null;
-  if (!usedPrefix) return;
+  if (!usedPrefix) {
+    // Friendly hint if the user tries legacy '!' prefix with a known command
+    const lc = content.toLowerCase();
+    if (lc.startsWith('!')) {
+      const maybe = lc.slice(1).trim().split(/\s+/)[0];
+      const alias = { bloonmoon: 'bloodmoon' };
+      const normalized = alias[maybe] || maybe;
+      const known = ['dashboard','trends','activity','players','time','info','update','bloodmoon'];
+      if (known.includes(normalized)) {
+        try { msg.reply(`Use the '${primaryPrefix}' prefix. Example: ${primaryPrefix}${normalized}`); } catch (_) {}
+      }
+    }
+    return;
+  }
   const args = content.slice(usedPrefix.length).trim().split(/\s+/);
     const cmd = (args.shift() || '').toLowerCase();
 
@@ -2468,7 +2493,7 @@ client.on('messageCreate', async (msg) => {
           color: 0x7289da,
           title: '🎮 DeadLink Information & Features',
           description: `Server connection: ${statusMsg}\n\n${changesReport}${latestLine}`,
-          footer: { text: `DeadLink v${pjson.version} • Original: LakeYS • Expanded: CDRZ` }
+          footer: { text: `DeadLink v${pjson.version}` }
         };
         await msg.channel.send({ embeds: [embed] }).catch(() => {});
       } catch (_) { /* ignore */ }

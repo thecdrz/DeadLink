@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>DeadLink – 7 Days to Die Server Companion</title>
+  <meta name="description" content="DeadLink is a lightweight 7 Days to Die server companion: trends, reports, horde-night alerts, and safe server controls. Docker-friendly and Discord-integrated." />
+
+  <!-- Brand / sharing -->
+  <meta name="theme-color" content="#0f0f12">
+  <meta property="og:title" content="DeadLink – 7 Days to Die Server Companion">
+  <meta property="og:description" content="Trends, reports, horde-night alerts, and safe controls for your 7 Days to Die server.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/deadlink-logo.png">
+
+  <!-- Icon / logo -->
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Base colors */
+      --background: #0f0f12;
+      --surface-1: #16161d;
+      --surface-2: #1c1c26;
+      --primary: #ff4655;
+      --primary-dark: #cc3744;
+      --accent: #0bc6e3;
+      --text: #eaeaea;
+      --text-secondary: #b0b0b0;
+      --border: rgba(255, 255, 255, 0.08);
+      
+      /* Gradients */
+      --red-gradient: linear-gradient(135deg, #ff4655 0%, #ac152c 100%);
+      --blue-gradient: linear-gradient(135deg, #0bc6e3 0%, #0889b8 100%);
+      --dark-gradient: linear-gradient(180deg, #16161d 0%, #0f0f12 100%);
+      
+      /* Effects */
+      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.6);
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.7);
+      --glow-red: 0 0 20px rgba(255, 70, 85, 0.3);
+      --glow-blue: 0 0 20px rgba(11, 198, 227, 0.3);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+    
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      color: white;
+    }
+    
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      line-height: 1.1;
+    }
+    
+    h2 {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      margin-bottom: 1.5rem;
+    }
+    
+    h3 {
+      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      margin-bottom: 1rem;
+    }
+    
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    
+    .section {
+      padding: 5rem 0;
+      position: relative;
+    }
+    
+    /* Header */
+    .site-header {
+      background: rgba(15, 15, 18, 0.8);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo {
+      height: 40px;
+      width: auto;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+    
+    .nav-links a:hover {
+      color: white;
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary);
+      transition: width 0.2s ease;
+    }
+    
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    
+    /* Hero section */
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      background: var(--surface-1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(255, 70, 85, 0.15) 0%, transparent 60%),
+                  radial-gradient(circle at 80% 70%, rgba(11, 198, 227, 0.1) 0%, transparent 50%);
+      z-index: 1;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      max-width: 700px;
+    }
+    
+    .tagline {
+      color: var(--accent);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    
+    .hero-description {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .button {
+      padding: 0.8rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.2s ease;
+      min-width: 160px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .button-primary {
+      background: var(--red-gradient);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--glow-red), var(--shadow-md);
+    }
+    
+    .button-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .button-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-secondary);
+      transform: translateY(-2px);
+    }
+    
+    .hero-image {
+      position: absolute;
+      right: -10%;
+      bottom: -10%;
+      width: 60%;
+      max-width: 800px;
+      z-index: 1;
+      opacity: 0.8;
+      filter: drop-shadow(var(--glow-red));
+    }
+    
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .feature-card {
+      background: var(--surface-2);
+      border-radius: 12px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border: 1px solid var(--border);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(255, 70, 85, 0.3);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      background: var(--surface-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-icon svg {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .feature-title {
+      font-size: 1.3rem;
+    }
+    
+    .feature-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    /* Screenshot Showcase */
+    .showcase {
+      background: var(--surface-1);
+      padding: 6rem 0;
+    }
+    
+    .showcase-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .tab-button {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.8rem 1.2rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    .tab-button:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .tab-button.active {
+      background: var(--surface-2);
+      color: white;
+      border-left: 3px solid var(--primary);
+    }
+    
+    .showcase-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .screenshot-container {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .screenshot {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+    
+    /* Terminal section */
+    .terminal-section {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .terminal-window {
+      background: #0a0a0d;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      font-family: monospace;
+      color: #d0d0d0;
+      max-width: 90%;
+      margin: 3rem auto;
+      position: relative;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .terminal-button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    
+    .terminal-close {
+      background: #ff5f56;
+    }
+    
+    .terminal-minimize {
+      background: #ffbd2e;
+    }
+    
+    .terminal-zoom {
+      background: #27c93f;
+    }
+    
+    .terminal-title {
+      color: var(--text-secondary);
+      margin-left: 1rem;
+      font-size: 0.85rem;
+    }
+    
+    .terminal-content {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
+    
+    .command {
+      color: #50fa7b;
+      margin-bottom: 0.5rem;
+    }
+    
+    .command::before {
+      content: '$ ';
+      color: #bd93f9;
+    }
+    
+    .response {
+      color: #f8f8f2;
+      margin-bottom: 1rem;
+    }
+    
+    .copy-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 4px;
+      color: var(--text-secondary);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .copy-button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+      background: var(--red-gradient);
+      color: white;
+      position: relative;
+      overflow: hidden;
+      padding: 4rem 0;
+    }
+    
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMxLjIyMyAwIDIuMjIuOTk3IDIuMjIgMi4yMnYxOC41NmMwIDEuMjI0LS45OTcgMi4yMi0yLjIyIDIuMjJIMjMuNzhjLTEuMjI0IDAtMi4yMi0uOTk2LTIuMjItMi4yMnYtMTguNTZjMC0xLjIyMy45OTYtMi4yMiAyLjIyLTIuMjJoMTIuMjJ6bTAgMi4yMkgyMy43OHYxOC41NkgzNlYyMC4yMnoiIGZpbGw9IiNmZmYiIGZpbGwtcnVsZT0ibm9uemVybyIgb3BhY2l0eT0iLjIiLz48L2c+PC9zdmc+');
+      opacity: 0.3;
+      z-index: 1;
+    }
+    
+    .cta-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .cta-description {
+      margin: 1.5rem 0 2rem;
+      font-size: 1.1rem;
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--surface-2);
+      padding: 3rem 0 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    
+    .footer-info {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    .footer-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .footer-logo img {
+      height: 30px;
+      width: auto;
+    }
+    
+    .footer-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      max-width: 400px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+    
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+    
+    .footer-copyright {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .social-icon {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    .social-icon:hover {
+      color: white;
+    }
+    
+    /* Animation keyframes */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Animations */
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        padding-top: 80px;
+      }
+      
+      .hero-image {
+        opacity: 0.3;
+        right: -30%;
+        bottom: -20%;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+    
+    /* Optional: Floating particles background */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    
+    .red {
+      background-color: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+    
+    .blue {
+      background-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-content">
+      <div class="logo-container">
+        <img src="assets/deadlink-logo.png" alt="DeadLink Logo" class="logo">
+        <span style="font-family: 'Orbitron', sans-serif; font-weight: 700;">DeadLink</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#showcase">Screenshots</a>
+        <a href="#installation">Installation</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="particles" id="particles">
+      <!-- Particles will be injected via JS -->
+    </div>
+    <div class="container">
+      <div class="hero-content animate-fadeIn">
+        <span class="tagline">7 Days to Die Server Companion</span>
+        <h1>Take Control of Your<br><span style="color: var(--primary);">7D2D Server</span> Experience</h1>
+        <p class="hero-description">
+          DeadLink is a lightweight companion that brings advanced analytics, automated reports, 
+          horde night alerts, and secure server controls to your 7 Days to Die server. All with seamless Discord integration.
+        </p>
+        <div class="cta-buttons">
+          <a href="#installation" class="button button-primary">Get Started</a>
+          <a href="https://github.com/thecdrz/DeadLink" target="_blank" class="button button-secondary">View on GitHub</a>
+        </div>
+      </div>
+    </div>
+    <img src="../screenshots/HC_Dashboard.png" alt="DeadLink Dashboard" class="hero-image">
+  </section>
+
+  <!-- Features Section -->
+  <section class="section" id="features">
+    <div class="container">
+      <h2>Powerful Features</h2>
+      <p style="color: var(--text-secondary); max-width: 700px; margin-bottom: 3rem;">
+        DeadLink transforms your server management experience with these core capabilities,
+        designed to make administration easier and player engagement deeper.
+      </p>
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4 19h16" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M6 15l4-4 3 3 5-6" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Player & Server Trends</h3>
+          <p class="feature-description">
+            Track and visualize online player counts, server restarts, and latency metrics. 
+            Spot potential issues early and understand your community's gaming patterns.
+          </p>
+        </div>
+        
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+              <rect x="3" y="14" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="8" cy="7" r="1" fill="currentColor"/>
+              <circle cx="8" cy="17" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Daily Activity Reports</h3>
+          <p class="feature-description">
+            Receive comprehensive daily summaries of all server activity directly to your Discord. 
+            Track logins, deaths, chat messages, and other important in-game events.
+          </p>
+        </div>
+        
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M21 12.5A8.5 8.5 0 0 1 10.5 2 9 9 0 1 0 22 13.5c-3 .8-5.3-.4-1-1z" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Horde Night Alerts</h3>
+          <p class="feature-description">
+            Never be caught unprepared again. DeadLink provides smart, rate-limited blood moon warnings 
+            with intelligent cool-downs to prevent notification spam.
+          </p>
+        </div>
+        
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M14 7l3 3-7 7H7v-3l7-7z" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M14 7l3 3" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Safe Server Controls</h3>
+          <p class="feature-description">
+            Manage your server through secure, permission-based commands for restarts, messaging, and moderation. 
+            No more dealing with raw telnet commands and their potential risks.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshot Showcase -->
+  <section class="showcase section" id="showcase">
+    <div class="container">
+      <h2>See DeadLink in Action</h2>
+      <p style="color: var(--text-secondary); max-width: 700px; margin-bottom: 2rem;">
+        Discover how DeadLink transforms your server management experience with these visual previews.
+      </p>
+      
+      <div class="showcase-tabs">
+        <button class="tab-button active" data-tab="analytics">Analytics Dashboard</button>
+        <button class="tab-button" data-tab="trends">Player Trends</button>
+        <button class="tab-button" data-tab="reports">Activity Reports</button>
+        <button class="tab-button" data-tab="controls">Server Controls</button>
+      </div>
+      
+      <div class="showcase-content">
+        <div class="tab-content active" id="analytics-content">
+          <div class="screenshot-container">
+            <img src="../screenshots/analytics-dashboard.png" alt="Analytics Dashboard" class="screenshot">
+          </div>
+          <div style="margin-top: 1rem;">
+            <h3>Comprehensive Analytics Dashboard</h3>
+            <p style="color: var(--text-secondary);">
+              Get a complete overview of your server's performance and player activity in one glance.
+              Track key metrics like player count, server uptime, and response times.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Other tab contents will be shown/hidden with JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Installation Section -->
+  <section class="section" id="installation">
+    <div class="container">
+      <h2>Quick Installation</h2>
+      <p style="color: var(--text-secondary); max-width: 700px; margin-bottom: 2rem;">
+        DeadLink is designed to be easy to deploy. Just run the Docker container with your server details,
+        and you're ready to go.
+      </p>
+      
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <span class="terminal-button terminal-close"></span>
+          <span class="terminal-button terminal-minimize"></span>
+          <span class="terminal-button terminal-zoom"></span>
+          <span class="terminal-title">bash</span>
+        </div>
+        <div class="terminal-content">
+          <div class="command">docker run --name deadlink \\</div>
+          <div class="command">  -e DISCORD_TOKEN=... \\</div>
+          <div class="command">  -e TELNET_HOST=... \\</div>
+          <div class="command">  -e TELNET_PASS=... \\</div>
+          <div class="command">  ghcr.io/thecdrz/deadlink:latest</div>
+          <div class="response">
+DeadLink v2.7.0 initializing...
+[INFO] Connected to telnet server
+[INFO] Connected to Discord
+[SUCCESS] DeadLink is now monitoring your server!
+          </div>
+        </div>
+        <button class="copy-button" id="copy-command">Copy Command</button>
+      </div>
+      
+      <div style="margin-top: 3rem; text-align: center;">
+        <a href="https://github.com/thecdrz/DeadLink#installation" target="_blank" class="button button-primary">Full Installation Guide</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Elevate Your Server?</h2>
+        <p class="cta-description">
+          Join hundreds of server admins who have transformed their 7 Days to Die communities with DeadLink.
+          Free, open-source, and continuously improved.
+        </p>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" class="button button-secondary">Get Started Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <div class="footer-logo">
+            <img src="assets/deadlink-logo.png" alt="DeadLink Logo" style="width: 24px; height: 24px;">
+            DeadLink
+          </div>
+          <p class="footer-description">
+            A lightweight 7 Days to Die server companion with analytics, reports, alerts, and controls.
+            Docker-friendly and Discord-integrated.
+          </p>
+        </div>
+        
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <a href="#showcase">Screenshots</a>
+          <a href="#installation">Installation</a>
+          <a href="https://github.com/thecdrz/DeadLink/issues" target="_blank">Report an Issue</a>
+          <a href="https://discord.gg/YjeBPdSp" target="_blank">Join Discord</a>
+        </div>
+      </div>
+      
+      <div class="footer-copyright">
+        <div>
+          © 2025 DeadLink | Created by 
+          <a href="https://discord.com/users/217012303063678978" target="_blank" style="color: var(--accent); text-decoration: none;">CDRZ</a>
+        </div>
+        <div class="social-links">
+          <a href="https://github.com/thecdrz/DeadLink" class="social-icon" target="_blank">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57 4.77-1.59 8.2-6.085 8.2-11.385C24 5.37 18.63 0 12 0z"/>
+            </svg>
+          </a>
+          <a href="https://discord.gg/YjeBPdSp" class="social-icon" target="_blank">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09-.01-.02-.04-.03-.07-.03-1.5.26-2.93.71-4.27 1.33-.01 0-.02.01-.03.02-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05 1.8 1.32 3.53 2.12 5.24 2.65.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74.02-.04 0-.08-.04-.09-.57-.22-1.11-.48-1.64-.78-.04-.02-.04-.08-.01-.11.11-.08.22-.17.33-.25.02-.02.05-.02.07-.01 3.44 1.57 7.15 1.57 10.55 0 .02-.01.05-.01.07.01.11.09.22.17.33.26.04.03.04.09-.01.11-.52.31-1.07.56-1.64.78-.04.01-.05.06-.04.09.32.61.68 1.19 1.07 1.74.03.02.06.03.09.02 1.72-.53 3.45-1.33 5.25-2.65.02-.01.03-.03.03-.05.44-4.53-.73-8.46-3.1-11.95-.01-.01-.02-.02-.04-.02z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Particle background
+    document.addEventListener('DOMContentLoaded', function() {
+      const particlesContainer = document.getElementById('particles');
+      
+      // Create particles
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.classList.add(Math.random() > 0.5 ? 'red' : 'blue');
+        
+        // Random size between 2px and 6px
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random position
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+        
+        // Random animation
+        const duration = Math.random() * 40 + 20; // 20-60s
+        const delay = Math.random() * 10;
+        particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+        
+        particlesContainer.appendChild(particle);
+      }
+      
+      // Tabs functionality
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          
+          // Add active class to clicked button
+          button.classList.add('active');
+          
+          // Show the corresponding tab content
+          const tabName = button.getAttribute('data-tab');
+          // Implementation would show the relevant content
+          // This is just a placeholder
+        });
+      });
+      
+      // Copy command button
+      const copyButton = document.getElementById('copy-command');
+      if (copyButton) {
+        copyButton.addEventListener('click', () => {
+          const command = `docker run --name deadlink \\
+  -e DISCORD_TOKEN=... \\
+  -e TELNET_HOST=... \\
+  -e TELNET_PASS=... \\
+  ghcr.io/thecdrz/deadlink:latest`;
+          
+          navigator.clipboard.writeText(command).then(() => {
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+              copyButton.textContent = 'Copy Command';
+            }, 2000);
+          });
+        });
+      }
+      
+      // Additional animation for floating particles
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes float {
+          0% { transform: translate(0, 0); }
+          50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 60 - 30}px); }
+          100% { transform: translate(0, 0); }
+        }
+      `;
+      document.head.appendChild(style);
+    });
+  </script>
+</body>
+</html>

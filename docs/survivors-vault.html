@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadLink // Survivor's Data Vault</title>
+  <meta name="description" content="DeadLink: 7 Days to Die Server Companion. Secure Data Vault Interface." />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #10131a;
+      --vault: #1a2233;
+      --neon: #00ffe7;
+      --neon-glow: #00ffe788;
+      --danger: #ff4d4d;
+      --accent: #ffb74d;
+      --text: #e0e0e0;
+      --scanline: repeating-linear-gradient(180deg, #00ffe70a 0 2px, transparent 2px 6px);
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Share Tech Mono', 'Orbitron', monospace;
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .vault-header {
+      background: linear-gradient(90deg, #1a2233 60%, #10131a 100%);
+      border-bottom: 3px solid var(--neon);
+      padding: 2rem 0 1.2rem 0;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 2px 32px var(--neon-glow);
+    }
+    .vault-door {
+      display: inline-block;
+      background: #1a2233;
+      border: 3px solid var(--neon);
+      border-radius: 50%;
+      box-shadow: 0 0 32px var(--neon-glow);
+      padding: 0.7rem;
+      margin-bottom: 0.7rem;
+      position: relative;
+      animation: vaultPulse 2.5s infinite;
+    }
+    @keyframes vaultPulse {
+      0%, 100% { box-shadow: 0 0 32px var(--neon-glow); }
+      50% { box-shadow: 0 0 64px var(--neon-glow); }
+    }
+    .vault-door img {
+      width: 72px;
+      height: 72px;
+      display: block;
+    }
+    .vault-lock {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #10131a;
+      border: 2px solid var(--danger);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--danger);
+      font-size: 1.3rem;
+      box-shadow: 0 0 12px var(--danger);
+      animation: lockFlicker 1.5s infinite;
+    }
+    @keyframes lockFlicker {
+      0%, 100% { opacity: 1; }
+      40% { opacity: 0.7; }
+      50% { opacity: 0.3; }
+      60% { opacity: 0.7; }
+    }
+    .vault-title {
+      font-size: 2.3rem;
+      color: var(--neon);
+      text-shadow: 0 0 18px var(--neon-glow);
+      margin-bottom: 0.3rem;
+      font-family: 'Orbitron', 'Share Tech Mono', monospace;
+      font-weight: bold;
+      letter-spacing: 0.09em;
+    }
+    .vault-desc {
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+    .vault-panel {
+      background: var(--vault);
+      border-radius: 22px;
+      box-shadow: 0 0 40px #000a;
+      max-width: 760px;
+      margin: 2.5rem auto;
+      padding: 2.2rem 2.7rem 2.7rem 2.7rem;
+      position: relative;
+      border: 3px solid var(--neon);
+      overflow: hidden;
+    }
+    .vault-panel:before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      opacity: 0.13;
+      background: var(--scanline);
+      border-radius: 22px;
+    }
+    .panel-title {
+      font-size: 1.6rem;
+      color: var(--neon);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 12px var(--neon-glow);
+      font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    }
+    .vault-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.7rem;
+      margin-bottom: 2.2rem;
+    }
+    @media (max-width: 800px) {
+      .vault-cards { grid-template-columns: 1fr; }
+      .vault-panel { padding: 1.2rem; }
+    }
+    .vault-card {
+      background: #10131a;
+      border: 2.5px solid var(--neon);
+      border-radius: 14px;
+      box-shadow: 0 0 18px var(--neon-glow);
+      padding: 1.3rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .vault-card:hover {
+      box-shadow: 0 0 36px var(--neon-glow);
+      border-color: var(--accent);
+    }
+    .vault-icon {
+      font-size: 2rem;
+      margin-bottom: 0.3rem;
+      color: var(--neon);
+      text-shadow: 0 0 10px var(--neon-glow);
+    }
+    .vault-card-title {
+      font-size: 1.15rem;
+      color: var(--neon);
+      margin-bottom: 0.4rem;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    }
+    .vault-card-desc {
+      color: var(--text);
+      font-size: 0.99rem;
+      margin-bottom: 0.6rem;
+    }
+    .vault-bar {
+      width: 100%;
+      height: 9px;
+      background: repeating-linear-gradient(90deg, var(--neon) 0 3px, var(--vault) 3px 12px);
+      border-radius: 5px;
+      margin: 0.8rem 0 1.3rem 0;
+      opacity: 0.6;
+    }
+    .data-stream-section {
+      margin-top: 2.7rem;
+      text-align: center;
+    }
+    .data-stream-title {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.04em;
+      font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    }
+    .data-stream-frame {
+      display: inline-block;
+      background: #1a2233;
+      border: 3px solid var(--neon);
+      border-radius: 14px;
+      box-shadow: 0 0 24px var(--neon-glow);
+      padding: 0.7rem;
+      margin-bottom: 0.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .data-stream-frame img {
+      width: 340px;
+      max-width: 92vw;
+      border-radius: 9px;
+      display: block;
+      filter: brightness(1.1) contrast(1.1);
+    }
+    .data-stream-thumbs {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      margin-top: 0.6rem;
+    }
+    .data-stream-thumb {
+      border: 3px solid transparent;
+      border-radius: 7px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: border-color 0.2s, opacity 0.2s;
+      width: 54px;
+      height: 36px;
+      overflow: hidden;
+      background: #10131a;
+    }
+    .data-stream-thumb.active, .data-stream-thumb:hover {
+      border-color: var(--neon);
+      opacity: 1;
+    }
+    .data-stream-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(1.1) contrast(1.1);
+    }
+    .install-section {
+      margin-top: 2.7rem;
+      text-align: center;
+    }
+    .install-title {
+      color: var(--neon);
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.04em;
+      font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    }
+    .install-terminal {
+      background: #10131a;
+      border: 3px solid var(--accent);
+      border-radius: 12px;
+      color: var(--accent);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.05rem;
+      padding: 1.3rem 1.1rem;
+      margin: 0 auto 1.3rem auto;
+      max-width: 440px;
+      text-align: left;
+      box-shadow: 0 0 16px var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+    .install-terminal:before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background: var(--scanline);
+      border-radius: 12px;
+    }
+    .install-terminal .prompt { color: var(--neon); }
+    .install-terminal .comment { color: #b0b0b0; }
+    .install-terminal .ok { color: var(--neon); }
+    .install-terminal .info { color: var(--accent); }
+    .vault-footer {
+      background: #1a2233;
+      border-top: 3px solid var(--neon);
+      color: var(--text);
+      text-align: center;
+      padding: 1.7rem 0 0.8rem 0;
+      margin-top: 3.2rem;
+      font-size: 1.01rem;
+      letter-spacing: 0.04em;
+      font-family: 'Share Tech Mono', monospace;
+      box-shadow: 0 -2px 24px var(--neon-glow);
+    }
+    .vault-footer-links {
+      margin-bottom: 0.6rem;
+    }
+    .vault-footer-links a {
+      color: var(--neon);
+      text-decoration: none;
+      margin: 0 1.3rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+      font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    }
+    .vault-footer-links a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="vault-header">
+    <div class="vault-door">
+      <img src="assets/deadlink-logo.png" alt="DeadLink Logo">
+      <div class="vault-lock">🔒</div>
+    </div>
+    <div class="vault-title">DeadLink</div>
+    <div class="vault-desc">Survivor's Data Vault // 7 Days to Die Server Companion</div>
+  </div>
+  <div class="vault-panel">
+    <div class="panel-title">Vault Channels</div>
+    <div class="vault-cards">
+      <div class="vault-card">
+        <div class="vault-icon">🛰️</div>
+        <div class="vault-card-title">Live Server Trends</div>
+        <div class="vault-card-desc">Monitor player counts, restarts, and latency in real time. Stay ahead of the apocalypse.</div>
+        <div class="vault-bar"></div>
+      </div>
+      <div class="vault-card">
+        <div class="vault-icon">📊</div>
+        <div class="vault-card-title">Activity Analytics</div>
+        <div class="vault-card-desc">Daily logs of logins, deaths, chat, and events. All data securely stored and broadcast to Discord.</div>
+        <div class="vault-bar"></div>
+      </div>
+      <div class="vault-card">
+        <div class="vault-icon">🌑</div>
+        <div class="vault-card-title">Blood Moon Alerts</div>
+        <div class="vault-card-desc">Automated, non-spammy horde night warnings. Only the info you need to survive.</div>
+        <div class="vault-bar"></div>
+      </div>
+      <div class="vault-card">
+        <div class="vault-icon">🛡️</div>
+        <div class="vault-card-title">Secure Controls</div>
+        <div class="vault-card-desc">Scoped server commands for restart, say, moderation. No raw telnet exposure—just safe control.</div>
+        <div class="vault-bar"></div>
+      </div>
+    </div>
+    <div class="data-stream-section">
+      <div class="data-stream-title">Vault Data Stream</div>
+      <div class="data-stream-frame">
+        <img src="../screenshots/analytics-dashboard.png" alt="Analytics Dashboard" id="vault-main-shot">
+      </div>
+      <div class="data-stream-thumbs" id="vault-shot-thumbs">
+        <div class="data-stream-thumb active" data-src="../screenshots/analytics-dashboard.png">
+          <img src="../screenshots/analytics-dashboard.png" alt="Analytics Thumb">
+        </div>
+        <div class="data-stream-thumb" data-src="../screenshots/HC_Trends.png">
+          <img src="../screenshots/HC_Trends.png" alt="Trends Thumb">
+        </div>
+        <div class="data-stream-thumb" data-src="../screenshots/HC_Activity.png">
+          <img src="../screenshots/HC_Activity.png" alt="Activity Thumb">
+        </div>
+        <div class="data-stream-thumb" data-src="../screenshots/server-dashboard.png">
+          <img src="../screenshots/server-dashboard.png" alt="Controls Thumb">
+        </div>
+      </div>
+    </div>
+    <div class="install-section">
+      <div class="install-title">Install DeadLink</div>
+      <div class="install-terminal">
+        <div class="comment"># Docker install command</div>
+        <div class="prompt">&gt;</div> <span class="command">docker run --name deadlink \</span><br>
+        <span class="command">  -e DISCORD_TOKEN=... \</span><br>
+        <span class="command">  -e TELNET_HOST=... \</span><br>
+        <span class="command">  -e TELNET_PASS=... \</span><br>
+        <span class="command">  ghcr.io/thecdrz/deadlink:latest</span><br>
+        <div class="comment"># Vault initializing...</div>
+        <div class="ok">[OK] Telnet connection secured.</div>
+        <div class="ok">[OK] Discord link established.</div>
+        <div class="info">[INFO] DeadLink operational. Data vault active.</div>
+      </div>
+    </div>
+  </div>
+  <div class="vault-footer">
+    <div class="vault-footer-links">
+      <a href="https://github.com/thecdrz/DeadLink" target="_blank">GitHub</a>
+      <a href="https://discord.gg/YjeBPdSp" target="_blank">Discord</a>
+      <a href="https://github.com/thecdrz/DeadLink/issues" target="_blank">Report Issue</a>
+    </div>
+    <div>DeadLink Survivor's Data Vault // Property of CDRZ</div>
+  </div>
+  <script>
+    // Data stream screenshot switching
+    const vaultMainShot = document.getElementById('vault-main-shot');
+    const vaultThumbs = document.querySelectorAll('.data-stream-thumb');
+    vaultThumbs.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        vaultMainShot.src = thumb.dataset.src;
+        vaultThumbs.forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeadLink // Survivor's Radio</title>
+  <meta name="description" content="DeadLink: 7 Days to Die Server Companion. Broadcasting survival data..." />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #181c1b;
+      --panel: #232826;
+      --accent: #ffb74d;
+      --accent-glow: #ffb74d88;
+      --green: #6ee7b7;
+      --danger: #ff4d4d;
+      --text: #e0e0e0;
+      --static: url('https://www.transparenttextures.com/patterns/noise.png');
+    }
+    body {
+      background: var(--bg) var(--static) repeat;
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      margin: 0;
+      min-height: 100vh;
+    }
+    .radio-header {
+      background: linear-gradient(90deg, #232826 60%, #181c1b 100%);
+      border-bottom: 2px solid var(--accent);
+      padding: 1.5rem 0 1rem 0;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 2px 24px var(--accent-glow);
+    }
+    .logo-badge {
+      display: inline-block;
+      background: #232826;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 24px var(--accent-glow);
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 24px var(--accent-glow); }
+      50% { box-shadow: 0 0 48px var(--accent-glow); }
+    }
+    .logo-badge img {
+      width: 64px;
+      height: 64px;
+      display: block;
+    }
+    .on-air {
+      color: var(--danger);
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      font-size: 1.1rem;
+      background: #232826;
+      border-radius: 6px;
+      padding: 0.2em 0.7em;
+      box-shadow: 0 0 8px var(--danger);
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      animation: flicker 1.2s infinite;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      45% { opacity: 0.7; }
+      50% { opacity: 0.4; }
+      55% { opacity: 0.7; }
+    }
+    .radio-title {
+      font-size: 2.2rem;
+      color: var(--accent);
+      text-shadow: 0 0 12px var(--accent-glow);
+      margin-bottom: 0.2rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+    }
+    .radio-desc {
+      color: var(--green);
+      font-size: 1.1rem;
+      margin-bottom: 0.7rem;
+      letter-spacing: 0.04em;
+    }
+    .broadcast-panel {
+      background: var(--panel);
+      border-radius: 18px;
+      box-shadow: 0 0 32px #000a;
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 2rem 2.5rem 2.5rem 2.5rem;
+      position: relative;
+      border: 2px solid var(--accent);
+    }
+    .broadcast-panel:before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      background: var(--static) repeat;
+      border-radius: 18px;
+    }
+    .panel-title {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      text-align: center;
+      letter-spacing: 0.07em;
+      text-shadow: 0 0 8px var(--accent-glow);
+    }
+    .channels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 700px) {
+      .channels { grid-template-columns: 1fr; }
+      .broadcast-panel { padding: 1.2rem; }
+    }
+    .channel-card {
+      background: #181c1b;
+      border: 1.5px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 12px var(--accent-glow);
+      padding: 1.2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .channel-card:hover {
+      box-shadow: 0 0 24px var(--accent-glow);
+      border-color: var(--green);
+    }
+    .channel-title {
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+    }
+    .channel-desc {
+      color: var(--text);
+      font-size: 0.97rem;
+      margin-bottom: 0.5rem;
+    }
+    .channel-icon {
+      font-size: 1.7rem;
+      margin-bottom: 0.2rem;
+      color: var(--green);
+      text-shadow: 0 0 6px var(--green);
+    }
+    .static-bar {
+      width: 100%;
+      height: 8px;
+      background: repeating-linear-gradient(90deg, var(--accent) 0 2px, var(--panel) 2px 8px);
+      border-radius: 4px;
+      margin: 0.7rem 0 1.2rem 0;
+      opacity: 0.5;
+    }
+    .screenshot-section {
+      margin-top: 2.5rem;
+      text-align: center;
+    }
+    .screenshot-title {
+      color: var(--green);
+      font-size: 1.2rem;
+      margin-bottom: 0.7rem;
+      letter-spacing: 0.04em;
+    }
+    .screenshot-frame {
+      display: inline-block;
+      background: #232826;
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      box-shadow: 0 0 18px var(--accent-glow);
+      padding: 0.5rem;
+      margin-bottom: 0.7rem;
+    }
+    .screenshot-frame img {
+      width: 320px;
+      max-width: 90vw;
+      border-radius: 8px;
+      display: block;
+    }
+    .screenshot-thumbs {
+      display: flex;
+      justify-content: center;
+      gap: 0.7rem;
+      margin-top: 0.5rem;
+    }
+    .screenshot-thumb {
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: border-color 0.2s, opacity 0.2s;
+      width: 48px;
+      height: 32px;
+      overflow: hidden;
+      background: #181c1b;
+    }
+    .screenshot-thumb.active, .screenshot-thumb:hover {
+      border-color: var(--accent);
+      opacity: 1;
+    }
+    .screenshot-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .install-section {
+      margin-top: 2.5rem;
+      text-align: center;
+    }
+    .install-title {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin-bottom: 0.7rem;
+      letter-spacing: 0.04em;
+    }
+    .install-terminal {
+      background: #181c1b;
+      border: 2px solid var(--green);
+      border-radius: 10px;
+      color: var(--green);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      padding: 1.2rem 1rem;
+      margin: 0 auto 1.2rem auto;
+      max-width: 420px;
+      text-align: left;
+      box-shadow: 0 0 12px var(--green);
+      position: relative;
+    }
+    .install-terminal .prompt { color: var(--accent); }
+    .install-terminal .comment { color: #b0b0b0; }
+    .install-terminal .ok { color: var(--green); }
+    .install-terminal .info { color: var(--accent); }
+    .footer {
+      background: #232826;
+      border-top: 2px solid var(--accent);
+      color: var(--text);
+      text-align: center;
+      padding: 1.5rem 0 0.7rem 0;
+      margin-top: 3rem;
+      font-size: 0.97rem;
+      letter-spacing: 0.03em;
+    }
+    .footer-links {
+      margin-bottom: 0.5rem;
+    }
+    .footer-links a {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 1.2rem;
+      font-weight: bold;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: var(--green);
+    }
+  </style>
+</head>
+<body>
+  <div class="radio-header">
+    <div class="logo-badge">
+      <img src="assets/deadlink-logo.png" alt="DeadLink Logo">
+    </div>
+    <div class="on-air">ON AIR</div>
+    <div class="radio-title">DeadLink</div>
+    <div class="radio-desc">7 Days to Die Server Companion</div>
+  </div>
+  <div class="broadcast-panel">
+    <div class="panel-title">Broadcast Channels</div>
+    <div class="channels">
+      <div class="channel-card">
+        <div class="channel-icon">📈</div>
+        <div class="channel-title">Player & Server Trends</div>
+        <div class="channel-desc">Track online counts, restarts, and latency. Spot issues before they become disasters.</div>
+        <div class="static-bar"></div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">📋</div>
+        <div class="channel-title">Activity Reports</div>
+        <div class="channel-desc">Daily summaries of logins, deaths, chat, and events sent to Discord. Stay informed, stay alive.</div>
+        <div class="static-bar"></div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">🩸</div>
+        <div class="channel-title">Horde Night Alerts</div>
+        <div class="channel-desc">Polite, rate-limited blood moon warnings. No spam, just survival-critical info.</div>
+        <div class="static-bar"></div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-icon">🔧</div>
+        <div class="channel-title">Safe Server Controls</div>
+        <div class="channel-desc">Scoped commands for restart, say, moderation—no raw telnet noise. Control with confidence.</div>
+        <div class="static-bar"></div>
+      </div>
+    </div>
+    <div class="screenshot-section">
+      <div class="screenshot-title">Survivor's Feed</div>
+      <div class="screenshot-frame">
+        <img src="../screenshots/analytics-dashboard.png" alt="Analytics Dashboard" id="main-shot">
+      </div>
+      <div class="screenshot-thumbs" id="shot-thumbs">
+        <div class="screenshot-thumb active" data-src="../screenshots/analytics-dashboard.png">
+          <img src="../screenshots/analytics-dashboard.png" alt="Analytics Thumb">
+        </div>
+        <div class="screenshot-thumb" data-src="../screenshots/HC_Trends.png">
+          <img src="../screenshots/HC_Trends.png" alt="Trends Thumb">
+        </div>
+        <div class="screenshot-thumb" data-src="../screenshots/HC_Activity.png">
+          <img src="../screenshots/HC_Activity.png" alt="Activity Thumb">
+        </div>
+        <div class="screenshot-thumb" data-src="../screenshots/server-dashboard.png">
+          <img src="../screenshots/server-dashboard.png" alt="Controls Thumb">
+        </div>
+      </div>
+    </div>
+    <div class="install-section">
+      <div class="install-title">Install DeadLink</div>
+      <div class="install-terminal">
+        <div class="comment"># Docker install command</div>
+        <div class="prompt">&gt;</div> <span class="command">docker run --name deadlink \</span><br>
+        <span class="command">  -e DISCORD_TOKEN=... \</span><br>
+        <span class="command">  -e TELNET_HOST=... \</span><br>
+        <span class="command">  -e TELNET_PASS=... \</span><br>
+        <span class="command">  ghcr.io/thecdrz/deadlink:latest</span><br>
+        <div class="comment"># System initializing...</div>
+        <div class="ok">[OK] Telnet connection secured.</div>
+        <div class="ok">[OK] Discord link established.</div>
+        <div class="info">[INFO] DeadLink operational. Monitoring server...</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-links">
+      <a href="https://github.com/thecdrz/DeadLink" target="_blank">GitHub</a>
+      <a href="https://discord.gg/YjeBPdSp" target="_blank">Discord</a>
+      <a href="https://github.com/thecdrz/DeadLink/issues" target="_blank">Report Issue</a>
+    </div>
+    <div>DeadLink Survivor's Radio // Property of CDRZ</div>
+  </div>
+  <script>
+    // Screenshot switching
+    const mainShot = document.getElementById('main-shot');
+    const thumbs = document.querySelectorAll('.screenshot-thumb');
+    thumbs.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        mainShot.src = thumb.dataset.src;
+        thumbs.forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
