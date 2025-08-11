@@ -2111,6 +2111,7 @@ function handleInfoFromButton(interaction) {
     const statusMsg = d7dtdState.connStatus === 1 ? ":green_circle: Online" : 
                      d7dtdState.connStatus === 0 ? ":white_circle: Connecting..." : 
                      ":red_circle: Error";
+  const modeMsg = config["demo-mode"] ? "🧪 Demo" : "Live";
     
     // Use the comprehensive changes content for info (same as main info command)
     const changesReport = generateChangesReport();
@@ -2121,7 +2122,7 @@ function handleInfoFromButton(interaction) {
         latestLine = `\n\n**Updates**\nLatest release: ${info.tag} • ${info.url}`;
       }
     } catch (_) { /* ignore fetch errors */ }
-    const infoContent = `Server connection: ${statusMsg}\n\n${changesReport}${latestLine}`;
+  const infoContent = `Server connection: ${statusMsg}\nMode: ${modeMsg}\n\n${changesReport}${latestLine}`;
     
     const embed = {
       color: 0x7289da, // Discord blurple for info
@@ -2485,6 +2486,7 @@ client.on('messageCreate', async (msg) => {
         const statusMsg = d7dtdState.connStatus === 1 ? ':green_circle: Online' :
                          d7dtdState.connStatus === 0 ? ':white_circle: Connecting...' :
                          ':red_circle: Error';
+        const modeMsg = config["demo-mode"] ? '🧪 Demo' : 'Live';
 
         const changesReport = generateChangesReport();
         let latestLine = '';
@@ -2498,7 +2500,7 @@ client.on('messageCreate', async (msg) => {
         const embed = {
           color: 0x7289da,
           title: '🎮 DeadLink Information & Features',
-          description: `Server connection: ${statusMsg}\n\n${changesReport}${latestLine}`,
+          description: `Server connection: ${statusMsg}\nMode: ${modeMsg}\n\n${changesReport}${latestLine}`,
           footer: { text: `DeadLink v${pjson.version}` }
         };
         await msg.channel.send({ embeds: [embed] }).catch(() => {});
