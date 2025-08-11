@@ -1,6 +1,6 @@
 {
   "name": "deadlink",
-  "version": "2.11.0",
+  "version": "2.11.4",
   "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, dynamic narrative storytelling, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by CDRZ.",
   "main": "index.js",
   "scripts": {

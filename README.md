@@ -64,13 +64,15 @@ Admin-only utilities (requires Manage Server permission):
 
 *Rich embed showing the latest release. Use `7d!update announce` to print this on demand; auto-posts can be enabled via the `updates` config.*
 
-## Latest Release: v2.11.0
+## Latest Release: v2.11.4
 
-- New: Optional Blood Moon monitor with automatic imminent/start/end alerts
-- Hidden admin test command: `7d!bloodmoon test imminent|start|end`
-- Safe defaults (on by default; respects `horde-frequency` and new `bloodMoon` config)
+- Info: New “Mode” line on Info screen (shows Live or 🧪 Demo)
+- Info: Reordered sections (Core Commands above Update Helpers)
+- UX: Legacy `!` prefix toggle (enabled) and friendly hint for `!command` usage
+- UX: Typo helper for `!bloonmoon` → suggests `7d!bloodmoon`
+- Docs: Added alternate landing pages and updated screenshots (logo-L)
 
-Release notes: https://github.com/thecdrz/DeadLink/releases/tag/v2.8.0
+Release notes: https://github.com/thecdrz/DeadLink/releases/tag/v2.11.4
 
 # How it Works
 DeadLink works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
@@ -157,6 +159,28 @@ node index.js
 ```
 
 The app will automatically prefer these env vars when present.
+
+## Docker
+DeadLink images are published to GHCR on each tagged release.
+
+Image: `ghcr.io/thecdrz/deadlink:latest` or `ghcr.io/thecdrz/deadlink:v2.11.4`
+
+Example run:
+
+```powershell
+docker run --name deadlink -d `
+	-e DISCORD_TOKEN=$env:DISCORD_TOKEN `
+	-e TELNET_PASSWORD=$env:TELNET_PASSWORD `
+	-e TELNET_IP=$env:TELNET_IP `
+	-e TELNET_PORT=$env:TELNET_PORT `
+	-e DISCORD_CHANNEL=$env:DISCORD_CHANNEL `
+	-e DEMO_MODE=$env:DEMO_MODE `
+	ghcr.io/thecdrz/deadlink:latest
+```
+
+Notes:
+- DEMO_MODE=true enables a simulated telnet for screenshots/testing.
+- Logs stream to container stdout; use `docker logs -f deadlink`.
 
 ## Troubleshooting telnet
 - If in-game broadcast replies with "response not received" but the message shows up in game, this is normal for some servers without a prompt; DeadLink treats it as success.
