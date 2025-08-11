@@ -102,34 +102,16 @@ $ docker run --name deadlink \
     <footer class="footerbar">
       <a class="btn" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
       <a class="link" href="https://discord.gg/YjeBPdSp" target="_blank" rel="noopener">Join us on Discord</a>
-      <a id="versionLink" class="version" href="#" target="_blank" rel="noopener">DeadLink v0</a>
-      <span class="version" id="versionDate" style="opacity:.82; margin-left:8px;"></span>
+      <a id="versionLink" class="link" href="#" target="_blank" rel="noopener">DeadLink v2.11.3</a>
+      <span class="link">Maintained by CDRZ</span>
     </footer>
 
   </div>
 
-  <!-- Scripts: version/date + copy-to-clipboard -->
+  <!-- Scripts: copy-to-clipboard -->
   <script>
-    // Version from GitHub Releases (latest tag + publish date + link)
-    (async () => {
-      const vEl = document.getElementById('versionLink');
-      const dEl = document.getElementById('versionDate');
-      try {
-        const r = await fetch('https://api.github.com/repos/thecdrz/DeadLink/releases/latest', { cache: 'no-store' });
-        if (r.ok) {
-          const j = await r.json();
-          if (j?.tag_name) vEl.textContent = `DeadLink ${j.tag_name}`;
-          if (j?.html_url) vEl.href = j.html_url;
-          if (j?.published_at && dEl) {
-            const dt = new Date(j.published_at);
-            dEl.textContent = `— ${dt.toLocaleDateString()}`;
-          }
-          return;
-        }
-      } catch {}
-      vEl.textContent = 'DeadLink v0';
-      vEl.href = 'https://github.com/thecdrz/DeadLink/releases';
-    })();
+    // Set version link
+    document.getElementById('versionLink').href = 'https://github.com/thecdrz/DeadLink/releases';
 
     // Copy-to-clipboard for the Docker command
     document.addEventListener('click', e => {
