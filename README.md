@@ -1,14 +1,12 @@
-# DeadLink
+# DeadLink – 7 Days to Die Server Companion
 
-![DeadLink Logo](screenshots/HC_Logo.png)
+![DeadLink Logo](screenshots/HC_Logo-L.png)
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
 
-DeadLink is an advanced Discord bridge bot for 7 Days to Die, built on the solid foundation of LakeYS's Dishorde with comprehensive enhancements. This version features an interactive dashboard, player analytics, intelligent activity tracking, and enhanced security features.
+DeadLink is a modern 7 Days to Die Server Companion that integrates your server with Discord. It provides a clean dashboard, real‑time analytics, horde‑night context, and safe server actions—purpose‑built for running and showcasing your world. Docker‑friendly, secure by default, and tuned for smooth screenshot and admin workflows.
 
-> Credit: Based on Dishorde by LakeYS — Original project: https://github.com/LakeYS/Dishorde
-
-## NEW FEATURES in DeadLink:
+## Highlights
 ### New in v2.10.0
 - Safer telnet commands via a queued executor with light rate limiting
 - Friendlier user errors when the server is loading/not connected/timeouts
@@ -75,7 +73,7 @@ Admin-only utilities (requires Manage Server permission):
 Release notes: https://github.com/thecdrz/DeadLink/releases/tag/v2.11.5
 
 # How it Works
-DeadLink works by connecting to your server's telnet console and monitoring it for chat messages and player data. Messages are relayed to and from the server using Discord, allowing for seamless communication between in-game players and Discord users, plus comprehensive server analytics.
+DeadLink connects to your server’s telnet console to read game state (chat, players, time) and post summarized insights to Discord. It supports sending selected messages back to the server (optional), but its focus is a reliable companion experience: analytics, alerts, and an interactive control panel.
 
 # Enhanced Features
 This CDRZ fork adds intelligent analysis capabilities that monitor player activity and provide contextual insights:
@@ -88,9 +86,13 @@ This CDRZ fork adds intelligent analysis capabilities that monitor player activi
 - **Blood Moon Integration**: Strategic warnings and preparation advice during horde events
 - **Historical Context**: Incorporates recent player activity and server trends into storytelling
 
+# Credits
+DeadLink includes enhancements, docs, and UX work by CDRZ. The original concept of Discord integration for 7 Days to Die was pioneered by LakeYS in Dishorde.
+
+Original project: https://github.com/LakeYS/Dishorde
+
 # Authors
-**DeadLink**: CDRZ | Discord: <@217012303063678978>  
-**Original Dishorde**: LakeYS (contact@lakeys.net)
+**DeadLink**: CDRZ | Discord: <@217012303063678978>
 
 # Terminal Commands
 `exit`
