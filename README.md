@@ -1,7 +1,7 @@
 # DeadLink – 7 Days to Die Server Companion
 
 <p align="center">
-	<img alt="DeadLink logo" src="docs/assets/deadlink-logo-light.png" width="256" />
+		<img alt="DeadLink logo" src="docs/assets/deadlink-logo-light.png" width="308" />
 </p>
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
@@ -77,10 +77,10 @@ Admin-only helpers (Manage Server permission) are available via UI/buttons or fu
 ## 📸 Screenshots
 Live gallery and docs site:
 
-- Website: https://thecdrz.github.io/DeadLink/
-- Gallery: https://thecdrz.github.io/DeadLink/gallery.html
+- Website: https://DeadLink.lol/
+- Gallery: https://DeadLink.lol/gallery.html
 
-See the website for a quick tour: https://thecdrz.github.io/DeadLink/
+See the website for a quick tour: https://DeadLink.lol/
 
 ## Latest Release: v2.12.2
 
