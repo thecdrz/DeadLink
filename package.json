@@ -10,7 +10,9 @@
   "slash:guild": "node scripts/register-commands.js --guild",
   "snapshots": "node scripts/snapshot-embeds.js",
   "snapshots:anim": "node scripts/snapshot-anim.js",
-  "telemetry:serve": "node scripts/telemetry-server.js"
+  "telemetry:serve": "node scripts/telemetry-server.js",
+  "telemetry:send": "node scripts/send-telemetry-once.js",
+  "telemetry:flush": "node scripts/telemetry-flush-buffer.js"
   },
   "author": "CDRZ (built on Dishorde by LakeYS)",
   "license": "MIT",
