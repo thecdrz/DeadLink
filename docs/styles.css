@@ -2,40 +2,40 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Modern Color Palette */
-  --bg-primary: #0a0b0f;
-  --bg-secondary: #1a1d29;
-  --bg-tertiary: #2a2d3a;
+  /* Modern Color Palette - Darker to match logo */
+  --bg-primary: #080a0e;
+  --bg-secondary: #121419;
+  --bg-tertiary: #1c1f26;
   
-  /* Glass Effects */
-  --glass-primary: rgba(26, 29, 41, 0.4);
-  --glass-secondary: rgba(42, 45, 58, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-hover: rgba(255, 255, 255, 0.2);
+  /* Glass Effects - Darker and more muted */
+  --glass-primary: rgba(18, 20, 25, 0.6);
+  --glass-secondary: rgba(28, 31, 38, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 255, 255, 0.15);
   
-  /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #94a3b8;
-  --text-accent: #f1f5f9;
+  /* Text Colors - Softer contrast */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --text-accent: #e2e8f0;
   
-  /* Brand Colors */
-  --accent-primary: #3b82f6;
-  --accent-secondary: #8b5cf6;
-  --accent-orange: #f97316;
-  --accent-cyan: #06b6d4;
+  /* Brand Colors - Matching logo tones */
+  --accent-primary: #2563eb;
+  --accent-secondary: #7c3aed;
+  --accent-orange: #ea580c;
+  --accent-cyan: #0891b2;
   
-  /* Gradient Colors */
-  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  --gradient-secondary: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
-  --gradient-accent: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  /* Gradient Colors - Darker variants */
+  --gradient-primary: linear-gradient(135deg, #1e40af 0%, #6d28d9 100%);
+  --gradient-secondary: linear-gradient(135deg, #c2410c 0%, #dc2626 100%);
+  --gradient-accent: linear-gradient(135deg, #0e7490 0%, #1e40af 100%);
   
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  /* Shadows - Deeper and more dramatic */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
   
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -105,9 +105,9 @@ a {
 .page {
   min-height: 100dvh;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(249, 115, 22, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(194, 65, 12, 0.06) 0%, transparent 50%),
     linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
   padding: var(--space-xl) var(--space-lg) var(--space-2xl);
   position: relative;
@@ -120,8 +120,8 @@ a {
   inset: 0;
   pointer-events: none;
   background: 
-    radial-gradient(600px circle at 50% 0%, rgba(59, 130, 246, 0.05), transparent),
-    radial-gradient(800px circle at 100% 100%, rgba(139, 92, 246, 0.05), transparent);
+    radial-gradient(600px circle at 50% 0%, rgba(30, 64, 175, 0.03), transparent),
+    radial-gradient(800px circle at 100% 100%, rgba(109, 40, 217, 0.03), transparent);
   mix-blend-mode: multiply;
 }
 
@@ -236,17 +236,17 @@ a {
   margin: 0 auto var(--space-xl);
   box-shadow: 
     var(--shadow-2xl),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 0 100px rgba(59, 130, 246, 0.3);
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 60px rgba(30, 64, 175, 0.15);
   transition: all 0.5s ease;
 }
 
 .hero-logo:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 
-    0 40px 80px -20px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.15) inset,
-    0 0 120px rgba(59, 130, 246, 0.4);
+    0 40px 80px -20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 80px rgba(30, 64, 175, 0.2);
 }
 
 .tagline {
@@ -343,13 +343,13 @@ a {
   font-size: 2rem;
   margin-bottom: var(--space-md);
   color: var(--accent-primary);
-  filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.3));
+  filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.2));
   transition: all 0.3s ease;
 }
 
 .card:hover .icon {
   transform: scale(1.1);
-  filter: drop-shadow(0 6px 12px rgba(59, 130, 246, 0.4));
+  filter: drop-shadow(0 6px 12px rgba(37, 99, 235, 0.25));
 }
 
 .card h3 {
@@ -717,7 +717,7 @@ figcaption {
   line-height: 1.2;
   box-shadow: 
     var(--shadow-md),
-    0 0 20px rgba(249, 115, 22, 0.3);
+    0 0 15px rgba(194, 65, 12, 0.2);
   margin: 0;
   white-space: nowrap;
   transition: all 0.3s ease;
@@ -732,7 +732,7 @@ figcaption {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
   transition: left 0.5s ease;
 }
 
@@ -744,7 +744,7 @@ figcaption {
   transform: translateY(-2px);
   box-shadow: 
     var(--shadow-lg),
-    0 0 30px rgba(249, 115, 22, 0.4);
+    0 0 25px rgba(194, 65, 12, 0.25);
 }
 
 .link {
