@@ -215,6 +215,7 @@ figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
 .footerbar{
   max-width:1100px; margin:24px auto 0;
   display:flex; align-items:center; justify-content:center; 
+  gap: 12px; /* Consistent space between items */
   flex-wrap: wrap; /* Allow wrapping for smaller screens */
   padding:10px 24px; border-radius:14px;
   border:1px solid var(--border);
@@ -223,7 +224,7 @@ figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
     var(--card);
   box-shadow:0 10px 24px rgba(0,0,0,0.30);
 }
-.footerbar > * { margin: 4px 10px; }
+.footerbar > * { margin: 4px 0; flex-shrink: 0; }
 .btn{
   display:inline-block;
   padding:6px 12px;
@@ -235,12 +236,14 @@ figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
   line-height: 1.2;
   box-shadow:0 6px 14px -8px rgba(227,106,40,0.40);
   margin: 0;
+  white-space: nowrap; /* prevent squish/wrap */
 }
 .link{ 
   color:#f0e6d6; 
   opacity:.95;
   font-weight: 500;
   margin: 0; /* No additional margin needed */
+  white-space: nowrap;
 }
 .link:hover{ opacity:1 }
 

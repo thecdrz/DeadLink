@@ -1,56 +1,41 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
-  <title>DeadLink – 7 Days to Die Server Companion</title>
+  <meta name="color-scheme" content="light" />
+  <title>DeadLink – 7 Days to Die Server Companion (Light)</title>
   <meta name="description" content="DeadLink is a lightweight 7 Days to Die server companion: trends, reports, horde-night alerts, and safe server controls. Docker-friendly and Discord-integrated." />
-
-  <!-- Brand / sharing -->
-  <meta name="theme-color" content="#121112">
-  <meta property="og:title" content="DeadLink – 7 Days to Die Server Companion">
-  <meta property="og:description" content="Trends, reports, horde-night alerts, and safe controls for your 7 Days to Die server.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/deadlink-logo.png">
-  <link rel="canonical" href="https://thecdrz.github.io/DeadLink/">
-
-  <!-- Icon / logo -->
-  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
-  <link rel="preload" href="assets/deadlink-logo.png" as="image" />
-
-  <!-- Tagline font -->
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/deadlink-logo-light.png" type="image/png" />
+  <link rel="preload" href="assets/deadlink-logo-light.png" as="image" />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800;900&display=swap" rel="stylesheet">
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles-light.css" />
 </head>
 <body>
   <div class="page">
     <nav class="topnav" aria-label="Primary">
       <div class="nav-left">
-        <a class="brand backlink" href="./index.html"><img src="assets/deadlink-logo.png" alt="DeadLink logo small">DeadLink</a>
+        <a class="brand backlink" href="./index-light.html"><img src="assets/deadlink-logo-light.png" alt="DeadLink logo small">DeadLink</a>
       </div>
-  <div class="nav-right">
-    <a href="./gallery.html">Gallery</a>
-  <a href="./devops.html">DevOps</a>
-  <a href="./guide.html">Docs</a>
-    <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
-  </div>
+      <div class="nav-right">
+        <a href="./gallery.html">Gallery</a>
+        <a href="./devops.html">DevOps</a>
+        <a href="./guide.html">Docs</a>
+        <a href="./index.html" title="Switch to dark theme">Dark</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
     </nav>
 
-    <!-- HERO -->
     <header class="hero">
-      <img class="hero-logo" src="assets/deadlink-logo.png" alt="DeadLink logo">
+      <img class="hero-logo" src="assets/deadlink-logo-light.png" alt="DeadLink logo">
       <p class="tagline">7 DAYS TO DIE SERVER COMPANION</p>
     </header>
 
-    <!-- FEATURES -->
     <section class="features">
       <div class="grid">
         <article class="card">
           <div class="icon" aria-hidden="true" title="Trends">
-            <!-- chart icon -->
             <svg viewBox="0 0 24 24" width="28" height="28" role="img" aria-label=""><path d="M4 19h16" stroke="currentColor" stroke-width="2" fill="none"/><path d="M6 15l4-4 3 3 5-6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
           </div>
           <h3>Player & Server Trends</h3>
@@ -59,7 +44,6 @@
 
         <article class="card">
           <div class="icon" aria-hidden="true" title="Reports">
-            <!-- server drawers -->
             <svg viewBox="0 0 24 24" width="28" height="28"><rect x="3" y="4" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><rect x="3" y="14" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="8" cy="7" r="1" fill="currentColor"/><circle cx="8" cy="17" r="1" fill="currentColor"/></svg>
           </div>
           <h3>Daily Activity Reports</h3>
@@ -68,7 +52,6 @@
 
         <article class="card">
           <div class="icon" aria-hidden="true" title="Horde Night">
-            <!-- moon -->
             <svg viewBox="0 0 24 24" width="28" height="28"><path d="M21 12.5A8.5 8.5 0 0 1 10.5 2 9 9 0 1 0 22 13.5c-3 .8-5.3-.4-1-1z" fill="currentColor"/></svg>
           </div>
           <h3>Horde Night Alerts</h3>
@@ -77,7 +60,6 @@
 
         <article class="card">
           <div class="icon" aria-hidden="true" title="Controls">
-            <!-- tools -->
             <svg viewBox="0 0 24 24" width="28" height="28"><path d="M14 7l3 3-7 7H7v-3l7-7z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M14 7l3 3" stroke="currentColor" stroke-width="2"/></svg>
           </div>
           <h3>Safe Server Controls</h3>
@@ -86,7 +68,6 @@
       </div>
     </section>
 
-    <!-- Link to Gallery page instead of embedding full gallery -->
     <section class="features">
       <div class="grid">
         <article class="card">
@@ -116,7 +97,6 @@
       </div>
     </section>
 
-    <!-- GET STARTED -->
     <section class="cta-panel">
       <h2>Get Started</h2>
       <div class="cta-grid">
@@ -140,7 +120,6 @@ $ docker run --name deadlink \
       </div>
     </section>
 
-    <!-- FOOTER BAR -->
     <footer class="footerbar">
       <a class="btn" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
       <a class="link" href="https://discord.gg/YjeBPdSp" target="_blank" rel="noopener">Join us on Discord</a>
@@ -151,13 +130,9 @@ $ docker run --name deadlink \
         CDRZ
       </a>
     </footer>
-
   </div>
 
-  <!-- Scripts: copy-to-clipboard -->
   <script>
-
-    // Copy-to-clipboard for the Docker command
     document.addEventListener('click', e => {
       if (!e.target.closest('.copybtn')) return;
       const btn = e.target.closest('.copybtn');

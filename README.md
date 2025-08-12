@@ -14,8 +14,8 @@ DeadLink is a modern 7 Days to Die Server Companion that integrates your server 
 - Persistent, structured logs (rotating) with startup summary and clear levels
 - Reliable telnet pipeline (queued, timed, reconnecting) with scoped actions
 - Analytics: player trends, clusters, MVP, deep‑dive stats (session, distance, streaks)
-- Optional PNG charts (auto‑fallback to ASCII if native deps missing)
-- Optional config validation (zod) with readable warnings
+- Interactive dashboard: Activity (brief default with Details), Players (list + deep dive picker), Trends, Info — all with consistent navigation
+- Player stats and trends: K/D, kill rate (kpm), ping quality, distance traveled, session length, deathless streaks, clusters, MVP, and time‑series patterns
 - Jest smoke and unit tests for quick validation
 
 Note: PNG trend charts and config validation are optional features. They are listed as optionalDependencies and will install on supported systems; if they fail to build, you can install them manually:
@@ -116,7 +116,7 @@ DeadLink extends and modernizes the excellent Dishorde project by LakeYS with an
 Original project: https://github.com/LakeYS/Dishorde
 
 # Authors
-**DeadLink**: CDRZ · 🗨️ [Discord](https://discord.com/users/217012303063678978) (<@217012303063678978>)
+**DeadLink**: CDRZ · 🗨️ [CDRZ on Discord](https://discord.com/users/217012303063678978)
 
 # Terminal Commands
 `exit`

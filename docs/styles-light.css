@@ -1,0 +1,100 @@
+/* Light theme: reuses base styles and overrides variables for a bright look */
+@import url('styles.css');
+
+:root {
+  --bg: #f7f7f8;           /* page background */
+  --panel: #ffffff;        /* panels/cards */
+  --text: #0f172a;         /* primary text (slate-900) */
+  --muted: #334155;        /* muted text (slate-700) */
+  --accent: #ea580c;       /* orange-600 */
+  --accent-2: #0284c7;     /* sky-600 */
+  --card: #ffffff;         /* card surface */
+  --border: rgba(2, 6, 23, 0.12); /* subtle border */
+  --shadow: rgba(2, 6, 23, 0.08);
+  --glass: rgba(255,255,255,0.66);
+}
+
+/* Subtle backdrop gradients tuned for light */
+.page{
+  background:
+    radial-gradient(1400px 840px at 60% -18%, rgba(234,88,12,0.08), transparent),
+    radial-gradient(1100px 620px at 20% -10%, rgba(2,132,199,0.08), transparent),
+    #f3f4f6;
+}
+.page::before{
+  background: radial-gradient(1700px 1000px at 50% -14%, rgba(255,255,255,0.0), rgba(0,0,0,0.04));
+}
+
+/* Top nav on light */
+.topnav {
+  background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.70));
+  border-color: var(--border);
+  box-shadow: 0 8px 24px rgba(2,6,23,0.05);
+}
+.topnav a, .backlink { color: #0f172a; }
+.backlink:hover{ background: rgba(2,6,23,0.04); }
+.topnav a:hover{ background: rgba(2,6,23,0.04); }
+
+/* Hero logo smaller shadow on light */
+.hero-logo{
+  box-shadow: 0 14px 40px rgba(2,6,23,0.10), 0 0 0 1px rgba(2,6,23,0.06) inset;
+}
+.tagline{ color:#0f172a; opacity:.82; }
+
+/* Cards */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.90), rgba(255,255,255,0.70)), var(--card);
+  border-color: var(--border);
+  box-shadow: 0 10px 22px rgba(2,6,23,0.06);
+}
+.card:hover{
+  box-shadow: 0 16px 28px rgba(2,6,23,0.08);
+  border-color: rgba(2,6,23,0.18);
+}
+.card h3{ color:#0f172a; }
+.card p{ color:#334155; }
+
+/* Docs */
+.docs-sidebar, .docs-content{
+  background: linear-gradient(180deg, rgba(255,255,255,0.90), rgba(255,255,255,0.70)), var(--panel);
+  border-color: var(--border);
+}
+.docs-sidebar a{ color:#0f172a; }
+.docs-sidebar a:hover{ background: rgba(2,6,23,0.04); }
+.docs-sidebar a.active{ background: rgba(2,6,23,0.06); border-color: rgba(2,6,23,0.14); }
+.docs-content h1, .docs-content h2, .docs-content h3{ color:#0f172a; }
+.docs-content p, .docs-content li{ color:#334155; }
+.docs-content pre{ background:#f3f4f6; }
+
+/* CTA panel and terminal */
+.cta-panel{
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.70)), var(--panel);
+  border-color: var(--border);
+  box-shadow: 0 12px 22px rgba(2,6,23,0.06);
+}
+.cta-panel h2{ color:#0f172a; }
+.terminal{ background: #f8fafc; color:#0f172a; }
+
+/* Footer */
+.footerbar{
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.70)), var(--card);
+  border-color: var(--border);
+  box-shadow: 0 10px 20px rgba(2,6,23,0.06);
+  gap: 12px;
+}
+.footerbar > * { margin: 4px 0; flex-shrink: 0; }
+.btn{ border-color:#ea580c; background:linear-gradient(180deg, #f97316, #ea580c); color:white; }
+.link{ color:#0f172a; }
+.btn, .link{ white-space: nowrap; }
+
+/* Lightbox on light keeps a strong dim background */
+.lightbox-overlay{ background: rgba(0,0,0,0.70); }
+
+/* Copy button tuned for light theme */
+.copybtn{
+  background: linear-gradient(180deg, #ffffff, #f3f4f6);
+  color:#0f172a;
+  border-color: rgba(2,6,23,0.14);
+  box-shadow: 0 4px 10px rgba(2,6,23,0.06);
+}
+.copybtn:hover{ background: linear-gradient(180deg, #ffffff, #e5e7eb); }
