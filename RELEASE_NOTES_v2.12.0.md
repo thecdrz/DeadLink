@@ -26,6 +26,7 @@
 ### Dev & Maintainability
 - Structured log levels (error, warn, info, debug, success) with ANSI color + rotation.
 - Test suite (Jest) covers config schema & smoke start.
+- New website with Gallery and Docs hub; snapshots generated to `docs/assets/snapshots/`.
 
 ### Internal / Future Hooks
 - Placeholders added for crafting statistics (Undead Legacy integration path).

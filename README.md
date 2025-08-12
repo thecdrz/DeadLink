@@ -1,6 +1,6 @@
 # DeadLink – 7 Days to Die Server Companion
 
-![DeadLink Logo](screenshots/HC_Logo-L.png)
+<img alt="DeadLink logo" src="docs/assets/deadlink-logo.png" width="140"/>
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
 
@@ -72,35 +72,13 @@ Admin-only helpers (Manage Server permission) are available via UI/buttons or fu
 💡 Pro Tip: Use `/dashboard` for the best experience—click buttons instead of typing.
 
 ## 📸 Screenshots
+Live gallery and docs site:
 
-### Interactive Dashboard
-![DeadLink Dashboard](screenshots/HC_Dashboard.png)
-
-*Clean, intuitive interface with clickable buttons for all server functions*
-
-### Comprehensive Information Display
-![DeadLink Info](screenshots/HC_Info.png)
-
-*Detailed feature overview with organized sections and professional formatting*
-
-### Game Time & Blood Moon Context
-![DeadLink Time](screenshots/HC_Time.png)
-
-### Player Activity Snapshot
-![DeadLink Activity](screenshots/HC_Activity.png)
-
-### Analytics & Trends
-![DeadLink Trends](screenshots/HC_Trends.png)
-
-*Real-time player analytics with trend tracking and visual data representation*
-
-### Version Update Announcement (Admin test)
-![DeadLink Update Check](screenshots/HC_UpdateCheck.png)
-
-*Rich embed showing the latest release. Auto-posts can be enabled via the `updates` config.*
+- Website: https://thecdrz.github.io/DeadLink/
+- Gallery: https://thecdrz.github.io/DeadLink/gallery.html
 
 ### Live Embed Previews (Generated)
-The following previews are generated with our Puppeteer snapshot tool and reflect the current UI styling:
+These previews are generated with our snapshot tool and reflect the current UI styling:
 
 ![Dashboard Trends](screenshots/dashboard-trends.png)
 ![Activity](screenshots/activity.png)

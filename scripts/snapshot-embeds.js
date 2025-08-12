@@ -17,18 +17,20 @@ function sampleEmbeds() {
   ];
 }
 
-function htmlFor(embed) {
+function htmlFor(embed, opts = {}) {
   const pad = 12;
+  const maxWidth = opts.maxWidth || 880; // wider card for higher-res screenshots
+  const chartHeight = opts.chartHeight || 300;
   return `<!doctype html><meta charset="utf-8"/><style>
   body{background:#2b2d31;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Noto Sans',sans-serif}
-  .card{max-width:640px;background:#313338;color:#dbdee1;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+  .card{max-width:${maxWidth}px;background:#313338;color:#dbdee1;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);}
   .title{padding:${pad}px ${pad}px 0 ${pad}px;font-weight:600}
   .desc{white-space:pre-wrap;padding:${pad}px;color:#b5bac1}
   .footer{padding:${pad}px;color:#8e9297;font-size:12px}
-  .image{display:block;width:100%;height:auto}
+  .image{display:block;width:100%;height:auto;aspect-ratio:${maxWidth}/${chartHeight};object-fit:cover}
   </style><div class="card">
   <div class="title">${escapeHtml(embed.title||'')}</div>
-  ${embed.image?`<img class="image" src="https://dummyimage.com/640x240/212121/ffffff&text=Chart" alt="image"/>`:''}
+  ${embed.image?`<img class="image" src="https://dummyimage.com/${maxWidth}x${chartHeight}/212121/ffffff&text=Chart" alt="image"/>`:''}
   <div class="desc">${escapeHtml(embed.description||'')}</div>
   <div class="footer">${escapeHtml(embed.footer?.text||'')}</div>
   </div>`;
@@ -49,10 +51,11 @@ async function run() {
   try {
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(15000);
-    await page.setViewport({ width: 760, height: 520, deviceScaleFactor: 2 });
+  // Larger viewport + higher scale for sharper images
+  await page.setViewport({ width: 1120, height: 760, deviceScaleFactor: 2.5 });
 
     for (const s of sampleEmbeds()) {
-      const html = htmlFor(s.embed);
+  const html = htmlFor(s.embed, { maxWidth: 980, chartHeight: 340 });
       try {
         await page.setContent(html, { waitUntil: 'domcontentloaded' });
         const filename = `${s.name}.png`;

@@ -35,6 +35,7 @@
           <input id="doc-search" type="search" placeholder="Search sections…" aria-label="Search sections">
         </div>
         <ul>
+          <li><a data-doc="features">Features</a></li>
           <li><a data-doc="getting-started">Getting Started</a></li>
           <li><a data-doc="installation">Installation</a></li>
           <li><a data-doc="configuration">Configuration</a></li>
@@ -59,7 +60,7 @@
 
   <script>
   const DEFAULT_DOC = 'getting-started';
-  const routes = new Set(['getting-started','installation','configuration','commands','analytics-and-telemetry','security','troubleshooting','changelog']);
+  const routes = new Set(['features','getting-started','installation','configuration','commands','analytics-and-telemetry','security','troubleshooting','changelog']);
     const contentEl = document.getElementById('docs-content');
 
     function setActive(linkName){
