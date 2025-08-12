@@ -28,9 +28,14 @@
 <body>
   <div class="page">
     <nav class="topnav" aria-label="Primary">
-      <a href="./index.html">Home</a>
-      <a href="./gallery.html">Gallery</a>
-      <a href="./devops.html">DevOps</a>
+      <div class="nav-left">
+        <a class="brand backlink" href="./index.html"><img src="assets/deadlink-logo.png" alt="DeadLink logo small">DeadLink</a>
+      </div>
+      <div class="nav-right">
+        <a href="./gallery.html">Gallery</a>
+        <a href="./devops.html">DevOps</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
     </nav>
 
     <!-- HERO -->
@@ -84,14 +89,28 @@
     <section class="features">
       <div class="grid">
         <article class="card">
-          <h3>See the UI Gallery</h3>
-          <p>View live-styled previews of Dashboard, Activity, Players, Time, and Player Deep Dive.</p>
+          <div class="icon" aria-hidden="true">🖼️</div>
+          <h3>UI Gallery</h3>
+          <p>Preview the Dashboard, Activity, Players, Time, and Player Deep Dive.</p>
           <p><a class="btn" href="./gallery.html" aria-label="Open the gallery page">Open Gallery</a></p>
         </article>
         <article class="card">
+          <div class="icon" aria-hidden="true">🔁</div>
           <h3>DevOps & CI/CD</h3>
           <p>How we ship: tests, releases, Docker images, and website publishing.</p>
           <p><a class="btn" href="./devops.html" aria-label="Open the DevOps documentation">DevOps Docs</a></p>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">📦</div>
+          <h3>Docker</h3>
+          <p>Run DeadLink in a container with a few environment variables.</p>
+          <p><a class="btn" href="https://github.com/thecdrz/DeadLink#docker" target="_blank" rel="noopener">Docker Guide</a></p>
+        </article>
+        <article class="card">
+          <div class="icon" aria-hidden="true">📑</div>
+          <h3>Docs</h3>
+          <p>Read the full guide and configuration tips on GitHub.</p>
+          <p><a class="btn" href="./guide/index.md" target="_blank" rel="noopener">Open Docs</a></p>
         </article>
       </div>
     </section>

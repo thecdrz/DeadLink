@@ -11,9 +11,14 @@
 <body>
   <div class="page">
     <nav class="topnav" aria-label="Primary">
-      <a href="./index.html">Home</a>
-      <a href="./gallery.html" aria-current="page">Gallery</a>
-      <a href="./devops.html">DevOps</a>
+      <div class="nav-left">
+        <a class="brand backlink" href="./index.html"><img src="assets/deadlink-logo.png" alt="DeadLink logo small">DeadLink</a>
+      </div>
+      <div class="nav-right">
+        <a href="./gallery.html" aria-current="page">Gallery</a>
+        <a href="./devops.html">DevOps</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
     </nav>
 
     <header class="hero">
@@ -21,33 +26,28 @@
       <p class="tagline">UI GALLERY</p>
     </header>
 
-    <section class="features">
+    <section class="features" aria-label="UI Gallery">
       <div class="grid">
-        <article class="card">
-          <h3>Dashboard Trends</h3>
-          <img src="assets/snapshots/dashboard-trends.png" alt="Dashboard Trends embed preview"/>
-          <p class="caption">Player counts with insights and activity patterns.</p>
-        </article>
-        <article class="card">
-          <h3>Activity</h3>
-          <img src="assets/snapshots/activity.png" alt="Activity embed preview"/>
-          <p class="caption">Narrative activity snapshot with survival tips.</p>
-        </article>
-        <article class="card">
-          <h3>Players</h3>
-          <img src="assets/snapshots/players.png" alt="Players embed preview"/>
-          <p class="caption">Current players with health, K/D, ping, clusters, and distances.</p>
-        </article>
-        <article class="card">
-          <h3>Time</h3>
-          <img src="assets/snapshots/time.png" alt="Time embed preview"/>
-          <p class="caption">In‑game day/time with blood moon countdown context.</p>
-        </article>
-        <article class="card">
-          <h3>Player Deep Dive</h3>
-          <img src="assets/snapshots/player-deep-dive.png" alt="Player Deep Dive embed preview"/>
-          <p class="caption">Per‑player summary: session stats, streaks, speed, and location.</p>
-        </article>
+        <figure class="card">
+          <img src="assets/snapshots/dashboard-trends.png" alt="Dashboard Trends embed preview" data-lightbox>
+          <figcaption>Dashboard Trends — Player counts with insights and activity patterns.</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/snapshots/activity.png" alt="Activity embed preview" data-lightbox>
+          <figcaption>Activity — Narrative snapshot with survival tips.</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/snapshots/players.png" alt="Players embed preview" data-lightbox>
+          <figcaption>Players — Health, K/D, ping, clusters, and distances.</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/snapshots/time.png" alt="Time embed preview" data-lightbox>
+          <figcaption>Time — In‑game time with blood moon countdown.</figcaption>
+        </figure>
+        <figure class="card">
+          <img src="assets/snapshots/player-deep-dive.png" alt="Player Deep Dive embed preview" data-lightbox>
+          <figcaption>Player Deep Dive — Session stats, streaks, speed, and location.</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -57,5 +57,27 @@
       <a class="link" href="./devops.html">DevOps</a>
     </footer>
   </div>
+
+  <script>
+    // Lightweight lightbox: click any [data-lightbox] image to open in overlay.
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img[data-lightbox]');
+      if (!img) return;
+      const overlay = document.createElement('div');
+      overlay.className = 'lightbox-overlay fade-in';
+      overlay.setAttribute('role','dialog');
+      overlay.setAttribute('aria-modal','true');
+      overlay.innerHTML = `<img class="lightbox-img" src="${img.src}" alt="${img.alt}">`;
+      overlay.addEventListener('click', () => overlay.remove());
+      document.body.appendChild(overlay);
+    });
+    // ESC to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const lb = document.querySelector('.lightbox-overlay');
+        if (lb) lb.remove();
+      }
+    });
+  </script>
 </body>
 </html>
