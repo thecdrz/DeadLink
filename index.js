@@ -14,7 +14,7 @@ var TelnetClient = require("telnet-client");
 const DishordeInitializer = require("./lib/init.js");
 const Logger = require("./lib/log.js");
 const { createPinoLogger, patchConsoleToPino } = require("./lib/pinoLogger.js");
-const { serverAnalyticsEmbed } = require("./lib/embeds.js");
+const { serverAnalyticsEmbed, activityEmbed, playersListEmbed, timeEmbed, playerDeepDiveEmbed } = require("./lib/embeds.js");
 const { buildTrendsPayload } = require("./lib/trendsHarness.js");
 const { TelnetQueue, friendlyError } = require("./lib/telnetQueue.js");
 const { renderTrendPng, isChartPngAvailable } = require("./lib/charts.js");
@@ -500,12 +500,7 @@ Sessions Tracked: ${sessionsTracked}
 Lifetime Distance: ${totalDist}m
 Deathless PB: ${streakInfo.longestMinutes}m`;
   }
-  return {
-    color: 0x5865f2,
-    title: `🎯 Player Deep Dive`,
-    description: desc.slice(0, 4000),
-    footer: { text: `Generated at ${new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'})}` }
-  };
+  return playerDeepDiveEmbed({ title: '🎯 Player Deep Dive', description: desc.slice(0, 4000) });
 }
 
 ////// # Init/Version Check # //////
@@ -1638,166 +1633,17 @@ function generateTrendsReport() {
   return report;
 }
 
-function generateEnhancedAnalytics(history) {
-  if (history.length < 3) return "📊 *Insufficient data for detailed analysis*";
-  
-  const now = Date.now();
-  const oneHourAgo = now - (60 * 60 * 1000);
-  const threeHoursAgo = now - (3 * 60 * 60 * 1000);
-  const sixHoursAgo = now - (6 * 60 * 60 * 1000);
-  
-  // Filter recent data
-  const lastHour = history.filter(h => h.timestamp >= oneHourAgo);
-  const last3Hours = history.filter(h => h.timestamp >= threeHoursAgo);
-  const last6Hours = history.filter(h => h.timestamp >= sixHoursAgo);
-  
-  // Calculate activity metrics
-  const currentActivity = calculateActivityLevel(lastHour);
-  const recentActivity = calculateActivityLevel(last3Hours);
-  const extendedActivity = calculateActivityLevel(last6Hours);
-  
-  // Player session analysis
-  const sessionInsights = analyzePlayerSessions(history);
-  
-  // Activity patterns
-  const activityPatterns = analyzeActivityPatterns(history);
-  
-  let analytics = "";
-  
-  // Activity levels
-  analytics += `🕐 **Last Hour**: ${currentActivity.level} (${currentActivity.avg} avg)\n`;
-  analytics += `⏰ **Last 3 Hours**: ${recentActivity.level} (${recentActivity.avg} avg)\n`;
-  analytics += `📅 **Last 6 Hours**: ${extendedActivity.level} (${extendedActivity.avg} avg)\n`;
-  
-  // Session insights
-  if (sessionInsights) {
-    analytics += `\n👥 **Session Insights**\n`;
-    analytics += sessionInsights;
-  }
-  
-  // Activity patterns
-  if (activityPatterns) {
-    analytics += `\n📊 **Activity Patterns**\n`;
-    analytics += activityPatterns;
-  }
-  
-  return analytics;
-}
+// Enhanced analytics helpers (extracted)
+const { generateEnhancedAnalytics, analyzePlayerSessions, analyzeActivityPatterns, getActivityPattern } = require('./lib/enhancedAnalytics');
 
 
-function analyzePlayerSessions(history) {
-  if (history.length < 6) return null;
-  
-  // Find unique players across recent data
-  const recentPlayers = new Set();
-  const last24Hours = history.filter(h => h.timestamp >= Date.now() - (24 * 60 * 60 * 1000));
-  
-  last24Hours.forEach(entry => {
-    if (entry.players && Array.isArray(entry.players)) {
-      entry.players.forEach(player => recentPlayers.add(player));
-    }
-  });
-  
-  const uniquePlayers = recentPlayers.size;
-  const currentPlayers = history[history.length - 1].players || [];
-  
-  let insights = "";
-  
-  // Player retention
-  if (uniquePlayers > 0) {
-    const retentionRate = Math.round((currentPlayers.length / uniquePlayers) * 100);
-    insights += `🎯 **Retention**: ${retentionRate}% of recent players still online\n`;
-  }
-  
-  // Session duration estimate
-  if (currentPlayers.length > 0) {
-    const avgSessionLength = estimateSessionLength(history, currentPlayers);
-    if (avgSessionLength) {
-      insights += `⏱️ **Avg Session**: ~${avgSessionLength} hours\n`;
-    }
-  }
-  
-  // Player activity patterns
-  const activityPattern = getActivityPattern(history);
-  if (activityPattern) {
-    insights += `📈 **Pattern**: ${activityPattern}\n`;
-  }
-  
-  return insights || null;
-}
+// analyzePlayerSessions moved to ./lib/enhancedAnalytics
 
-function analyzeActivityPatterns(history) {
-  if (history.length < 12) return null;
-  
-  const recent = history.slice(-6);
-  const previous = history.slice(-12, -6);
-  
-  const recentAvg = recent.reduce((sum, h) => sum + h.count, 0) / recent.length;
-  const previousAvg = previous.reduce((sum, h) => sum + h.count, 0) / previous.length;
-  
-  const change = recentAvg - previousAvg;
-  const changePercent = Math.round((change / (previousAvg || 1)) * 100);
-  
-  let patterns = "";
-  
-  // Activity change
-  if (Math.abs(changePercent) > 10) {
-    const direction = changePercent > 0 ? "increasing" : "decreasing";
-    patterns += `📊 **Activity ${direction}** by ${Math.abs(changePercent)}%\n`;
-  } else {
-    patterns += `📊 **Stable activity** (±${Math.abs(changePercent)}%)\n`;
-  }
-  
-  // Consistency
-  const consistency = calculateConsistency(history);
-  patterns += `🎯 **Consistency**: ${consistency}\n`;
-  
-  return patterns;
-}
+// analyzeActivityPatterns moved to ./lib/enhancedAnalytics
 
-function estimateSessionLength(history, currentPlayers) {
-  if (currentPlayers.length === 0 || history.length < 2) return null;
-  
-  // Simple estimation based on how long players have been consistently online
-  let sessionStart = Date.now();
-  
-  for (let i = history.length - 1; i >= 0; i--) {
-    const entry = history[i];
-    const entryPlayers = entry.players || [];
-    
-    // Check if any current players were present
-    const hasCurrentPlayers = currentPlayers.some(player => 
-      entryPlayers.includes(player)
-    );
-    
-    if (hasCurrentPlayers) {
-      sessionStart = entry.timestamp;
-    } else {
-      break;
-    }
-  }
-  
-  const sessionHours = Math.round((Date.now() - sessionStart) / (1000 * 60 * 60) * 10) / 10;
-  return sessionHours > 0 ? sessionHours : null;
-}
+// estimateSessionLength moved to ./lib/enhancedAnalytics
 
-function getActivityPattern(history) {
-  if (history.length < 6) return null;
-  
-  const recent = history.slice(-6);
-  const counts = recent.map(h => h.count);
-  
-  // Check for patterns
-  const increasing = counts.every((count, i) => i === 0 || count >= counts[i - 1]);
-  const decreasing = counts.every((count, i) => i === 0 || count <= counts[i - 1]);
-  const stable = counts.every((count, i) => i === 0 || Math.abs(count - counts[i - 1]) <= 1);
-  
-  if (increasing) return "Steadily increasing";
-  if (decreasing) return "Gradually declining";
-  if (stable) return "Consistent activity";
-  
-  return "Variable activity";
-}
+// getActivityPattern moved to ./lib/enhancedAnalytics
 
 function findPeakActivityTime(history) {
   if (history.length < 6) return null;
@@ -2098,14 +1944,7 @@ function handleActivityFromButton(interaction) {
                   d7dtdState.activityData.hordeTime
                 );
                 
-                const embed = {
-                  color: 0x2ecc71,
-                  title: "🎯 Server Activity Report",
-                  description: activityMessage,
-                  footer: {
-                    text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-                  }
-                };
+                const embed = activityEmbed({ description: activityMessage });
                 
                 const navigationButtons = createNavigationButtons();
                 interaction.editReply({ 
@@ -2166,7 +2005,7 @@ function handlePlayersFromButton(interaction) {
           if (match) trackPlayerCount(parseInt(match[1]));
         }
       });
-      const embed = buildPlayersEmbed(players, totalLine);
+  const embed = buildPlayersEmbed(players, totalLine);
   const navigationButtons = createNavigationButtons();
   const select = createPlayerSelect(players);
   const components = [navigationButtons];
@@ -2183,12 +2022,7 @@ function handleTimeFromButton(interaction) {
       let timeData = "";
       processTelnetResponse(response, (line) => { if (line.startsWith("Day")) timeData = line; });
       if (timeData) {
-        const embed = {
-          color: 0x3498db,
-          title: "⏰ Current Game Time",
-          description: timeData,
-          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
-        };
+  const embed = timeEmbed({ description: timeData });
   const navigationButtons = createNavigationButtons();
         interaction.editReply({ 
           embeds: [embed],
@@ -2316,14 +2150,7 @@ function handleActivity(msg) {
               );
               
               // Create enhanced embed for activity
-              const embed = {
-                color: 0x2ecc71, // Green color for activity
-                title: "🎯 Server Activity Report",
-                description: activityMessage,
-                footer: {
-                  text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-                }
-              };
+              const embed = activityEmbed({ description: activityMessage });
               
               msg.channel.send({ embeds: [embed] })
                 .catch(() => {
@@ -2361,7 +2188,7 @@ function handlePlayers(msg) {
           if (match) trackPlayerCount(parseInt(match[1]));
         }
       });
-      const embed = buildPlayersEmbed(players, totalLine);
+  const embed = buildPlayersEmbed(players, totalLine);
       msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(totalLine || 'No data'));
   });
   } catch (_) {}
@@ -2374,12 +2201,7 @@ function handleTime(msg) {
       let timeData = "";
       processTelnetResponse(response, (line) => { if (line.startsWith("Day")) timeData = line; });
       if (timeData) {
-        const embed = {
-          color: 0x3498db,
-          title: "⏰ Current Game Time",
-          description: timeData,
-          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
-        };
+  const embed = timeEmbed({ description: timeData });
         msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(timeData));
       } else {
         msg.channel.send("❌ No time data received.").catch(() => {});
@@ -2709,12 +2531,7 @@ function clusterPlayers(players, threshold = 150) {
 function buildPlayersEmbed(players, totalLine) {
   const now = Date.now();
   if (!players.length) {
-    return {
-      color: 0x2ecc71,
-      title: '👥 Current Players Online',
-      description: totalLine || 'No players online',
-      footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit' })}` }
-    };
+  return playersListEmbed({ description: totalLine || 'No players online' });
   }
   // Sessions & per-player lines
   const lines = [];
@@ -2761,12 +2578,7 @@ function buildPlayersEmbed(players, totalLine) {
   const clusterSummary = `Clusters: ${clusters.length} | Largest: ${largest.length} | Isolated: ${isolated}`;
   const mvpLine = mvp ? `🏅 **MVP**: ${mvp} (top kill rate)` : '';
   const description = `${totalLine}\n\n${lines.join('\n\n')}\n\n${clusterSummary}${mvpLine?`\n${mvpLine}`:''}`;
-  return {
-    color: 0x2ecc71,
-    title: '👥 Current Players Online',
-    description: description.slice(0, 4000),
-    footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit' })}` }
-  };
+  return playersListEmbed({ description: description.slice(0, 4000) });
 }
 
 async function handlePlayerDeepDive(interaction) {
