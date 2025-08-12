@@ -1,6 +1,15 @@
 # Features
 
-A high-level overview of DeadLink’s capabilities.
+A high‑level overview of DeadLink’s capabilities.
+
+## Key Features
+- Daily Activity Reports — automatic summaries of joins, leaves, deaths, chat, and notable events posted to Discord
+- Horde Night Alerts — polite, rate‑limited warnings with Blood Moon context and cool‑downs
+- Player & Server Trends — history, peaks, and consistency; optional charts when dependencies are available
+- Interactive Dashboard — buttons for Activity, Players, Trends, Info; brief‑by‑default with a Details toggle
+- Player Deep Dive — inspect per‑player stats (K/D, kill rate, ping, distance, session length, deathless streaks, last seen)
+- Safe Server Controls — scoped actions; no raw telnet spam in channels
+- Logs & Updates — rotating logs with levels; release checks and optional public announcements
 
 ## Dashboards
 - Interactive Dashboard with buttons: Activity, Players, Time, Info

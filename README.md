@@ -23,6 +23,17 @@ Note: PNG trend charts and config validation are optional features. They are lis
 
 DeadLink runs as a separate companion via telnet—no game mods required. **Supports Windows and Linux dedicated servers; console servers aren’t supported.**
 
+## Key Features
+- Daily Activity Reports — automatic summaries of joins, leaves, deaths, chat, and events to Discord
+- Horde Night Alerts — polite, rate‑limited Blood Moon warnings with cool‑downs and context
+- Player & Server Trends — history, peaks, and patterns; optional PNG charts when available
+- Interactive Dashboard — buttons for Activity, Players, Trends, and Info; brief‑by‑default with Details toggle
+- Player Deep Dive — per‑player stats (K/D, kill rate, ping, distance, session, streaks, last seen)
+- Safe Server Controls — scoped actions (no raw telnet spam) for a safer ops workflow
+- Logs & Updates — rotating structured logs; release checks and optional announcement posts
+- Docker‑friendly — run with environment variables on Windows or Linux
+- Full documentation — https://DeadLink.lol/guide.html#/features
+
 ## Slash Commands
 DeadLink now uses slash commands for everything. Use these:
 
