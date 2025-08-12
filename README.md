@@ -99,18 +99,18 @@ Full notes: `RELEASE_NOTES_v2.12.2.md`
 DeadLink connects to your server’s telnet console to read game state (chat, players, time) and post summarized insights to Discord. It supports sending selected messages back to the server (optional), but its focus is a reliable companion experience: analytics, alerts, and an interactive control panel.
 
 # Enhanced Features
-This CDRZ fork adds intelligent analysis capabilities that monitor player activity and provide contextual insights:
-- **Dynamic Narrative Engine**: Generates humorous, time-aware stories with multiple scenario templates
-- **Empty Server Storytelling**: Witty atmospheric descriptions that entertain even when nobody's online
-- **Multi-Player Scenarios**: Specialized narratives for solo players, small groups, and larger communities
-- **Biome Detection & Analysis**: Players' locations are analyzed for environmental context and danger assessment
-- **Health-Aware Suggestions**: Conditions trigger appropriate survival recommendations with priority alerts
-- **Time-Contextual Stories**: Activity descriptions adapt to morning, afternoon, evening, and night scenarios
-- **Blood Moon Integration**: Strategic warnings and preparation advice during horde events
-- **Historical Context**: Incorporates recent player activity and server trends into storytelling
+This fork focuses on practical, reliable insights and a streamlined UX:
+- **Narrative Activity**: Brief by default with a “Details” toggle or `/activity full`; time‑aware guidance with Blood Moon context.
+- **Players + Deep Dive**: Live list (K/D, kill rate, ping, distance, session, streak) and per‑player deep dive, including offline stats (last seen, lifetime distance, PB streak).
+- **Clusters & MVP**: Proximity clustering and an MVP callout (highest kill rate) for quick situational awareness.
+- **Trends & Analytics**: Player‑count history and pattern analysis; optional PNG charts (falls back to ASCII if deps are missing).
+- **Dashboard‑first UX**: One `/dashboard` with buttons; slash‑only commands for consistency.
+- **Reliable Telnet I/O**: Queued commands with timeouts and reconnection handling; scoped actions.
+- **Dev Mode**: Simulated telnet for demos/tests and deterministic screenshots.
+- **Logging & Updates**: Rotating structured logs; release checks and optional public announcements.
 
 # Credits
-DeadLink includes enhancements, docs, and UX work by CDRZ. The original concept of Discord integration for 7 Days to Die was pioneered by LakeYS in Dishorde.
+DeadLink extends and modernizes the excellent Dishorde project by LakeYS with analytics, narrative, dashboard UI, docs, and ops polish.
 
 Original project: https://github.com/LakeYS/Dishorde
 
