@@ -15,7 +15,7 @@ DeadLink is a modern 7 Days to Die Server Companion that integrates your server 
 - Reliable telnet pipeline (queued, timed, reconnecting) with scoped actions
 - Analytics: player trends, clusters, MVP, deep‑dive stats (session, distance, streaks)
 - Interactive dashboard: Activity (brief default with Details), Players (list + deep dive picker), Trends, Info — all with consistent navigation
-- Player stats and trends: K/D, kill rate (kpm), ping quality, distance traveled, session length, deathless streaks, clusters, MVP, and time‑series patterns
+- Player stats and trends: ping quality, distance traveled, session length, deathless streaks, clusters, and time‑series patterns
 - Jest smoke and unit tests for quick validation
 
 Note: PNG trend charts and config validation are optional features. They are listed as optionalDependencies and will install on supported systems; if they fail to build, you can install them manually:
@@ -28,7 +28,7 @@ DeadLink runs as a separate companion via telnet—no game mods required. **Supp
 - Horde Night Alerts — polite, rate‑limited Blood Moon warnings with cool‑downs and context
 - Player & Server Trends — history, peaks, and patterns; optional PNG charts when available
 - Interactive Dashboard — buttons for Activity, Players, Trends, and Info; brief‑by‑default with Details toggle
-- Player Deep Dive — per‑player stats (K/D, kill rate, ping, distance, session, streaks, last seen)
+- Player Deep Dive — per‑player stats (ping, distance, session, streaks, last seen)
 - Safe Server Controls — scoped actions (no raw telnet spam) for a safer ops workflow
 - Logs & Updates — rotating structured logs; release checks and optional announcement posts
 - Docker‑friendly — run with environment variables on Windows or Linux
@@ -113,7 +113,7 @@ DeadLink connects to your server’s telnet console to read game state (chat, pl
 # Enhanced Features
 This fork focuses on practical, reliable insights and a streamlined UX:
 - **Narrative Activity**: Brief by default with a “Details” toggle or `/activity full`; time‑aware guidance with Blood Moon context.
-- **Players + Deep Dive**: Live list (K/D, kill rate, ping, distance, session, streak) and per‑player deep dive, including offline stats (last seen, lifetime distance, PB streak).
+- **Players + Deep Dive**: Live list (ping, distance, session, streak) and per‑player deep dive, including offline stats (last seen, lifetime distance, PB streak).
 - **Clusters & MVP**: Proximity clustering and an MVP callout (highest kill rate) for quick situational awareness.
 - **Trends & Analytics**: Player‑count history and pattern analysis; optional PNG charts (falls back to ASCII if deps are missing).
 - **Dashboard‑first UX**: One `/dashboard` with buttons; slash‑only commands for consistency.
@@ -254,6 +254,27 @@ Get-Content -Path .\logs\telemetry-buffer.jsonl -Tail 10
 npm run telemetry:flush -- --endpoint http://127.0.0.1:8787/v1/event
 
 # Buffer should shrink to 0; events appear in telemetry-events.jsonl
+```
+
+### View and report telemetry
+
+Generate summaries and trends from the collected JSONL:
+
+```powershell
+# Text summary for the last 30 days (prints to console)
+npm run telemetry:report
+
+# Markdown report (writes to .\logs\telemetry-report.md)
+npm run telemetry:report:md
+
+# HTML report with a simple chart (writes to .\logs\telemetry-report.html)
+npm run telemetry:report:html
+```
+
+Open the HTML report in your browser (PowerShell):
+
+```powershell
+Start-Process .\logs\telemetry-report.html
 ```
 
 Notes:

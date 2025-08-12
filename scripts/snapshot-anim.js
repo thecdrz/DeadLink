@@ -45,7 +45,7 @@ function htmlFor(embed){
     const embeds = {
       trends: ${JSON.stringify(serverAnalyticsEmbed({ description: '📈 Current: 7 players\n📋 24h Avg: 5.3\n🔝 Peak: 12 | 🔽 Low: 1\n\n🎯 Activity Insights\n🕐 Last Hour: High (7.2 avg)\n⏰ Last 3 Hours: Moderate (4.8 avg)\n📅 Last 6 Hours: Moderate (3.9 avg)\n\n📊 Activity Patterns\n📊 Activity increasing by 18%\n🎯 Consistency: Moderately consistent', withImage: true }))},
       activity: ${JSON.stringify(activityEmbed({ description: '👤 John explores the ash lands. Health excellent; speed high. Tips: ✅ Managing well.' }))},
-      players: ${JSON.stringify(playersListEmbed({ description: '3 online: John (L18 ❤️85% K/D 25.0 50ms 430m), Sarah (L8 ❤️30% 45ms 220m)…\nClusters: 2 | Largest: 2 | Isolated: 1' }))},
+  players: ${JSON.stringify(playersListEmbed({ description: '3 online: John (L18 ❤️85% 50ms 430m), Sarah (L8 ❤️30% 45ms 220m)…\nClusters: 2 | Largest: 2 | Isolated: 1' }))},
       time: ${JSON.stringify(timeEmbed({ description: 'Day 7, 21:05\nHorde begins in 55 minutes.' }))}
     };
     function render(name){

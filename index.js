@@ -28,13 +28,14 @@ const { Client, Intents } = Discord;
 const requestedIntents = [Intents.FLAGS.GUILDS];
 
 // Fancy ASCII banner & unified logging helper
-const banner = `
-  ____               _ _ _ _       _
- |  _ \\ ___  ___ __| (_) | | __ _| |__
- | | | / _ \\/ __/ _ | | | |/ _ | '_ \\
- | |_| |  __/ (_| (_| | | | | (_| | | | |
- |____/ \\___|\\__\\__,_|_|_|_|\\__, |_| |_|
-                               |___/`;
+// Startup banner (provided by user); colored at print time
+const banner = String.raw`
+____                 _ _     _       _    
+|  _ \  ___  __ _  __| | |   (_)_ __ | | __
+| | | |/ _ \/ _\` |/ _\` | |   | | '_ \| |/ /
+| |_| |  __/ (_| | (_| | |___| | | | |   < 
+|____/ \___|\__,_|\__,_|_____|_|_| |_|_|\_\`
+`;
 
 const log = (() => {
   // Optional Pino logger (pretty if available). Activated when LOG_ENGINE=pino
@@ -110,7 +111,7 @@ const log = (() => {
   };
 })();
 
-console.log(banner + "\n" + c.bold(`DeadLink v${pjson.version}`));
+console.log(c.cyan(banner) + "\n" + c.bold(`DeadLink v${pjson.version}`));
 log.warn('[SEC]', 'Remote connections to 7 Days to Die servers are not encrypted.');
 log.info('[SEC]', 'Use only on trusted networks with a unique telnet password.');
 log.info('[CREDITS]', 'Originally inspired by Dishorde (LakeYS) - thanks! DeadLink has since become a near full rewrite.');
@@ -274,14 +275,16 @@ else {
     process.exit(1);
   }
   
-  if (!config.password || config.password === "yourtelnetpassword") {
-    console.error("ERROR: Telnet password not configured. Set TELNET_PASSWORD environment variable or update config.json");
-    process.exit(1);
-  }
-  
-  if (!config.ip || config.ip === "yourserverip") {
-    console.error("ERROR: Server IP not configured. Set TELNET_IP environment variable or update config.json");
-    process.exit(1);
+  // In dev-mode (simulated telnet), allow missing telnet credentials
+  if (!config["dev-mode"]) {
+    if (!config.password || config.password === "yourtelnetpassword") {
+      console.error("ERROR: Telnet password not configured. Set TELNET_PASSWORD environment variable or update config.json");
+      process.exit(1);
+    }
+    if (!config.ip || config.ip === "yourserverip") {
+      console.error("ERROR: Server IP not configured. Set TELNET_IP environment variable or update config.json");
+      process.exit(1);
+    }
   }
   // Optional schema validation (only logs warnings when zod is present)
   try {
@@ -343,7 +346,7 @@ else {
 }
 
 // Telnet Password
-if(typeof config.password === "undefined") {
+if(typeof config.password === "undefined" && !config["dev-mode"]) {
   console.error("\x1b[31mERROR: No telnet password specified!\x1b[0m");
   process.exit();
 }
@@ -464,18 +467,15 @@ function buildSinglePlayerEmbed(playerName, snapshot) {
   const currentStreakMins = streakInfo.lastDeathAt ? Math.floor((now - streakInfo.lastDeathAt)/60000) : 0;
   let desc = '';
   if (snapshot) {
-    const k = parseInt(snapshot.zombiesKilled||'0');
-    const d = parseInt(snapshot.deaths||'0');
-    const kd = d===0? k : (k/d).toFixed(1);
+  const k = parseInt(snapshot.zombiesKilled||'0');
+  const d = parseInt(snapshot.deaths||'0');
     const hp = snapshot.health ? `${snapshot.health}%` : '—';
     const hs = healthStatus(snapshot.health);
     const pq = pingQuality(snapshot.ping);
     const dur = sess ? formatDuration(now - sess.start) : '—';
     let loc = getLocationDescription(snapshot.pos);
     if (loc.length > 120) loc = loc.slice(0,117)+'…';
-    const base = d7dtdState.playerBaselines[playerName] || { killsAtStart: k };
-    const mins = sess ? Math.max(1, Math.floor((now - sess.start)/60000)) : 1;
-    const kpm = ((k - base.killsAtStart)/mins).toFixed(2);
+  // Removed KPM/ratio metrics
   const travel = d7dtdState.playerTravel[playerName] || { sessionDistance: 0, totalDistance: 0 };
   const sessionDist = Math.round(travel.sessionDistance||0);
   const totalDist = Math.round(travel.totalDistance||0);
@@ -483,7 +483,7 @@ function buildSinglePlayerEmbed(playerName, snapshot) {
   const mpm = sessionDist && minsPlayed ? (sessionDist / minsPlayed).toFixed(1) : '0';
   desc += `**${playerName}**\n` +
       `Level: ${snapshot.level||'?'} | ❤️ ${hp} (${hs}) | Ping: ${pq} ${snapshot.ping||'?'}ms\n` +
-      `Kills: ${k} | Deaths: ${d} | K/D: ${kd} | Kill Rate: ${kpm} kpm\n` +
+  `Kills: ${k} | Deaths: ${d}\n` +
       `Session: ${dur}\n` +
       `Distance: ${sessionDist}m (Lifetime ${totalDist}m) | Avg Speed: ${mpm} m/min\n` +
       `Deathless Streak: ${currentStreakMins}m (PB ${streakInfo.longestMinutes}m)\n` +
@@ -1723,6 +1723,102 @@ function formatHour(hour) {
   return `${hour - 12}:00 PM`;
 }
 
+// ---- Daily Activity Reports (auto-post once per day) ----
+let dailyReportTimer = null;
+function startDailyReportsScheduler() {
+  try {
+    const cfg = config.dailyReports || {};
+    const enabled = cfg.enabled === true;
+    if (!enabled) return;
+    const timeStr = String(cfg.time || '09:00'); // HH:MM local time
+    const delay = computeNextDailyDelay(timeStr);
+    log.info('[DAILY]', `Scheduling daily activity report for ${timeStr} (in ${Math.round(delay/60000)}m)`);
+    if (dailyReportTimer) clearTimeout(dailyReportTimer);
+    dailyReportTimer = setTimeout(async () => {
+      try { await runDailyReport(); } catch(_) {}
+      // reschedule next day
+      const nextDelay = computeNextDailyDelay(timeStr);
+      dailyReportTimer = setTimeout(async () => { try { await runDailyReport(); } catch(_) {} }, nextDelay);
+    }, delay);
+  } catch (e) {
+    log.warn('[DAILY]', `Failed to start scheduler: ${e && e.message}`);
+  }
+}
+
+function computeNextDailyDelay(hhmm) {
+  try {
+    const [hh, mm] = String(hhmm || '09:00').split(':').map(n => parseInt(n, 10));
+    const now = new Date();
+    const next = new Date(now.getTime());
+    next.setSeconds(0, 0);
+    next.setHours(isNaN(hh)?9:hh, isNaN(mm)?0:mm, 0, 0);
+    if (next <= now) next.setDate(next.getDate() + 1);
+    return next.getTime() - now.getTime();
+  } catch (_) { return 60*60*1000; }
+}
+
+async function runDailyReport() {
+  try { telemetry.send('daily_report_run', {}); } catch(_) {}
+  try {
+    // Choose channel: specific override or bound default
+    let targetChannel = channel;
+    const cfg = config.dailyReports || {};
+    const overrideId = cfg.channel ? cfg.channel.toString() : null;
+    if (overrideId && client && client.channels) {
+      try {
+        const fetched = await client.channels.fetch(overrideId);
+        if (fetched && fetched.isText()) targetChannel = fetched;
+      } catch(_) {}
+    }
+    if (!targetChannel) {
+      log.warn('[DAILY]', 'No channel available for daily report');
+      return;
+    }
+    const mode = (cfg.mode || 'brief').toLowerCase();
+    const { players, time, hordeTime } = await collectActivitySnapshot();
+    // Track counts
+    const playerNames = players.map(p => p.name);
+    try { trackPlayerCount(players.length, playerNames); } catch(_) {}
+    let description;
+    if (mode === 'full') description = generateActivityMessage(players, time, hordeTime);
+    else description = buildActivityBrief(players, time, hordeTime);
+    const embed = activityEmbed({ description });
+    await targetChannel.send({ embeds: [embed] }).catch(()=>{});
+    log.success('[DAILY]', `Posted daily ${mode} activity report (${players.length} players)`);
+  } catch (e) {
+    log.warn('[DAILY]', `Run failed: ${e && e.message}`);
+  }
+}
+
+async function collectActivitySnapshot() {
+  const snapshot = { players: [], time: null, hordeTime: null };
+  // Query listplayers
+  try {
+    const { err, response } = await telnetQueue.exec('lp', { timeout: 7000 });
+    if (!err && response) {
+      processTelnetResponse(response, (line) => {
+        if (line.includes('id=') && line.includes('pos=')) {
+          const p = parsePlayerData(line);
+          if (p) snapshot.players.push(p);
+        }
+      });
+    }
+  } catch(_) {}
+  // Query time
+  try {
+    const { err: timeErr, response: timeResponse } = await telnetQueue.exec('gettime', { timeout: 5000 });
+    if (!timeErr && timeResponse) {
+      processTelnetResponse(timeResponse, (line) => {
+        if (line.startsWith('Day')) {
+          snapshot.time = line;
+          snapshot.hordeTime = calculateHordeStatus(line);
+        }
+      });
+    }
+  } catch(_) {}
+  return snapshot;
+}
+
 function handleTrends(msg) {
   try {
     const trendsReport = generateTrendsReport();
@@ -2448,6 +2544,10 @@ client.on('ready', async () => {
     } catch (_) { /* ignore */ }
   }
   } catch (_) {}
+  // Start daily reports scheduler (optional)
+  try {
+    startDailyReportsScheduler();
+  } catch(_) {}
 });
 
 // Handle button interactions from the dashboard UI
@@ -2541,6 +2641,9 @@ client.on('interactionCreate', async (interaction) => {
       }
       if (name === 'bloodmoon') {
         return handleBloodMoonTest(interaction);
+      }
+      if (name === 'dailyreport') {
+        return handleDailyReportSlash(interaction);
       }
     }
   } catch (err) {
@@ -2674,16 +2777,9 @@ function buildPlayersEmbed(players, totalLine) {
     ensurePlayerSession(p.name);
     const sess = d7dtdState.playerSessions[p.name];
     const dur = formatDuration(now - sess.start);
-    const k = parseInt(p.zombiesKilled || '0');
-    const d = parseInt(p.deaths || '0');
-    const kd = d === 0 ? k : (k/d).toFixed(1);
-    // Baseline for KPM
-    if (!d7dtdState.playerBaselines[p.name]) {
-      d7dtdState.playerBaselines[p.name] = { killsAtStart: k, deathsAtStart: d };
-    }
-    const base = d7dtdState.playerBaselines[p.name];
-    const minsPlayed = Math.max(1, Math.floor((now - sess.start)/60000));
-    const kpm = ((k - base.killsAtStart)/minsPlayed).toFixed(2);
+  const k = parseInt(p.zombiesKilled || '0');
+  const d = parseInt(p.deaths || '0');
+  // Removed KPM baselines/metrics
     const hp = p.health ? `${p.health}%` : '—';
     const hs = healthStatus(p.health);
     const pq = pingQuality(p.ping);
@@ -2694,24 +2790,16 @@ function buildPlayersEmbed(players, totalLine) {
   const streakDisplay = streakInfo.longestMinutes > 0 ? `🔥 ${Math.max(currentStreakMins,0)}m (PB ${streakInfo.longestMinutes}m)` : `🔥 ${currentStreakMins}m`;
   const travel = d7dtdState.playerTravel[p.name] || { sessionDistance: 0 };
   const distDisplay = travel.sessionDistance ? `📏 ${Math.round(travel.sessionDistance)}m` : '📏 0m';
-  lines.push(`**${p.name}** L${p.level||'?'} | ❤️ ${hp} (${hs}) | K/D ${kd} | 🧟 ${k} | ⚔️ ${kpm}kpm | ☠️ ${d} | ${pq} ${p.ping||'?'}ms | ${distDisplay} | ⏱️ ${dur} | ${streakDisplay}\n↳ ${loc}`);
+  lines.push(`**${p.name}** L${p.level||'?'} | ❤️ ${hp} (${hs}) | 🧟 ${k} | ☠️ ${d} | ${pq} ${p.ping||'?'}ms | ${distDisplay} | ⏱️ ${dur} | ${streakDisplay}\n↳ ${loc}`);
   });
-  // MVP (highest kpm)
-  let mvp = null; let best = -1;
-  players.forEach(p => {
-    const k = parseInt(p.zombiesKilled||'0');
-    const base = d7dtdState.playerBaselines[p.name] || { killsAtStart: k };
-    const sess = d7dtdState.playerSessions[p.name];
-    const mins = Math.max(1, Math.floor((now - sess.start)/60000));
-    const rate = (k - base.killsAtStart)/mins;
-    if (rate > best) { best = rate; mvp = p.name; }
-  });
+  // MVP (removed: previously based on kill rate)
+  let mvp = null;
   // Clusters
   const clusters = clusterPlayers(players);
   const largest = clusters[0] || [];
   const isolated = clusters.filter(c=>c.length===1).length;
   const clusterSummary = `Clusters: ${clusters.length} | Largest: ${largest.length} | Isolated: ${isolated}`;
-  const mvpLine = mvp ? `🏅 **MVP**: ${mvp} (top kill rate)` : '';
+  const mvpLine = '';
   const description = `${totalLine}\n\n${lines.join('\n\n')}\n\n${clusterSummary}${mvpLine?`\n${mvpLine}`:''}`;
   return playersListEmbed({ description: description.slice(0, 4000) });
 }
@@ -2742,5 +2830,47 @@ async function handlePlayerDeepDive(interaction) {
     });
   } catch (e) {
     try { interaction.editReply('❌ Deep dive failed'); } catch(_) {}
+  }
+}
+
+// Slash: /dailyreport [mode] [channel] — admin only
+async function handleDailyReportSlash(interaction) {
+  try {
+    const member = interaction.member;
+    const perms = member && member.permissions;
+    if (!perms || !perms.has || !perms.has('MANAGE_GUILD')) {
+      return interaction.reply({ content: '❌ Admin only', ephemeral: true }).catch(() => {});
+    }
+    await interaction.deferReply({ ephemeral: false });
+    let mode = 'brief';
+    let overrideChannelId = null;
+    try {
+      mode = (interaction.options.getString('mode') || 'brief').toLowerCase();
+    } catch(_) {}
+    try {
+      const chStr = interaction.options.getString('channel');
+      if (chStr && /^\d{5,}$/.test(chStr)) overrideChannelId = chStr;
+    } catch(_) {}
+    // Resolve channel
+    let targetChannel = channel;
+    if (overrideChannelId) {
+      try {
+        const fetched = await client.channels.fetch(overrideChannelId);
+        if (fetched && fetched.isText()) targetChannel = fetched;
+      } catch(_) {}
+    }
+    if (!targetChannel) {
+      return interaction.editReply('❌ No channel available to post the report.').catch(()=>{});
+    }
+    const { players, time, hordeTime } = await collectActivitySnapshot();
+    const description = mode === 'full' ?
+      generateActivityMessage(players, time, hordeTime) :
+      buildActivityBrief(players, time, hordeTime);
+    const embed = activityEmbed({ description });
+    try { await targetChannel.send({ embeds: [embed] }); } catch(_) {}
+    try { telemetry.send('daily_report_manual', { mode }); } catch(_) {}
+    return interaction.editReply(`✅ Posted ${mode} daily report to <#${targetChannel.id}>`).catch(()=>{});
+  } catch (e) {
+    try { await interaction.editReply('❌ Daily report failed.'); } catch(_) {}
   }
 }

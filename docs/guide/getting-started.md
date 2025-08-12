@@ -79,7 +79,7 @@ Below are quick previews of the main dashboards. Click to open the full image in
     <img alt="Players view showing online roster with per-player stats" src="assets/snapshots/players.png">
   </a>
   <figcaption>
-    Players – Live roster with session stats, kill rate, K/D, and deathless streak.
+  Players – Live roster with session stats, ping, and deathless streak.
   </figcaption>
 </figure>
 
