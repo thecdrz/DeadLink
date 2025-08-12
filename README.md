@@ -1,6 +1,8 @@
 # DeadLink – 7 Days to Die Server Companion
 
-<img alt="DeadLink logo" src="docs/assets/deadlink-logo.png" width="256"/>
+<p align="center">
+	<img alt="DeadLink logo" src="docs/assets/deadlink-logo-light.png" width="256" />
+</p>
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
 
