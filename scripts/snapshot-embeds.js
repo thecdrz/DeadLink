@@ -39,15 +39,15 @@ function terminalStartupCard(){
 
 function htmlFor(embed, opts = {}) {
   const pad = 12;
-  const maxWidth = opts.maxWidth || 880; // wider card for higher-res screenshots
-  const chartHeight = opts.chartHeight || 300;
+  const maxWidth = opts.maxWidth || 900; // balanced width for crispness
+  const chartHeight = opts.chartHeight || 240; // smaller chart area to avoid overpowering
   return `<!doctype html><meta charset="utf-8"/><style>
   body{background:#2b2d31;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Noto Sans',sans-serif}
-  .card{max-width:${maxWidth}px;background:#313338;color:#dbdee1;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);}
-  .title{padding:${pad}px ${pad}px 0 ${pad}px;font-weight:600}
+  .card{max-width:${maxWidth}px;background:#313338;color:#dbdee1;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,0.06);overflow:hidden}
+  .title{padding:${pad}px ${pad}px 8px ${pad}px;font-weight:700}
   .desc{white-space:pre-wrap;padding:${pad}px;color:#b5bac1}
-  .footer{padding:${pad}px;color:#8e9297;font-size:12px}
-  .image{display:block;width:100%;height:auto;aspect-ratio:${maxWidth}/${chartHeight};object-fit:cover}
+  .footer{padding:${pad}px;color:#8e9297;font-size:12px;border-top:1px solid rgba(255,255,255,0.06)}
+  .image{display:block;width:100%;height:auto;aspect-ratio:${maxWidth}/${chartHeight};object-fit:cover;border-top-left-radius:10px;border-top-right-radius:10px}
   </style><div class="card">
   <div class="title">${escapeHtml(embed.title||'')}</div>
   ${embed.image?`<img class="image" src="https://dummyimage.com/${maxWidth}x${chartHeight}/212121/ffffff&text=Chart" alt="image"/>`:''}
@@ -77,7 +77,7 @@ async function run() {
   // Include terminal snapshot first
   const all = [{ name: 'terminal-startup', embed: terminalStartupCard() }, ...sampleEmbeds()];
   for (const s of all) {
-  const html = htmlFor(s.embed, { maxWidth: 980, chartHeight: 340 });
+  const html = htmlFor(s.embed, { maxWidth: 900, chartHeight: 240 });
       try {
         await page.setContent(html, { waitUntil: 'domcontentloaded' });
         const filename = `${s.name}.png`;
