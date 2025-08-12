@@ -27,6 +27,11 @@
 </head>
 <body>
   <div class="page">
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html">Home</a>
+      <a href="./gallery.html">Gallery</a>
+      <a href="./devops.html">DevOps</a>
+    </nav>
 
     <!-- HERO -->
     <header class="hero">
@@ -75,34 +80,18 @@
       </div>
     </section>
 
-    <!-- GALLERY -->
+    <!-- Link to Gallery page instead of embedding full gallery -->
     <section class="features">
-      <h2 style="text-align:center;margin:0 0 16px 0;">Screenshots</h2>
       <div class="grid">
         <article class="card">
-          <h3>Dashboard Trends</h3>
-          <img src="assets/snapshots/dashboard-trends.png" alt="Dashboard Trends" style="width:100%;height:auto;border-radius:6px"/>
-          <p class="caption">Player counts with insights and activity patterns.</p>
+          <h3>See the UI Gallery</h3>
+          <p>View live-styled previews of Dashboard, Activity, Players, Time, and Player Deep Dive.</p>
+          <p><a class="btn" href="./gallery.html" aria-label="Open the gallery page">Open Gallery</a></p>
         </article>
         <article class="card">
-          <h3>Activity</h3>
-          <img src="assets/snapshots/activity.png" alt="Activity" style="width:100%;height:auto;border-radius:6px"/>
-          <p class="caption">Narrative activity snapshot with survival tips.</p>
-        </article>
-        <article class="card">
-          <h3>Players</h3>
-          <img src="assets/snapshots/players.png" alt="Players" style="width:100%;height:auto;border-radius:6px"/>
-          <p class="caption">Current players with health, K/D, ping, clusters, and distances.</p>
-        </article>
-        <article class="card">
-          <h3>Time</h3>
-          <img src="assets/snapshots/time.png" alt="Time" style="width:100%;height:auto;border-radius:6px"/>
-          <p class="caption">In‑game day/time with blood moon countdown context.</p>
-        </article>
-        <article class="card">
-          <h3>Player Deep Dive</h3>
-          <img src="assets/snapshots/player-deep-dive.png" alt="Player Deep Dive" style="width:100%;height:auto;border-radius:6px"/>
-          <p class="caption">Per‑player summary: session stats, streaks, speed, and location.</p>
+          <h3>DevOps & CI/CD</h3>
+          <p>How we ship: tests, releases, Docker images, and website publishing.</p>
+          <p><a class="btn" href="./devops.html" aria-label="Open the DevOps documentation">DevOps Docs</a></p>
         </article>
       </div>
     </section>

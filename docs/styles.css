@@ -41,6 +41,13 @@ a { color: var(--text); text-decoration: none; }
 }
 
 /* HERO */
+.topnav {
+  max-width:1040px; margin:8px auto 0; padding:6px 10px;
+  display:flex; gap:12px; align-items:center; justify-content:flex-end;
+}
+.topnav a{ color:#f0e6d6; opacity:.95; font-weight:600; padding:6px 10px; border-radius:8px; }
+.topnav a:hover{ opacity:1; background: rgba(255,255,255,0.05); }
+
 .hero{ text-align:center; padding:18px 0 6px; margin-bottom: 18px; }
 .hero-logo{
   width: min(87vw, 588px); /* adjusted to 5% larger than previous */

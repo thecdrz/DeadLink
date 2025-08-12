@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>DeadLink – DevOps & CI/CD</title>
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <nav class="topnav" aria-label="Primary">
+      <a href="./index.html">Home</a>
+      <a href="./gallery.html">Gallery</a>
+      <a href="./devops.html" aria-current="page">DevOps</a>
+    </nav>
+
+    <header class="hero">
+      <img class="hero-logo" src="assets/deadlink-logo.png" alt="DeadLink logo">
+      <p class="tagline">DEVOPS & WORKFLOWS</p>
+    </header>
+
+    <section class="cta-panel">
+      <h2>Overview</h2>
+      <p>Our delivery pipeline keeps DeadLink reliable and easy to run—locally or in Docker. Here’s how it works.</p>
+    </section>
+
+    <section class="features">
+      <div class="grid">
+        <article class="card" aria-labelledby="ci-title">
+          <div class="icon" aria-hidden="true">⚙️</div>
+          <h3 id="ci-title">CI checks</h3>
+          <p>Jest test suites run on every push (planned), with smoke tests and analytics/helpers covered. Linting is optional.</p>
+          <p class="caption">Workflow file: <code>.github/workflows/ci-check.yml</code></p>
+        </article>
+
+        <article class="card" aria-labelledby="release-title">
+          <div class="icon" aria-hidden="true">🏷️</div>
+          <h3 id="release-title">Releases</h3>
+          <p>Pushing a tag like <code>vX.Y.Z</code> creates a GitHub Release. Release notes are auto-generated unless a body file is present.</p>
+          <p class="caption">Workflow: <code>.github/workflows/release.yml</code></p>
+        </article>
+
+        <article class="card" aria-labelledby="docker-title">
+          <div class="icon" aria-hidden="true">🐳</div>
+          <h3 id="docker-title">Docker images</h3>
+          <p>On release or manual trigger, multi-arch images (amd64/arm64) are built and pushed to GHCR. Tags include the version and <code>latest</code>.</p>
+          <p class="caption">Workflow: <code>.github/workflows/docker.yml</code> → image <code>ghcr.io/thecdrz/deadlink</code></p>
+        </article>
+
+        <article class="card" aria-labelledby="pages-title">
+          <div class="icon" aria-hidden="true">📰</div>
+          <h3 id="pages-title">Website</h3>
+          <p>Docs are served via GitHub Pages. Any change under <code>docs/</code> triggers a build and deploy.</p>
+          <p class="caption">Workflow: <code>.github/workflows/pages.yml</code></p>
+        </article>
+
+        <article class="card" aria-labelledby="snapshots-title">
+          <div class="icon" aria-hidden="true">📸</div>
+          <h3 id="snapshots-title">UI Snapshots</h3>
+          <p>A Puppeteer script renders sample embeds and saves PNGs to <code>screenshots/</code> and <code>docs/assets/snapshots/</code> for the site.</p>
+          <p class="caption">Script: <code>scripts/snapshot-embeds.js</code> — Run: <code>npm run snapshots</code></p>
+        </article>
+
+        <article class="card" aria-labelledby="docker-run-title">
+          <div class="icon" aria-hidden="true">🚀</div>
+          <h3 id="docker-run-title">Run in Docker</h3>
+          <p>Use GHCR images and set environment variables for Discord and telnet credentials. <code>DEV_MODE=true</code> enables simulated telnet for local demos.</p>
+          <p class="caption">See README → Docker</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta-panel">
+      <h2>Release notes</h2>
+      <p>We maintain versioned notes in the repo (e.g., <code>RELEASE_NOTES_v2.7.0.md</code>), and GitHub Releases include summaries.</p>
+    </section>
+
+    <footer class="footerbar">
+      <a class="btn" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      <a class="link" href="./index.html">Home</a>
+      <a class="link" href="./gallery.html">Gallery</a>
+    </footer>
+  </div>
+</body>
+</html>
