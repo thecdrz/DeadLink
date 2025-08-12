@@ -1966,6 +1966,7 @@ function handleActivityFromButton(interaction) {
 }
 
 function handleTrendsFromButton(interaction) {
+  try { telemetry.send('ui_view', { view: 'trends' }); } catch(_) {}
   interaction.deferReply().then(() => {
     const trendsReport = generateTrendsReport();
     (async () => {
@@ -2039,6 +2040,7 @@ function handleTimeFromButton(interaction) {
 }
 
 function handleInfoFromButton(interaction) {
+  try { telemetry.send('ui_view', { view: 'info' }); } catch(_) {}
   interaction.deferReply().then(async () => {
     const statusMsg = d7dtdState.connStatus === 1 ? ":green_circle: Online" : 
                      d7dtdState.connStatus === 0 ? ":white_circle: Connecting..." : 
