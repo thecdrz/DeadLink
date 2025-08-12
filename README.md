@@ -227,6 +227,12 @@ Notes:
 	- Try setting a fixed `TELNET_IP` to the public hostname.
 	- The bot auto-reconnects; it will send when the connection stabilizes.
 
+	## Releasing
+	- Create/update release notes file: `RELEASE_NOTES_vX.Y.Z.md`.
+	- Bump versions in `package.json` and `version.json`; update `updates.json` if announcing in-app.
+	- Commit and tag: `vX.Y.Z`, then push with tags.
+	- GitHub Actions will create the GitHub Release on tag push. For existing tags, run the "Create GitHub Release" workflow manually (Actions → Create GitHub Release → Run workflow) and enter the tag.
+
 # How to Install - Windows
 ## Creating the bot account
 1. Log in to the [Discord Developer Portal](https://discord.com/developers) in a browser and click "Create an application". Name the bot anything you'd like. Write down the application ID as you'll need it for later.
