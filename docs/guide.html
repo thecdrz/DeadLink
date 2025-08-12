@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>DeadLink – Documentation</title>
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="page">
+    <nav class="topnav" aria-label="Primary">
+      <div class="nav-left">
+        <a class="brand backlink" href="./index.html"><img src="assets/deadlink-logo.png" alt="DeadLink logo small">DeadLink</a>
+      </div>
+      <div class="nav-right">
+        <a href="./gallery.html">Gallery</a>
+        <a href="./devops.html">DevOps</a>
+        <a href="./guide.html" aria-current="page">Docs</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </nav>
+
+    <header class="hero" style="padding-top:18px;">
+      <img class="hero-logo" src="assets/deadlink-logo.png" alt="DeadLink logo">
+      <p class="tagline">DOCUMENTATION</p>
+    </header>
+
+    <section class="docs-container" aria-label="Documentation">
+      <aside class="docs-sidebar" aria-label="Sections">
+        <ul>
+          <li><a data-doc="getting-started">Getting Started</a></li>
+          <li><a data-doc="installation">Installation</a></li>
+          <li><a data-doc="configuration">Configuration</a></li>
+          <li><a data-doc="commands">Commands</a></li>
+          <li><a data-doc="analytics-and-telemetry">Analytics & Telemetry</a></li>
+          <li><a data-doc="security">Security</a></li>
+          <li><a data-doc="troubleshooting">Troubleshooting</a></li>
+        </ul>
+      </aside>
+      <main class="docs-content" id="docs-content" aria-live="polite">
+        <div class="loading">Loading…</div>
+      </main>
+    </section>
+
+    <footer class="footerbar">
+      <a class="btn" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      <a class="link" href="./index.html">Home</a>
+      <a class="link" href="./devops.html">DevOps</a>
+    </footer>
+  </div>
+
+  <script>
+    const DEFAULT_DOC = 'getting-started';
+    const routes = new Set(['getting-started','installation','configuration','commands','analytics-and-telemetry','security','troubleshooting']);
+    const contentEl = document.getElementById('docs-content');
+
+    function setActive(linkName){
+      document.querySelectorAll('.docs-sidebar a').forEach(a => a.classList.toggle('active', a.dataset.doc === linkName));
+    }
+
+    async function loadDoc(name){
+      if (!routes.has(name)) name = DEFAULT_DOC;
+      setActive(name);
+      contentEl.innerHTML = '<div class="loading">Loading…</div>';
+      try{
+        const res = await fetch(`./guide/${name}.md`);
+        const md = await res.text();
+        const html = marked.parse(md);
+        contentEl.innerHTML = html;
+        contentEl.querySelectorAll('table').forEach(t => t.classList.add('doc-table'));
+      }catch(err){
+        contentEl.innerHTML = '<p>Failed to load document.</p>';
+      }
+    }
+
+    function navigate(hash){
+      const name = (hash || location.hash || '').replace(/^#\/?/, '') || DEFAULT_DOC;
+      loadDoc(name);
+    }
+
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('.docs-sidebar a[data-doc]');
+      if (!a) return;
+      e.preventDefault();
+      const name = a.dataset.doc;
+      history.pushState({}, '', `#/${name}`);
+      navigate(`#/${name}`);
+    });
+
+    window.addEventListener('popstate', () => navigate());
+    navigate();
+  </script>
+</body>
+</html>
