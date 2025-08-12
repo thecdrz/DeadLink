@@ -130,6 +130,11 @@ node index.js
 |---|---:|---:|---|
 | enabled | boolean | true | Anonymous, local-only telemetry. |
 | storagePath | string | ./analytics.json | Where to store the local analytics file. |
+| endpoint | string | (internal default) | Telemetry collector URL. Can be http:// or https:// |
+| bufferEnabled | boolean | true | Persist unsent events to a local buffer for durability. |
+| bufferPath | string | ./logs/telemetry-buffer.jsonl | File for durable, file-backed queue. |
+| flushIntervalMs | number | 10000 | How often to attempt sending queued telemetry. |
+| batchSize | number | 25 | Max events to attempt per flush cycle. |
 
 ## Environment variables (overrides)
 - DISCORD_TOKEN, DISCORD_CHANNEL

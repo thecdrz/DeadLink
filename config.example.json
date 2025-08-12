@@ -31,7 +31,11 @@
   "analytics": {
     "enabled": true,
     "endpoint": "https://telemetry.deadlink.lol/v1/event",
-    "storagePath": "./telemetry.json"
+  "storagePath": "./telemetry.json",
+  "bufferEnabled": true,
+  "bufferPath": "./logs/telemetry-buffer.jsonl",
+  "flushIntervalMs": 10000,
+  "batchSize": 25
   },
 
   "updates": {

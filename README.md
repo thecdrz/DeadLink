@@ -1,7 +1,7 @@
 # DeadLink – 7 Days to Die Server Companion
 
 <p align="center">
-			<img alt="DeadLink logo" src="docs/assets/deadlink-logo-light.png" width="370" />
+			<img alt="DeadLink logo" src="docs/assets/deadlink-logo.png" width="370" />
 </p>
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
@@ -94,7 +94,7 @@ Live gallery and docs site:
 
 See the website for a quick tour: https://DeadLink.lol/
 
-## Latest Release: v2.12.2
+## Latest Release: v2.12.3
 
 Key additions:
 - Player Deep Dive select menu in Players dashboard
@@ -105,7 +105,7 @@ Key additions:
 - Deferred heartbeat until telnet + analytics loaded
 - Players list now shows distance metric
 
-Full notes: `RELEASE_NOTES_v2.12.2.md`
+Full notes: `RELEASE_NOTES_v2.12.3.md`
 
 # How it Works
 DeadLink connects to your server’s telnet console to read game state (chat, players, time) and post summarized insights to Discord. It supports sending selected messages back to the server (optional), but its focus is a reliable companion experience: analytics, alerts, and an interactive control panel.

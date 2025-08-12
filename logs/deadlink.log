@@ -215,3 +215,12 @@
 14:02:13.376 [DISCORD] Bound to channel 1404124535900602379
 14:02:14.986 [HB] Heartbeat: players=0 dataPoints=71
 14:17:14.995 [HB] Heartbeat: players=5 dataPoints=72
+14:25:04.422 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+14:25:04.426 [SEC] Use only on trusted networks with a unique telnet password.
+14:25:04.429 [CREDITS] Originally inspired by Dishorde (LakeYS) - thanks! DeadLink has since become a near full rewrite.
+14:25:04.433 [LOG] Existing log files: deadlink.log(15KB)
+14:25:04.436 [CHARTS] PNG charts not available (using ASCII fallback)
+14:25:04.577 [TELNET] Connected
+14:25:05.179 [DISCORD] Logged in as DeadLink#8637
+14:25:05.184 [DISCORD] Bound to channel 1404124535900602379
+14:25:07.038 [HB] Heartbeat: players=5 dataPoints=72

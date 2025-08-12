@@ -16,6 +16,12 @@ Persistent data is stored in analytics.json (gitignored).
 - Endpoint override: config.analytics.endpoint or DEADLINK_ANALYTICS_ENDPOINT
 - Instance ID: random UUID stored locally in telemetry.json (no linkage to Discord)
 
+### Reliability and buffering
+- Events are queued in-memory and periodically flushed.
+- If the endpoint is unreachable, events are persisted to a local buffer file (./logs/telemetry-buffer.jsonl) and retried.
+- Tuning: `flushIntervalMs`, `batchSize`, `bufferEnabled`, `bufferPath` under `analytics.*`.
+- Debug: set `DEADLINK_TELEMETRY_DEBUG=1` to print sends and endpoint at startup.
+
 ### Self-host the telemetry endpoint (optional)
 - Start a local receiver: `npm run telemetry:serve` (listens on http://localhost:8787)
 - Point the bot to it by setting either:

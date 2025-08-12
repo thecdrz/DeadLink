@@ -73,6 +73,7 @@ DeadLink.zip
 # Analytics data storage
 analytics.json
 logs/telemetry-*.jsonl
+logs/telemetry-buffer.jsonl
 
 # Version tracking
 version.json
