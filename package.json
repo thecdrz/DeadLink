@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest --runInBand",
+  "test:json": "node -e \"require('fs').mkdirSync('logs',{recursive:true})\" && jest --runInBand --json --outputFile logs/jest-last-run.json",
+  "test:coverage": "node -e \"require('fs').mkdirSync('logs',{recursive:true})\" && jest --runInBand --coverage --coverageReporters=json-summary --json --outputFile logs/jest-last-run.json",
     "slash:global": "node scripts/register-commands.js --global",
   "slash:guild": "node scripts/register-commands.js --guild",
   "snapshots": "node scripts/snapshot-embeds.js",
@@ -13,7 +15,11 @@
   "telemetry:serve": "node scripts/telemetry-server.js",
   "telemetry:send": "node scripts/send-telemetry-once.js",
   "telemetry:flush": "node scripts/telemetry-flush-buffer.js",
-  "telemetry:smoke": "node scripts/telemetry-smoke.js"
+  "telemetry:smoke": "node scripts/telemetry-smoke.js",
+  "telemetry:report": "node scripts/telemetry-report.js --input .\\logs\\telemetry-events.jsonl --since 30d --out txt",
+  "telemetry:report:md": "node scripts/telemetry-report.js --input .\\logs\\telemetry-events.jsonl --since 30d --out md > .\\logs\\telemetry-report.md",
+  "telemetry:report:html": "node scripts/telemetry-report.js --input .\\logs\\telemetry-events.jsonl --since 90d --out html --output .\\logs\\telemetry-report.html",
+  "site:telemetry": "node scripts/telemetry-report.js --input .\\logs\\telemetry-events.jsonl --since 90d --out html --output .\\docs\\telemetry-report.html"
   },
   "author": "CDRZ (built on Dishorde by LakeYS)",
   "license": "MIT",

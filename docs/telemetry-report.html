@@ -1,68 +1,190 @@
 <!doctype html><html><head><meta charset="utf-8"><title>DeadLink Telemetry Report</title><style>
-    :root{--bg:#0f1117;--card:#151a24;--muted:#9aa7b2;--fg:#e6edf3;--accent:#06b6d4;--accent2:#f472b6}
+    :root{
+      --bg:#0c0f14; --card:#121826; --muted:#9aa7b2; --fg:#e6edf3;
+      --line:#1f2a44; --accent:#22d3ee; --accent2:#a78bfa; --accentBar:#60a5fa;
+      --good:#22c55e; --warn:#f59e0b; --danger:#ef4444;
+      --sys:#38bdf8; --flow:#f59e0b; --feat:#06b6d4
+    }
+    [data-theme="alt"]{
+      --bg:#0b0b10; --card:#14161d; --muted:#8b98a5; --fg:#e3e9ef;
+      --line:#27324a; --accent:#06b6d4; --accent2:#f472b6; --accentBar:#38bdf8;
+      --good:#16a34a; --warn:#f59e0b; --danger:#ef4444;
+      --sys:#38bdf8; --flow:#f59e0b; --feat:#06b6d4
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#0f1117,#0c0f14);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#090b10);color:var(--fg);font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
     .wrap{max-width:1100px;margin:0 auto;padding:18px}
-    .topnav{position:sticky;top:0;z-index:3;background:rgba(15,17,23,.85);backdrop-filter:blur(6px);border-bottom:1px solid #22314e;margin: -18px -18px 12px -18px;padding:10px 18px;display:flex;align-items:center;justify-content:space-between}
+    .topnav{position:sticky;top:0;z-index:3;background:rgba(10,12,18,.85);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin: -18px -18px 12px -18px;padding:10px 18px;display:flex;align-items:center;justify-content:space-between}
     .topnav .brand{display:flex;align-items:center;gap:10px;color:var(--fg);font-weight:600}
     .topnav img.logo{height:22px;width:auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
     .topnav .links a{color:var(--fg);text-decoration:none;margin-left:10px;padding:6px 10px;border-radius:6px}
-    .topnav .links a:hover{background:#11203c}
-    h1{margin:0 0 8px 0;color:var(--accent)} h2{margin-top:28px;color:var(--accent)}
+    .topnav .links a:hover{background:#0f1628}
+    .topnav .tools{display:flex;align-items:center;gap:8px}
+    .theme-toggle{background:transparent;border:1px solid var(--line);color:var(--muted);padding:6px 8px;border-radius:8px;cursor:pointer}
+    .theme-toggle:hover{color:var(--fg);background:#0f1628}
+    h1{margin:0 0 8px 0;color:var(--fg)}
+  h2{margin:24px auto 8px auto;color:var(--fg);width:min(980px,100%);}
+    h2::after{content:"";display:block;height:1px;background:var(--line);margin-top:8px;opacity:.7}
+  .hero{width:min(980px,100%);margin:0 auto;padding:14px 0 8px}
+  .tabs{width:min(980px,100%);margin:10px auto 12px;display:flex;flex-wrap:wrap;gap:8px}
+  .tabs .tab{background:transparent;border:1px solid var(--line);color:var(--muted);padding:6px 10px;border-radius:999px;cursor:pointer}
+  .tabs .tab.active{color:var(--fg);background:#0f1628;border-color:#22304a}
     .muted{color:var(--muted)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:12px 0}
-    .card{background:var(--card);padding:12px 14px;border-radius:10px;border:1px solid #1f2a44}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:12px 0}
+  .grid.two{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{background:var(--card);padding:12px 14px;border-radius:10px;border:1px solid var(--line)}
     .stat{font-size:22px;font-weight:700;text-align:center}
     .grid.stats .card{ text-align:center }
-    .chart{background:var(--card);border:1px solid #1f2a44;border-radius:12px;padding:12px}
+    .chart{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;width:min(980px,100%);margin:0 auto}
+  .group{margin-bottom:18px}
+  .hidden{display:none !important}
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;width:min(980px,100%);margin:4px auto 10px}
+  .card.kpi{display:flex;flex-direction:column;gap:6px;cursor:pointer}
+  .kpi .lab{color:var(--muted);font-size:12px}
+  .kpi .val{font-size:22px;font-weight:700}
+  .kpi .delta{font-size:12px}
+  .kpi .delta.up{color:var(--good)}
+  .kpi .delta.down{color:var(--danger)}
+  /* Funnel */
+  .funnel{display:flex;flex-direction:column;gap:8px}
+  .frow{display:flex;align-items:center;gap:10px}
+  .frow .flab{min-width:140px;text-align:right;color:var(--muted)}
+  .frow .fbar{flex:1;height:16px;background:#0d1422;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .frow .fbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accentBar),var(--accent))}
+  .frow .fval{min-width:60px;text-align:center;color:var(--muted)}
     svg{width:100%;height:220px;display:block}
-    table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid #1f2a44;border-radius:10px;overflow:hidden}
-    th,td{padding:8px 10px;border-bottom:1px solid #1f2a44}
+    table{border-collapse:collapse;width:min(980px,100%);margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+    th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:center}
     thead{background:#15223d}
     tr:nth-child(even){background:#0f1830}
     pre{background:var(--card);padding:10px;border-radius:8px;border:1px solid #1c2633;color:var(--fg)}
     .bars{display:flex;flex-direction:column;gap:8px}
     .bar{display:flex;align-items:center;gap:8px}
-    .bar .label{min-width:140px;color:var(--fg)}
-    .bar .track{flex:1;height:16px;background:#0e1a30;border:1px solid #1f2a44;border-radius:10px;overflow:hidden}
-    .bar .fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent))}
-  .bar .val{width:60px;text-align:right;color:var(--muted)}
-  .subtle{font-size:12px;color:var(--muted)}
-  .insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:12px 0}
-  .mini svg{height:80px}
-  .heatmap{display:grid;grid-template-columns:repeat(25,1fr);gap:6px;align-items:center}
-  .heatmap .day{grid-column:1/2;color:var(--muted);font-size:12px}
-  .heatmap .cells{grid-column:2/26;display:grid;grid-template-columns:repeat(24,1fr);gap:2px}
-  .cell{height:14px;border-radius:3px;background:#0e141d;border:1px solid #1b2430}
-  .cell[data-x>="1"]{background:#0a3a40}
-  .cell[data-x>="2"]{background:#0e5a63}
-  .cell[data-x>="4"]{background:#0f7a7d}
-  .cell[data-x>="8"]{background:#0f9b98}
-  .cell[data-x>="16"]{background:#11bcb3}
-  /* Single-row 24h strip */
-  .strip{display:grid;grid-template-columns:repeat(24,1fr);gap:2px}
-  .strip .cell{height:18px}
-  .tips{background:var(--card);border:1px dashed #2a3a4f;padding:10px 12px;border-radius:8px;margin-top:8px}
-  /* Tooltips */
-  .tt{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid #2a3a4f;color:#9aa7b2;font-size:11px;margin-left:6px;cursor:default;position:relative}
-  .tt::after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);bottom:120%;background:#0e141d;border:1px solid #1c2633;color:var(--fg);padding:6px 8px;border-radius:6px;white-space:pre-wrap;min-width:180px;max-width:280px;opacity:0;pointer-events:none;transition:opacity .12s;box-shadow:0 4px 14px rgba(0,0,0,.45)}
-  .tt:hover::after{opacity:1}
-  /* Collapsibles */
-  details{background:var(--card);border:1px solid #1c2633;border-radius:8px;margin:10px 0}
-  summary{list-style:none;padding:10px 12px;cursor:pointer;color:var(--fg);display:flex;align-items:center;gap:8px}
-  summary::-webkit-details-marker{display:none}
-  summary .badge{background:#162132;color:var(--fg);border:1px solid #1c2633;border-radius:999px;padding:2px 8px;font-size:12px}
-  details > div{padding:8px 10px}
+    .bar .label{min-width:140px;color:var(--fg);text-align:center}
+    .bar .track{flex:1;height:14px;background:#0d1422;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+    .bar .fill{height:100%;background:var(--accentBar)}
+    .bar .val{width:80px;text-align:center;color:var(--muted)}
+    .subtle{font-size:12px;color:var(--muted)}
+    .insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:12px 0}
+    .mini svg{height:80px}
+    .heatmap{display:grid;grid-template-columns:repeat(25,1fr);gap:6px;align-items:center}
+    .heatmap .day{grid-column:1/2;color:var(--muted);font-size:12px}
+    .heatmap .cells{grid-column:2/26;display:grid;grid-template-columns:repeat(24,1fr);gap:2px}
+    .cell{height:14px;border-radius:3px;background:#0e141d;border:1px solid #1b2430}
+    .cell[data-x>="1"]{background:#0a3a40}
+    .cell[data-x>="2"]{background:#0e5a63}
+    .cell[data-x>="4"]{background:#0f7a7d}
+    .cell[data-x>="8"]{background:#0f9b98}
+    .cell[data-x>="16"]{background:#11bcb3}
+    /* Single-row 24h strip */
+    .strip{display:grid;grid-template-columns:repeat(24,1fr);gap:2px}
+    .strip .cell{height:18px}
+    /* Legend */
+    .legend{display:flex;gap:10px;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+    .legend .swatch{display:inline-block;width:14px;height:10px;border-radius:3px;border:1px solid #1b2430}
+    .tips{background:var(--card);border:1px dashed #2a3a4f;padding:10px 12px;border-radius:8px;margin-top:8px}
+    .tips ul{margin:8px 0 0 18px;padding:0}
+    .chart.empty{display:flex;align-items:center;justify-content:center;min-height:80px;border:1px dashed #2a3a4f;color:var(--muted)}
+    /* Tooltips */
+    .tt{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid #2a3a4f;color:#9aa7b2;font-size:11px;margin-left:6px;cursor:default;position:relative}
+    .tt::after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);bottom:120%;background:#0e141d;border:1px solid #1c2633;color:var(--fg);padding:6px 8px;border-radius:6px;white-space:pre-wrap;min-width:180px;max-width:280px;opacity:0;pointer-events:none;transition:opacity .12s;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+    .tt:hover::after{opacity:1}
+    /* Collapsibles */
+    details{background:var(--card);border:1px solid #1c2633;border-radius:8px;margin:10px 0}
+    summary{list-style:none;padding:10px 12px;cursor:pointer;color:var(--fg);display:flex;align-items:center;gap:8px}
+    summary::-webkit-details-marker{display:none}
+    summary .badge{background:#162132;color:var(--fg);border:1px solid #1c2633;border-radius:999px;padding:2px 8px;font-size:12px}
+    details > div{padding:8px 10px}
+    /* Donut gauges */
+    .donuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;width:min(980px,100%);margin:0 auto}
+    .donut{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .donut svg{width:90px;height:90px}
+    .donut .lab{margin-top:8px;color:var(--muted)}
+  /* Section headers */
+  .sec{width:min(980px,100%);margin:24px auto 8px auto}
+  .sec h2{margin:0;color:var(--fg);padding-left:12px;border-left:4px solid var(--accent)}
+  .sec.sys h2{border-color:var(--sys)}
+  .sec.flow h2{border-color:var(--flow)}
+  .sec.feat h2{border-color:var(--feat)}
+  .sec.quality h2{border-color:var(--accent2)}
+  /* Metric table */
+  .kv{width:min(980px,100%);margin:0 auto}
+  .kv .hdr,.kv .row{display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr 1fr}
+  .kv .hdr > div,.kv .row > div{padding:8px 10px;border-bottom:1px solid var(--line);text-align:center}
+  .kv .hdr{background:#15223d;font-weight:600;position:sticky;top:58px;z-index:2}
+  .kv .srt{cursor:pointer}
+  .kv .srt:hover{text-decoration:underline}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .segments{position:relative;height:8px;border:1px solid var(--line);border-radius:999px;background:linear-gradient(to right,var(--good) 0 var(--g),var(--warn) var(--g) var(--y),var(--danger) var(--y) 100%)}
+  .segments > i{position:absolute;top:-3px;width:2px;height:14px;background:var(--fg);border-radius:1px}
+  /* Simple progress bar (used in coverage/tests) */
+  .pbar{height:8px;background:#0d1422;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .pbar i{display:block;height:100%;background:var(--accentBar)}
+  .txt-good{color:var(--good)}
+  .txt-warn{color:var(--warn)}
+  .txt-danger{color:var(--danger)}
   </style></head>
-  <body><div class="wrap">
+  <body><div class="wrap" id="root">
   <div class="topnav">
-    <div class="brand"><img class="logo" src="/assets/deadlink-logo.png" alt="DeadLink logo"/> DeadLink</div>
-    <div class="links"><a href="#overview">Overview</a><a href="#trend">Daily/Hourly</a><a href="#types">Types</a><a href="#versions">Versions</a><a href="#platforms">Platforms</a><a href="#node">Node</a><a href="#features">Features</a><a href="#recent">Recent</a></div>
+    <div class="brand"><img class="logo" src="assets/deadlink-logo.png" alt="DeadLink logo"/> DeadLink</div>
+    <div class="links"><a href="#overview">Overview</a><a href="#system">System</a><a href="#workflow">Workflow</a><a href="#features">Features</a><a href="#quality">Quality</a><a href="#versions">Versions</a><a href="#platforms">Platforms</a><a href="#node">Node</a><a href="#types">Types</a><a href="#recent">Recent</a></div>
+    <div class="tools"><button class="theme-toggle" id="themeBtn" title="Toggle theme">Theme</button></div>
   </div>
-  <h1 id="overview">DeadLink Telemetry Report</h1>
-  <div class="muted">2025-08-12T14:02:12.240Z → 2025-08-12T20:06:40.236Z • Days: 1</div>
+  <script>(function(){
+    var root=document.getElementById('root');
+    var btn=document.getElementById('themeBtn');
+    if(btn&&root){
+      try{var pref=localStorage.getItem('dl-theme'); if(pref){root.setAttribute('data-theme',pref);} }catch(e){}
+      btn.addEventListener('click',function(){
+        var next = root.getAttribute('data-theme')==='alt' ? '' : 'alt';
+        if(next){root.setAttribute('data-theme',next);} else {root.removeAttribute('data-theme');}
+        try{localStorage.setItem('dl-theme',next);}catch(e){}
+      });
+    }
+  })();</script>
+  <div class="hero">
+    <h1 id="overview">DeadLink Telemetry Report</h1>
+    <div class="muted">2025-08-12T14:02:12.240Z → 2025-08-12T20:06:40.236Z • Days: 1</div>
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="t-overview">Overview</button>
+      <button class="tab" data-tab="t-system">System</button>
+      <button class="tab" data-tab="t-workflow">Workflow</button>
+      <button class="tab" data-tab="t-quality">Quality</button>
+      <button class="tab" data-tab="t-features">Features</button>
+      <button class="tab" data-tab="t-explore">Explore</button>
+    </div>
+  </div>
   <div class="tips" style="margin-top:10px">Local-only: generated from this instance's telemetry file.</div>
+  <details style="margin-top:10px"><summary>Low data tips</summary><div class="tips"><ul>
+    <li>Try a longer window: <code>npm run telemetry:report -- --since 30d</code></li>
+    <li>Generate local events: <code>npm run telemetry:smoke</code> or <code>npm run telemetry:send</code></li>
+    <li>Ensure analytics are enabled in config or env <code>DEADLINK_ANALYTICS=1</code></li>
+  </ul></div></details>
 
+  <div id="t-overview" class="group">
+  <div class="kpis">
+    <div class="card kpi" data-goto="t-workflow" title="Go to Workflow">
+      <div class="lab">Events</div>
+      <div class="val">32</div>
+      <div class="delta">Across 1 day</div>
+    </div>
+    <div class="card kpi" data-goto="t-system" title="Go to System">
+      <div class="lab">Peak hour</div>
+      <div class="val">16:00</div>
+      <div class="delta">12 events</div>
+    </div>
+    <div class="card kpi" data-goto="t-quality" title="Go to Quality">
+      <div class="lab">Test pass</div>
+      <div class="val">100%</div>
+      <div class="delta">Suites 13</div>
+    </div>
+    <div class="card kpi" data-goto="t-features" title="Go to Features">
+      <div class="lab">Top feature</div>
+      <div class="val">manual_test</div>
+      <div class="delta">19% of events</div>
+    </div>
+  </div>
   <div class="grid">
     <div class="card"><div class="muted">Events <span class="tt" data-tip="Total events observed in the selected time window.">i</span></div><div class="stat">32</div></div>
     <div class="card"><div class="muted">Event types <span class="tt" data-tip="Unique event names captured (e.g., startup, channel_bound).">i</span></div><div class="stat">7</div></div>
@@ -79,30 +201,129 @@
     <div class="card"><div class="muted">Peak hour</div><div class="stat">16:00</div><div class="muted">12 events</div></div>
     <div class="card"><div class="muted">Busiest day</div><div class="stat">2025-08-12</div><div class="muted">32 events</div></div>
     <div class="card"><div class="muted">Top event</div><div class="stat">manual_test</div><div class="muted">6 (19%)</div></div>
-    <div class="card"><div class="muted">Last event</div><div class="stat">75m ago</div><div class="muted">2025-08-12T20:06:40.236Z</div></div>
+    <div class="card"><div class="muted">Last event</div><div class="stat">160m ago</div><div class="muted">2025-08-12T20:06:40.236Z</div></div>
+  </div>
   </div>
 
-  <div class="chart mini"><svg viewBox="0 0 920 100" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stop-color="rgba(0,194,199,0.35)"/>
-          <stop offset="100%" stop-color="rgba(0,194,199,0.02)"/>
-        </linearGradient>
-      </defs>
-      <polyline fill="none" stroke="#00c2c7" stroke-width="2" points="10,10"/>
-      <circle cx="10" cy="10" r="2.5" fill="#00c2c7"/>
-    </svg></div>
+  <div id="t-system" class="group hidden">
+  <div class="sec sys" id="system"><h2>System health</h2></div>
+  <p class="muted">No system metrics found.</p>
+  </div>
 
-  <div class="tips"><strong>Low data tips</strong><ul>
-    <li>Try a longer window: <code>npm run telemetry:report -- --since 30d</code></li>
-    <li>Generate local events: <code>npm run telemetry:smoke</code> or <code>npm run telemetry:send</code></li>
-    <li>Ensure analytics are enabled in config or env <code>DEADLINK_ANALYTICS=1</code></li>
-  </ul></div>
-
-  <h2 id="trend">Events per hour (local) <span class="tt" data-tip="Daily totals if multiple days are present; otherwise the distribution across hours of the day (local time).">i</span></h2>
+  <div id="t-workflow" class="group hidden">
+  <div class="sec flow" id="workflow"><h2>Workflow telemetry</h2></div>
+  <div class="chart"><div class="funnel"><div class="frow"><div class="flab">runtime start</div><div class="fbar"><i style="width:0%"></i></div><div class="fval">0</div></div><div class="frow"><div class="flab">discord ready</div><div class="fbar"><i style="width:100%"></i></div><div class="fval">5</div></div><div class="frow"><div class="flab">channel bound</div><div class="fbar"><i style="width:100%"></i></div><div class="fval">5</div></div><div class="frow"><div class="flab">hc scheduled</div><div class="fbar"><i style="width:0%"></i></div><div class="fval">0</div></div><div class="frow"><div class="flab">hc done</div><div class="fbar"><i style="width:0%"></i></div><div class="fval">0</div></div></div><div class="subtle" style="margin-top:6px">Workflow funnel (heuristic): shows counts of key lifecycle stages.</div></div>
+  <h2 id="trend-hr">Events per hour (local) <span class="tt" data-tip="Distribution across hours of the day (local time) aggregated over the selected window.">i</span></h2>
   <div class="chart"><div class="strip"><div class="cell" data-x="0" title="00:00 — 0 events"></div><div class="cell" data-x="0" title="01:00 — 0 events"></div><div class="cell" data-x="0" title="02:00 — 0 events"></div><div class="cell" data-x="0" title="03:00 — 0 events"></div><div class="cell" data-x="0" title="04:00 — 0 events"></div><div class="cell" data-x="0" title="05:00 — 0 events"></div><div class="cell" data-x="0" title="06:00 — 0 events"></div><div class="cell" data-x="0" title="07:00 — 0 events"></div><div class="cell" data-x="0" title="08:00 — 0 events"></div><div class="cell" data-x="0" title="09:00 — 0 events"></div><div class="cell" data-x="8" title="10:00 — 8 events"></div><div class="cell" data-x="0" title="11:00 — 0 events"></div><div class="cell" data-x="6" title="12:00 — 6 events"></div><div class="cell" data-x="1" title="13:00 — 1 event"></div><div class="cell" data-x="0" title="14:00 — 0 events"></div><div class="cell" data-x="5" title="15:00 — 5 events"></div><div class="cell" data-x="12" title="16:00 — 12 events"></div><div class="cell" data-x="0" title="17:00 — 0 events"></div><div class="cell" data-x="0" title="18:00 — 0 events"></div><div class="cell" data-x="0" title="19:00 — 0 events"></div><div class="cell" data-x="0" title="20:00 — 0 events"></div><div class="cell" data-x="0" title="21:00 — 0 events"></div><div class="cell" data-x="0" title="22:00 — 0 events"></div><div class="cell" data-x="0" title="23:00 — 0 events"></div></div><div class="subtle" style="margin-top:6px">0-23h local time →</div></div>
+  
+  <h2>Activity heatmap (last 1 day)</h2><div class="chart"><div class="heatmap"><div class="day">2025-08-12</div><div class="cells"><div class="cell" data-x="0" title="2025-08-12 00:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 01:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 02:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 03:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 04:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 05:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 06:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 07:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 08:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 09:00 — 0 events"></div><div class="cell" data-x="8" title="2025-08-12 10:00 — 8 events"></div><div class="cell" data-x="0" title="2025-08-12 11:00 — 0 events"></div><div class="cell" data-x="6" title="2025-08-12 12:00 — 6 events"></div><div class="cell" data-x="1" title="2025-08-12 13:00 — 1 event"></div><div class="cell" data-x="0" title="2025-08-12 14:00 — 0 events"></div><div class="cell" data-x="5" title="2025-08-12 15:00 — 5 events"></div><div class="cell" data-x="12" title="2025-08-12 16:00 — 12 events"></div><div class="cell" data-x="0" title="2025-08-12 17:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 18:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 19:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 20:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 21:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 22:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 23:00 — 0 events"></div></div></div><div class="subtle" style="margin-top:6px">0-23h local time →</div><div class="legend" aria-label="heatmap legend"><span>0</span><span class="cell" data-x="1" style="width:14px;height:10px"></span><span>1</span><span class="cell" data-x="2" style="width:14px;height:10px"></span><span>2</span><span class="cell" data-x="4" style="width:14px;height:10px"></span><span>4</span><span class="cell" data-x="8" style="width:14px;height:10px"></span><span>8</span><span class="cell" data-x="16" style="width:14px;height:10px"></span><span>16+</span></div></div>
+  <h2 id="types">Events by type <span class="tt" data-tip="Relative frequency of event names in this window.">i</span></h2>
+  <div class="chart"><div class="bars"><div class="bar" title="manual_test: 6 events (19%)"><div class="label">manual_test</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">6 <span class="subtle">(19%)</span></div></div><div class="bar" title="startup: 5 events (16%)"><div class="label">startup</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="discord_ready: 5 events (16%)"><div class="label">discord_ready</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="channel_bound: 5 events (16%)"><div class="label">channel_bound</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="ui_click: 5 events (16%)"><div class="label">ui_click</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="ui_view: 5 events (16%)"><div class="label">ui_view</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="smoke_offline: 1 events (3%)"><div class="label">smoke_offline</div><div class="track"><div class="fill" style="width:17%"></div></div><div class="val">1 <span class="subtle">(3%)</span></div></div></div></div>
+  <div class="subtle" style="margin-top:6px">Each bar shows how often an event occurred during this window. Percentages are relative to total events.</div>
+  </div>
 
-  <h2>Activity heatmap (last 1 day)</h2><div class="chart"><div class="heatmap"><div class="day">2025-08-12</div><div class="cells"><div class="cell" data-x="0" title="2025-08-12 00:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 01:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 02:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 03:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 04:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 05:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 06:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 07:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 08:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 09:00 — 0 events"></div><div class="cell" data-x="8" title="2025-08-12 10:00 — 8 events"></div><div class="cell" data-x="0" title="2025-08-12 11:00 — 0 events"></div><div class="cell" data-x="6" title="2025-08-12 12:00 — 6 events"></div><div class="cell" data-x="1" title="2025-08-12 13:00 — 1 event"></div><div class="cell" data-x="0" title="2025-08-12 14:00 — 0 events"></div><div class="cell" data-x="5" title="2025-08-12 15:00 — 5 events"></div><div class="cell" data-x="12" title="2025-08-12 16:00 — 12 events"></div><div class="cell" data-x="0" title="2025-08-12 17:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 18:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 19:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 20:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 21:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 22:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 23:00 — 0 events"></div></div></div><div class="subtle" style="margin-top:6px">0-23h local time →</div></div>
+  <div id="t-quality" class="group hidden">
+  <div class="sec quality" id="quality"><h2>Quality</h2></div>
+  <div class="chart">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+        <div class="card"><div class="muted">Suites</div><div class="stat">13</div></div>
+        <div class="card"><div class="muted">Tests</div><div class="stat">25</div></div>
+        <div class="card"><div class="muted">Passed</div><div class="stat">25</div></div>
+        <div class="card"><div class="muted">Failed</div><div class="stat">0</div></div>
+      </div><div class="subtle" style="grid-column:1/-1">Last run: 2025-08-12T22:30:42.057Z</div>
+      <div style="margin-top:8px" class="kv">
+        <div class="h">Coverage</div><div class="h">Percent</div><div class="h">Visual</div>
+        <div>lines</div><div class="txt-good">85.16%</div><div class="pbar" title="356/418"><i style="width:85%;background:var(--good)"></i></div> <div>functions</div><div class="txt-good">80%</div><div class="pbar" title="80/100"><i style="width:80%;background:var(--good)"></i></div> <div>statements</div><div class="txt-warn">79.96%</div><div class="pbar" title="415/519"><i style="width:80%;background:var(--warn)"></i></div> <div>branches</div><div class="txt-warn">63.08%</div><div class="pbar" title="270/428"><i style="width:63%;background:var(--warn)"></i></div>
+      </div>
+      <div class="subtle" style="margin-top:6px">Looks for logs/jest-last-run.json or jest-results.json and coverage/coverage-summary.json.</div>
+    </div>
+  </div>
+
+  <div id="t-features" class="group hidden">
+  <div class="sec feat" id="features"><h2>Features</h2></div>
+  <h2 id="features-sub">Feature signals <span class="tt" data-tip="Boolean indicators derived from events (e.g., dev mode enabled, updates checked). Values show share of events where a signal is true.">i</span></h2>
+  <div class="donuts"><div class="donut" title="devMode: 25 (78%)"><svg viewBox="0 0 60 60" aria-label="devMode">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="108 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">78%</text>
+        </g>
+      </svg><div class="lab">devMode</div></div><div class="donut" title="updates: 25 (78%)"><svg viewBox="0 0 60 60" aria-label="updates">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="108 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">78%</text>
+        </g>
+      </svg><div class="lab">updates</div></div><div class="donut" title="bloodMoon: 25 (78%)"><svg viewBox="0 0 60 60" aria-label="bloodMoon">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="108 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">78%</text>
+        </g>
+      </svg><div class="lab">bloodMoon</div></div><div class="donut" title="chartsPng: 0 (0%)"><svg viewBox="0 0 60 60" aria-label="chartsPng">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">0%</text>
+        </g>
+      </svg><div class="lab">chartsPng</div></div></div>
+  <div class="subtle" style="margin-top:6px">Signals reflect feature usage within this window. Percentages are out of total events.</div>
+  </div>
+
+  <div id="t-explore" class="group hidden">
+  <div class="sec" id="explore"><h2>Explore</h2></div>
+  
+  <div id="recent"></div>
+  <details ><summary>Recent events <span class="badge">30</span></summary><div><table><thead><tr><th>Time</th><th>Type</th></tr></thead><tbody><tr><td>2025-08-12T20:06:40.236Z</td><td>ui_view</td></tr><tr><td>2025-08-12T20:05:43.735Z</td><td>channel_bound</td></tr><tr><td>2025-08-12T20:05:43.729Z</td><td>discord_ready</td></tr><tr><td>2025-08-12T20:05:42.512Z</td><td>startup</td></tr><tr><td>2025-08-12T20:04:20.562Z</td><td>ui_view</td></tr><tr><td>2025-08-12T20:04:20.556Z</td><td>ui_click</td></tr><tr><td>2025-08-12T20:04:10.052Z</td><td>channel_bound</td></tr><tr><td>2025-08-12T20:04:10.047Z</td><td>discord_ready</td></tr><tr><td>2025-08-12T20:04:09.389Z</td><td>startup</td></tr><tr><td>2025-08-12T20:02:09.000Z</td><td>channel_bound</td></tr><tr><td>2025-08-12T20:02:08.995Z</td><td>discord_ready</td></tr><tr><td>2025-08-12T20:02:08.044Z</td><td>startup</td></tr><tr><td>2025-08-12T19:52:21.220Z</td><td>ui_view</td></tr><tr><td>2025-08-12T19:52:21.217Z</td><td>ui_click</td></tr><tr><td>2025-08-12T19:52:01.082Z</td><td>channel_bound</td></tr><tr><td>2025-08-12T19:52:01.077Z</td><td>discord_ready</td></tr><tr><td>2025-08-12T19:52:00.197Z</td><td>startup</td></tr><tr><td>2025-08-12T17:02:48.306Z</td><td>smoke_offline</td></tr><tr><td>2025-08-12T16:48:20.413Z</td><td>manual_test</td></tr><tr><td>2025-08-12T16:46:24.384Z</td><td>manual_test</td></tr><tr><td>2025-08-12T16:45:05.810Z</td><td>manual_test</td></tr><tr><td>2025-08-12T16:28:31.348Z</td><td>manual_test</td></tr><tr><td>2025-08-12T16:26:58.426Z</td><td>manual_test</td></tr><tr><td>2025-08-12T16:26:50.374Z</td><td>manual_test</td></tr><tr><td>2025-08-12T14:03:10.400Z</td><td>ui_click</td></tr><tr><td>2025-08-12T14:03:10.400Z</td><td>ui_view</td></tr><tr><td>2025-08-12T14:03:07.753Z</td><td>ui_click</td></tr><tr><td>2025-08-12T14:03:03.583Z</td><td>ui_view</td></tr><tr><td>2025-08-12T14:03:03.581Z</td><td>ui_click</td></tr><tr><td>2025-08-12T14:02:13.380Z</td><td>channel_bound</td></tr></tbody></table></div></details>
+  <details id="versions" open><summary>App versions <span class="badge">2</span></summary><div><table><thead><tr><th>Key</th><th>Count</th></tr></thead><tbody><tr><td>2.12.3</td><td>24</td></tr><tr><td>2.12.2</td><td>8</td></tr></tbody></table></div></details>
+  <details id="platforms" open><summary>Platforms <span class="badge">1</span></summary><div><table><thead><tr><th>Key</th><th>Count</th></tr></thead><tbody><tr><td>win32-ia32</td><td>32</td></tr></tbody></table></div></details>
+  <details id="node" open><summary>Node versions <span class="badge">1</span></summary><div><table><thead><tr><th>Key</th><th>Count</th></tr></thead><tbody><tr><td>22.17.0</td><td>32</td></tr></tbody></table></div></details>
+  </div>
+
+  <script>(function(){
+    var tabs=[].slice.call(document.querySelectorAll('.tabs .tab'));
+    function show(id){
+      ['t-overview','t-system','t-workflow','t-quality','t-features','t-explore'].forEach(function(x){
+        var el=document.getElementById(x); if(!el) return; if(x===id) el.classList.remove('hidden'); else el.classList.add('hidden');
+      });
+      tabs.forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-tab')===id); });
+    }
+    tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.getAttribute('data-tab')); }); });
+    // KPI jump links
+    [].forEach.call(document.querySelectorAll('.kpi[data-goto]'), function(k){
+      k.addEventListener('click', function(){ var id=k.getAttribute('data-goto'); show(id); window.scrollTo({top:0,behavior:'smooth'}); });
+    });
+    // metrics sorting inside System tab
+    var root=document.getElementById('metrics'); if(root){ var hdr=root.querySelector('.hdr'); var rows=[].slice.call(root.querySelectorAll('.row'));
+      function sortBy(key, asc){ rows.sort(function(a,b){ var av=a.dataset[key], bv=b.dataset[key]; var an=Number(av), bn=Number(bv); if(!isNaN(an) && !isNaN(bn)) return asc? (an-bn):(bn-an); return asc? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av)); }); rows.forEach(function(r){ root.appendChild(r); }); }
+      hdr&&hdr.addEventListener('click', function(e){ var el=e.target.closest('.srt'); if(!el) return; var key=el.getAttribute('data-sort'); var asc = el.getAttribute('data-order')!== 'asc' ? true : false; [].forEach.call(hdr.querySelectorAll('.srt'), function(h){ h.removeAttribute('data-order'); }); el.setAttribute('data-order', asc?'asc':'desc'); sortBy(key, asc); });
+    }
+  })();</script>
+
+  <div class="sec sys" id="system"><h2>System health</h2></div>
+  
+
+  <div class="sec quality" id="quality"><h2>Quality</h2></div>
+  <div class="chart">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+        <div class="card"><div class="muted">Suites</div><div class="stat">13</div></div>
+        <div class="card"><div class="muted">Tests</div><div class="stat">25</div></div>
+        <div class="card"><div class="muted">Passed</div><div class="stat">25</div></div>
+        <div class="card"><div class="muted">Failed</div><div class="stat">0</div></div>
+      </div><div class="subtle" style="grid-column:1/-1">Last run: 2025-08-12T22:30:42.057Z</div>
+      <div style="margin-top:8px" class="kv">
+        <div class="h">Coverage</div><div class="h">Percent</div><div class="h">Visual</div>
+        <div>lines</div><div class="txt-good">85.16%</div><div class="pbar" title="356/418"><i style="width:85%;background:var(--good)"></i></div> <div>functions</div><div class="txt-good">80%</div><div class="pbar" title="80/100"><i style="width:80%;background:var(--good)"></i></div> <div>statements</div><div class="txt-warn">79.96%</div><div class="pbar" title="415/519"><i style="width:80%;background:var(--warn)"></i></div> <div>branches</div><div class="txt-warn">63.08%</div><div class="pbar" title="270/428"><i style="width:63%;background:var(--warn)"></i></div>
+      </div>
+      <div class="subtle" style="margin-top:6px">Looks for logs/jest-last-run.json or jest-results.json and coverage/coverage-summary.json.</div>
+    </div>
+
+  <div class="sec flow" id="workflow"><h2>Workflow telemetry</h2></div>
+  <h2 id="trend-hr">Events per hour (local) <span class="tt" data-tip="Distribution across hours of the day (local time) aggregated over the selected window.">i</span></h2>
+  <div class="chart"><div class="strip"><div class="cell" data-x="0" title="00:00 — 0 events"></div><div class="cell" data-x="0" title="01:00 — 0 events"></div><div class="cell" data-x="0" title="02:00 — 0 events"></div><div class="cell" data-x="0" title="03:00 — 0 events"></div><div class="cell" data-x="0" title="04:00 — 0 events"></div><div class="cell" data-x="0" title="05:00 — 0 events"></div><div class="cell" data-x="0" title="06:00 — 0 events"></div><div class="cell" data-x="0" title="07:00 — 0 events"></div><div class="cell" data-x="0" title="08:00 — 0 events"></div><div class="cell" data-x="0" title="09:00 — 0 events"></div><div class="cell" data-x="8" title="10:00 — 8 events"></div><div class="cell" data-x="0" title="11:00 — 0 events"></div><div class="cell" data-x="6" title="12:00 — 6 events"></div><div class="cell" data-x="1" title="13:00 — 1 event"></div><div class="cell" data-x="0" title="14:00 — 0 events"></div><div class="cell" data-x="5" title="15:00 — 5 events"></div><div class="cell" data-x="12" title="16:00 — 12 events"></div><div class="cell" data-x="0" title="17:00 — 0 events"></div><div class="cell" data-x="0" title="18:00 — 0 events"></div><div class="cell" data-x="0" title="19:00 — 0 events"></div><div class="cell" data-x="0" title="20:00 — 0 events"></div><div class="cell" data-x="0" title="21:00 — 0 events"></div><div class="cell" data-x="0" title="22:00 — 0 events"></div><div class="cell" data-x="0" title="23:00 — 0 events"></div></div><div class="subtle" style="margin-top:6px">0-23h local time →</div></div>
+  
+
+  <h2>Activity heatmap (last 1 day)</h2><div class="chart"><div class="heatmap"><div class="day">2025-08-12</div><div class="cells"><div class="cell" data-x="0" title="2025-08-12 00:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 01:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 02:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 03:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 04:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 05:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 06:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 07:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 08:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 09:00 — 0 events"></div><div class="cell" data-x="8" title="2025-08-12 10:00 — 8 events"></div><div class="cell" data-x="0" title="2025-08-12 11:00 — 0 events"></div><div class="cell" data-x="6" title="2025-08-12 12:00 — 6 events"></div><div class="cell" data-x="1" title="2025-08-12 13:00 — 1 event"></div><div class="cell" data-x="0" title="2025-08-12 14:00 — 0 events"></div><div class="cell" data-x="5" title="2025-08-12 15:00 — 5 events"></div><div class="cell" data-x="12" title="2025-08-12 16:00 — 12 events"></div><div class="cell" data-x="0" title="2025-08-12 17:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 18:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 19:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 20:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 21:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 22:00 — 0 events"></div><div class="cell" data-x="0" title="2025-08-12 23:00 — 0 events"></div></div></div><div class="subtle" style="margin-top:6px">0-23h local time →</div><div class="legend" aria-label="heatmap legend"><span>0</span><span class="cell" data-x="1" style="width:14px;height:10px"></span><span>1</span><span class="cell" data-x="2" style="width:14px;height:10px"></span><span>2</span><span class="cell" data-x="4" style="width:14px;height:10px"></span><span>4</span><span class="cell" data-x="8" style="width:14px;height:10px"></span><span>8</span><span class="cell" data-x="16" style="width:14px;height:10px"></span><span>16+</span></div></div>
 
   <h2 id="types">Events by type <span class="tt" data-tip="Relative frequency of event names in this window.">i</span></h2>
   <div class="chart"><div class="bars"><div class="bar" title="manual_test: 6 events (19%)"><div class="label">manual_test</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">6 <span class="subtle">(19%)</span></div></div><div class="bar" title="startup: 5 events (16%)"><div class="label">startup</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="discord_ready: 5 events (16%)"><div class="label">discord_ready</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="channel_bound: 5 events (16%)"><div class="label">channel_bound</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="ui_click: 5 events (16%)"><div class="label">ui_click</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="ui_view: 5 events (16%)"><div class="label">ui_view</div><div class="track"><div class="fill" style="width:83%"></div></div><div class="val">5 <span class="subtle">(16%)</span></div></div><div class="bar" title="smoke_offline: 1 events (3%)"><div class="label">smoke_offline</div><div class="track"><div class="fill" style="width:17%"></div></div><div class="val">1 <span class="subtle">(3%)</span></div></div></div></div>
@@ -116,8 +337,33 @@
   <details id="versions" open><summary>App versions <span class="badge">2</span></summary><div><table><thead><tr><th>Key</th><th>Count</th></tr></thead><tbody><tr><td>2.12.3</td><td>24</td></tr><tr><td>2.12.2</td><td>8</td></tr></tbody></table></div></details>
   <details id="platforms" open><summary>Platforms <span class="badge">1</span></summary><div><table><thead><tr><th>Key</th><th>Count</th></tr></thead><tbody><tr><td>win32-ia32</td><td>32</td></tr></tbody></table></div></details>
   <details id="node" open><summary>Node versions <span class="badge">1</span></summary><div><table><thead><tr><th>Key</th><th>Count</th></tr></thead><tbody><tr><td>22.17.0</td><td>32</td></tr></tbody></table></div></details>
-  <h2 id="features">Feature signals <span class="tt" data-tip="Boolean indicators derived from events (e.g., dev mode enabled, updates checked). Counted when true.">i</span></h2>
-  <table><thead><tr><th>Feature</th><th>True count</th><th>% of events</th></tr></thead><tbody><tr><td>devMode</td><td>25</td><td>78%</td></tr><tr><td>updates</td><td>25</td><td>78%</td></tr><tr><td>bloodMoon</td><td>25</td><td>78%</td></tr><tr><td>chartsPng</td><td>0</td><td>0%</td></tr></tbody></table>
-  <div class="subtle" style="margin-top:6px">Signals are derived from event payloads and represent feature usage flags within this period.</div>
-  <div class="muted" style="margin-top:10px">Generated 2025-08-12T21:22:18.111Z</div>
+  <div class="sec feat" id="features"><h2>Features</h2></div>
+  <h2 id="features-sub">Feature signals <span class="tt" data-tip="Boolean indicators derived from events (e.g., dev mode enabled, updates checked). Values show share of events where a signal is true.">i</span></h2>
+  <div class="donuts"><div class="donut" title="devMode: 25 (78%)"><svg viewBox="0 0 60 60" aria-label="devMode">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="108 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">78%</text>
+        </g>
+      </svg><div class="lab">devMode</div></div><div class="donut" title="updates: 25 (78%)"><svg viewBox="0 0 60 60" aria-label="updates">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="108 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">78%</text>
+        </g>
+      </svg><div class="lab">updates</div></div><div class="donut" title="bloodMoon: 25 (78%)"><svg viewBox="0 0 60 60" aria-label="bloodMoon">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="108 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">78%</text>
+        </g>
+      </svg><div class="lab">bloodMoon</div></div><div class="donut" title="chartsPng: 0 (0%)"><svg viewBox="0 0 60 60" aria-label="chartsPng">
+        <g transform="translate(30,30)">
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#0e1a30" stroke-width="8"/>
+          <circle r="22" cx="0" cy="0" fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 138.23007675795088" transform="rotate(-90)"/>
+          <text x="0" y="4" text-anchor="middle" fill="#e6edf3" font-size="12">0%</text>
+        </g>
+      </svg><div class="lab">chartsPng</div></div></div>
+  <div class="subtle" style="margin-top:6px">Signals reflect feature usage within this window. Percentages are out of total events.</div>
+  <div class="muted" style="margin-top:10px">Generated 2025-08-12T22:47:31.554Z</div>
   </div></body></html>
