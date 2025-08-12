@@ -227,6 +227,40 @@ Notes:
 	- Try setting a fixed `TELNET_IP` to the public hostname.
 	- The bot auto-reconnects; it will send when the connection stabilizes.
 
+## Analytics & Telemetry — quick commands
+Validate telemetry locally (Windows PowerShell):
+
+```powershell
+# Start local receiver (writes JSONL to .\logs\telemetry-events.jsonl)
+npm run telemetry:serve
+```
+
+```powershell
+# In another terminal, send one event to the receiver
+npm run telemetry:send -- --endpoint http://127.0.0.1:8787/v1/event --type manual_test
+
+# Tail received events
+Get-Content -Path .\logs\telemetry-events.jsonl -Tail 10
+```
+
+```powershell
+# Simulate endpoint down to test buffering
+npm run telemetry:send -- --endpoint http://127.0.0.1:1/v1/event --type offline_test
+
+# Check buffer grew
+Get-Content -Path .\logs\telemetry-buffer.jsonl -Tail 10
+
+# Flush buffered events after recovery
+npm run telemetry:flush -- --endpoint http://127.0.0.1:8787/v1/event
+
+# Buffer should shrink to 0; events appear in telemetry-events.jsonl
+```
+
+Notes:
+- Use `;` to chain commands in PowerShell.
+- You can also set the endpoint via `$env:DEADLINK_ANALYTICS_ENDPOINT = "http://localhost:8787/v1/event"`.
+- For more details, see `docs/guide/analytics-and-telemetry.md`.
+
 	## Releasing
 	- Create/update release notes file: `RELEASE_NOTES_vX.Y.Z.md`.
 	- Bump versions in `package.json` and `version.json`; update `updates.json` if announcing in-app.
