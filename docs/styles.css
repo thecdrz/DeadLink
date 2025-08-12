@@ -95,9 +95,9 @@ a { color: var(--text); text-decoration: none; }
   border:1px solid var(--border);
   border-radius:10px;
   padding:14px 12px;
-  min-height:140px;
+  min-height:168px;
   display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
+  align-items:center; justify-content:flex-start;
   text-align:center;
   box-shadow:0 10px 26px rgba(0,0,0,0.36);
   transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
@@ -114,10 +114,20 @@ a { color: var(--text); text-decoration: none; }
   font-weight: 700;                     /* was 800 */
 }
 .card p{ margin:0; color:#d6ccbf; max-width:28ch }
+/* Push last child (CTA row) to the bottom so buttons align across cards */
+.card > :last-child { margin-top: auto; }
 
 /* FIGURE STYLES (gallery) */
 figure.card { padding: 0; }
-figure.card img{ display:block; border-radius:10px; box-shadow:0 0 0 1px rgba(255,255,255,0.05) inset; }
+figure.card img{ display:block; border-radius:10px; box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset; }
+
+/* Gallery tweaks */
+.gallery .hero-logo{ width: min(58vw, 420px); max-width: 24svh; }
+.gallery .grid{ grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; }
+.gallery figure.card{ padding:8px; background:
+  linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.12)),
+  #232127; border:1px solid rgba(255,255,255,0.16); }
+.gallery figure.card img{ box-shadow:0 0 0 1px rgba(255,255,255,0.12) inset, 0 10px 24px rgba(0,0,0,0.35); }
 figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
 
 /* GET STARTED PANEL (reduced height) */
