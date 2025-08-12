@@ -625,7 +625,7 @@ function handleMsgFromGame(line) {
     return;
   }
 
-  if((!config["disable-chatmsgs"] && data.type === "Chat") || (!config["disable-gmsgs"] && data.type === "GMSG")) {
+  if((!config["disable-chatmsgs"] && data.type === "Chat") || (!config["disable-misc-gmsgs"] && data.type === "GMSG")) {
     var msg;
     if(data.content.name === null) msg = data.content.text;
     else msg = `${data.content.name}: ${data.content.text}`;
