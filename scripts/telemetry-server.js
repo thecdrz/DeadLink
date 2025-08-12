@@ -17,6 +17,8 @@ function ensureDir(p) {
 ensureDir(STORAGE);
 
 const server = http.createServer((req, res) => {
+  // eslint-disable-next-line no-console
+  console.log(`[telemetry] ${req.method} ${req.url}`);
   // Health and simple info
   if (req.method === 'GET' && (req.url === '/' || req.url === '/health')) {
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -33,7 +35,7 @@ const server = http.createServer((req, res) => {
         req.destroy();
       }
     });
-    req.on('end', () => {
+  req.on('end', () => {
       try {
         const json = JSON.parse(body || '{}');
         // minimal validation, keep privacy-first behavior
@@ -44,6 +46,10 @@ const server = http.createServer((req, res) => {
           return;
         }
         const line = JSON.stringify({ ts: Date.now(), ...json });
+        try {
+          // eslint-disable-next-line no-console
+          console.log(`[telemetry] rx event: ${json.event.type}`);
+        } catch (_) {}
         fs.appendFile(STORAGE, line + '\n', () => {});
         // Return 204 No Content like many collectors
         res.writeHead(204);
