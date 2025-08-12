@@ -9,9 +9,10 @@ const { initTelemetry } = require('../lib/telemetry');
 const pjson = require('../package.json');
 
 (async () => {
-	const argv = minimist(process.argv.slice(2));
-	const endpoint = argv.endpoint || process.env.DEADLINK_ANALYTICS_ENDPOINT;
-	const eventType = String(argv.type || 'manual_test');
+		const argv = minimist(process.argv.slice(2));
+		// Accept flags or positional args for convenience (npm run on PowerShell)
+		const endpoint = argv.endpoint || argv.e || argv._[0] || process.env.DEADLINK_ANALYTICS_ENDPOINT;
+		const eventType = String(argv.type || argv.t || argv._[1] || 'manual_test');
 
 	if (!endpoint) {
 		console.error('[telemetry-once] No endpoint provided. Set --endpoint or DEADLINK_ANALYTICS_ENDPOINT.');

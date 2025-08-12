@@ -11,8 +11,9 @@ const pjson = require('../package.json');
 
 (async () => {
   const argv = minimist(process.argv.slice(2));
-  const endpoint = argv.endpoint || process.env.DEADLINK_ANALYTICS_ENDPOINT;
-  const bufferPath = argv.bufferPath || path.join('.', 'logs', 'telemetry-buffer.jsonl');
+  // Accept flags or positional args: [endpoint] [bufferPath]
+  const endpoint = argv.endpoint || argv.e || argv._[0] || process.env.DEADLINK_ANALYTICS_ENDPOINT;
+  const bufferPath = argv.bufferPath || argv.b || argv._[1] || path.join('.', 'logs', 'telemetry-buffer.jsonl');
 
   if (!endpoint) {
     console.error('[telemetry-flush] No endpoint provided. Set --endpoint or DEADLINK_ANALYTICS_ENDPOINT.');
