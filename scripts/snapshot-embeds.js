@@ -17,6 +17,26 @@ function sampleEmbeds() {
   ];
 }
 
+function terminalStartupCard(){
+  const lines = [
+    'DeadLink v2.12.1  |  mode: DEV  |  logs: ./logs',
+    '— — — — — — — — — — — — — — — — — — — — — — —',
+    '[init]   reading config.json … ok',
+    '[telnet] connecting to 127.0.0.1:8081 … connected',
+    '[discord] logging in … ready (1 guild)',
+    '[analytics] loaded analytics.json (sessions: 24)',
+    '[updates] checked GitHub releases (latest v2.12.1)',
+    '[heartbeat] scheduled (post-connect)',
+    '',
+    'Tip: /dashboard for the UI • DEV_MODE=true to simulate telnet'
+  ].join('\n');
+  return {
+    title: 'Terminal',
+    description: lines,
+    footer: { text: 'Clean structured logs' }
+  };
+}
+
 function htmlFor(embed, opts = {}) {
   const pad = 12;
   const maxWidth = opts.maxWidth || 880; // wider card for higher-res screenshots
@@ -54,7 +74,9 @@ async function run() {
   // Larger viewport + higher scale for sharper images
   await page.setViewport({ width: 1120, height: 760, deviceScaleFactor: 2.5 });
 
-    for (const s of sampleEmbeds()) {
+  // Include terminal snapshot first
+  const all = [{ name: 'terminal-startup', embed: terminalStartupCard() }, ...sampleEmbeds()];
+  for (const s of all) {
   const html = htmlFor(s.embed, { maxWidth: 980, chartHeight: 340 });
       try {
         await page.setContent(html, { waitUntil: 'domcontentloaded' });

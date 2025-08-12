@@ -47,6 +47,15 @@ docker run --name deadlink -d `
 Below are quick previews of the main dashboards. Click to open the full image in the Gallery.
 
 <figure>
+  <a href="assets/snapshots/terminal-startup.png" target="_blank" rel="noopener">
+    <img alt="Terminal startup logs with clean sections for init, telnet, discord, analytics, updates" src="assets/snapshots/terminal-startup.png">
+  </a>
+  <figcaption>
+    Terminal — Clean, structured startup logs show config, telnet/Discord connect, analytics load, and update checks.
+  </figcaption>
+</figure>
+
+<figure>
   <a href="assets/snapshots/dashboard-trends.png" target="_blank" rel="noopener">
     <img alt="Trends dashboard showing player count and server metrics with navigation buttons" src="assets/snapshots/dashboard-trends.png">
   </a>
