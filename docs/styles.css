@@ -90,7 +90,7 @@ a { color: var(--text); text-decoration: none; }
 /* Rectangular, centered, equal height with hover lift */
 .card{
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.10)),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.08)),
     var(--card);
   border:1px solid var(--border);
   border-radius:10px;
@@ -117,7 +117,7 @@ a { color: var(--text); text-decoration: none; }
 
 /* FIGURE STYLES (gallery) */
 figure.card { padding: 0; }
-figure.card img{ display:block; border-radius:10px; }
+figure.card img{ display:block; border-radius:10px; box-shadow:0 0 0 1px rgba(255,255,255,0.05) inset; }
 figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
 
 /* GET STARTED PANEL (reduced height) */
@@ -185,13 +185,16 @@ figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
   box-shadow:0 10px 24px rgba(0,0,0,0.30);
 }
 .btn{
-  display:inline-block; padding:8px 16px; /* reduced from 10px to 8px for height */
+  display:inline-block;
+  padding:6px 12px;
   border:1px solid #a24416; border-radius:10px;
   background:linear-gradient(180deg, #e36a28, #b14d19);
   color:var(--text);
-  font-weight: 650;                        /* was 800 */
-  box-shadow:0 8px 18px -8px rgba(227,106,40,0.40); /* reduced shadow to match smaller height */
-  margin: 0; /* No additional margin needed */
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.2;
+  box-shadow:0 6px 14px -8px rgba(227,106,40,0.40);
+  margin: 0;
 }
 .link{ 
   color:#f0e6d6; 
