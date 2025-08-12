@@ -14,7 +14,7 @@ var TelnetClient = require("telnet-client");
 const DishordeInitializer = require("./lib/init.js");
 const Logger = require("./lib/log.js");
 const { TelnetQueue, friendlyError } = require("./lib/telnetQueue.js");
-const { renderTrendPng } = require("./lib/charts.js");
+const { renderTrendPng, isChartPngAvailable } = require("./lib/charts.js");
 const { validateConfig } = require("./lib/configSchema.js");
 const c = require("./lib/colors.js");
 
@@ -102,6 +102,9 @@ try {
     }
   }
 } catch(_) {}
+
+// Indicate whether PNG charts are available
+try { log.info('[CHARTS]', isChartPngAvailable() ? 'PNG charts enabled' : 'PNG charts not available (using ASCII fallback)'); } catch(_) {}
 
 // Heartbeat (initialized after config load)
 let HEARTBEAT_MINUTES = 15;
@@ -1906,7 +1909,8 @@ function handleTrends(msg) {
         await msg.channel.send({ files: [{ attachment: png, name: 'trends.png' }], embeds: [{
           color: 0x3498db,
           title: "📊 Server Analytics Dashboard",
-          description: trendsReport.split('\n').slice(0, 12).join('\n')
+          description: trendsReport.split('\n').slice(0, 12).join('\n'),
+          image: { url: 'attachment://trends.png' }
         }] });
       } catch (_) { sendAscii(); }
     })();
@@ -2458,7 +2462,8 @@ function handleTrends(msg) {
         await msg.channel.send({ files: [{ attachment: png, name: 'trends.png' }], embeds: [{
           color: 0x3498db,
           title: "📊 Server Analytics Dashboard",
-          description: trendsReport.split('\n').slice(0, 12).join('\n')
+          description: trendsReport.split('\n').slice(0, 12).join('\n'),
+          image: { url: 'attachment://trends.png' }
         }] });
       } catch (_) { sendAscii(); }
     })();
