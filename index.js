@@ -1907,6 +1907,7 @@ function handleBackToDashboard(interaction) {
 }
 
 function handleActivityFromButton(interaction) {
+  try { telemetry.send('ui_view', { view: 'activity' }); } catch(_) {}
   // Defer the reply immediately
   interaction.deferReply().then(() => {
     // Reuse existing activity logic but with interaction response
@@ -1990,6 +1991,7 @@ function handleTrendsFromButton(interaction) {
 }
 
 function handlePlayersFromButton(interaction) {
+  try { telemetry.send('ui_view', { view: 'players' }); } catch(_) {}
   interaction.deferReply().then(() => {
   telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
@@ -2016,6 +2018,7 @@ function handlePlayersFromButton(interaction) {
 }
 
 function handleTimeFromButton(interaction) {
+  try { telemetry.send('ui_view', { view: 'time' }); } catch(_) {}
   interaction.deferReply().then(() => {
   telnetQueue.exec("gettime", { timeout: 5000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
@@ -2101,6 +2104,7 @@ async function handleUpdateFromSlash(interaction) {
 }
 
 function handleActivity(msg) {
+  try { telemetry.send('msg_cmd', { cmd: 'activity' }); } catch(_) {}
   // Clear previous activity data
   d7dtdState.activityData = {
     players: [],
@@ -2173,6 +2177,7 @@ function handleActivity(msg) {
 // (canonical handleTrends defined later)
 
 function handlePlayers(msg) {
+  try { telemetry.send('msg_cmd', { cmd: 'players' }); } catch(_) {}
   try {
   telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
@@ -2195,6 +2200,7 @@ function handlePlayers(msg) {
 }
 
 function handleTime(msg) {
+  try { telemetry.send('msg_cmd', { cmd: 'time' }); } catch(_) {}
   try {
   telnetQueue.exec("gettime", { timeout: 5000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
