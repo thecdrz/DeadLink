@@ -41,3 +41,51 @@ docker run --name deadlink -d `
   -e DEV_MODE=true `
   ghcr.io/thecdrz/deadlink:latest
 ```
+
+## What you'll see (annotated)
+
+Below are quick previews of the main dashboards. Click to open the full image in the Gallery.
+
+<figure>
+  <a href="assets/snapshots/dashboard-trends.png" target="_blank" rel="noopener">
+    <img alt="Trends dashboard showing player count and server metrics with navigation buttons" src="assets/snapshots/dashboard-trends.png">
+  </a>
+  <figcaption>
+    Trends – Use the navigation buttons to switch between Activity, Players, Time, and Info.
+  </figcaption>
+</figure>
+
+<figure>
+  <a href="assets/snapshots/activity.png" target="_blank" rel="noopener">
+    <img alt="Activity view with narrative events and blood moon context" src="assets/snapshots/activity.png">
+  </a>
+  <figcaption>
+    Activity – Narrative feed enriched with biome, time-of-day, and horde-night cues.
+  </figcaption>
+</figure>
+
+<figure>
+  <a href="assets/snapshots/players.png" target="_blank" rel="noopener">
+    <img alt="Players view showing online roster with per-player stats" src="assets/snapshots/players.png">
+  </a>
+  <figcaption>
+    Players – Live roster with session stats, kill rate, K/D, and deathless streak.
+  </figcaption>
+</figure>
+
+<figure>
+  <a href="assets/snapshots/player-deep-dive.png" target="_blank" rel="noopener">
+    <img alt="Player Deep Dive select menu with per-player distance and streak metrics" src="assets/snapshots/player-deep-dive.png">
+  </a>
+  <figcaption>
+    Player Deep Dive – Select a player to view lifetime distance, last seen, and PB streaks.
+  </figcaption>
+</figure>
+
+<p>
+  See more examples in the <a href="../gallery.html">Gallery</a>.
+  In dev mode, the bot generates mock data to explore these views without a live server.
+  Enable with <code>DEV_MODE=true</code>.
+  For a headless preview pipeline, run <code>npm run snapshots</code> to regenerate these images.
+  Images are saved to <code>docs/assets/snapshots/</code>.
+</p>

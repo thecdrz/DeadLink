@@ -136,14 +136,28 @@ figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
 .docs-sidebar{ background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.10)), var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px; }
 .docs-sidebar ul{ list-style:none; padding:0; margin:0; }
 .docs-sidebar li{ margin:4px 0; }
-.docs-sidebar a{ display:block; padding:8px 10px; border-radius:8px; color:#efe6d8; opacity:.95; cursor:pointer; }
+.docs-sidebar a{ display:block; padding:8px 10px; border-radius:8px; color:#efe6d8; opacity:.95; cursor:pointer; position:relative; }
 .docs-sidebar a:hover{ opacity:1; background: rgba(255,255,255,0.05); }
-.docs-sidebar a.active{ background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); }
+/* More prominent active highlight with accent bar */
+.docs-sidebar a.active{ background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.10)); border:1px solid rgba(255,255,255,0.14); }
+.docs-sidebar a.active::before{
+  content:""; position:absolute; left:-12px; top:6px; bottom:6px; width:4px; border-radius:3px;
+  background: linear-gradient(180deg, var(--accent), #e65f19);
+}
+.docs-sidebar .search{ margin-bottom:10px; position: sticky; top: 6px; background: var(--panel); padding-bottom: 6px; }
+.docs-sidebar .search input{
+  width:100%; padding:8px 10px; border-radius:8px;
+  border:1px solid var(--border); outline:none; color:var(--text);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.10)), #18161b;
+}
+.docs-sidebar .search input::placeholder{ color:#b8b0a6; }
 .docs-content{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.10)), var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
 .docs-content h1, .docs-content h2, .docs-content h3{ color:#fff4e5; }
 .docs-content pre{ background:#1f1d1f; border:1px solid var(--border); border-radius:10px; padding:12px; overflow:auto; }
 .docs-content code{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#f3e7d2; }
 .docs-content p, .docs-content li{ color:#d6ccbf; }
+/* Better default styling for inline images in docs */
+.docs-content img{ border-radius:10px; box-shadow:0 0 0 1px rgba(255,255,255,0.10) inset, 0 10px 24px rgba(0,0,0,0.30); }
 
 /* GET STARTED PANEL (reduced height) */
 .cta-panel{
@@ -257,3 +271,6 @@ figcaption{ padding: 10px 10px 12px; color:#d6ccbf; font-size:14px; }
 .lightbox-img{ max-width: min(1200px, 96vw); max-height: 92vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.6); }
 .lightbox-overlay.fade-in{ animation: lb-fade .12s ease-out; }
 @keyframes lb-fade{ from{opacity:0} to{opacity:1} }
+
+/* Accessibility utility */
+.visually-hidden{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }

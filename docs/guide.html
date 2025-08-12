@@ -30,6 +30,10 @@
 
     <section class="docs-container" aria-label="Documentation">
       <aside class="docs-sidebar" aria-label="Sections">
+        <div class="search" role="search">
+          <label for="doc-search" class="visually-hidden">Search docs</label>
+          <input id="doc-search" type="search" placeholder="Search sections…" aria-label="Search sections">
+        </div>
         <ul>
           <li><a data-doc="getting-started">Getting Started</a></li>
           <li><a data-doc="installation">Installation</a></li>
@@ -38,6 +42,7 @@
           <li><a data-doc="analytics-and-telemetry">Analytics & Telemetry</a></li>
           <li><a data-doc="security">Security</a></li>
           <li><a data-doc="troubleshooting">Troubleshooting</a></li>
+          <li><a data-doc="changelog">Changelog</a></li>
         </ul>
       </aside>
       <main class="docs-content" id="docs-content" aria-live="polite">
@@ -53,12 +58,16 @@
   </div>
 
   <script>
-    const DEFAULT_DOC = 'getting-started';
-    const routes = new Set(['getting-started','installation','configuration','commands','analytics-and-telemetry','security','troubleshooting']);
+  const DEFAULT_DOC = 'getting-started';
+  const routes = new Set(['getting-started','installation','configuration','commands','analytics-and-telemetry','security','troubleshooting','changelog']);
     const contentEl = document.getElementById('docs-content');
 
     function setActive(linkName){
-      document.querySelectorAll('.docs-sidebar a').forEach(a => a.classList.toggle('active', a.dataset.doc === linkName));
+      document.querySelectorAll('.docs-sidebar a').forEach(a => {
+        const isActive = a.dataset.doc === linkName;
+        a.classList.toggle('active', isActive);
+        if (isActive) { a.setAttribute('aria-current', 'page'); } else { a.removeAttribute('aria-current'); }
+      });
     }
 
     async function loadDoc(name){
@@ -66,11 +75,15 @@
       setActive(name);
       contentEl.innerHTML = '<div class="loading">Loading…</div>';
       try{
-        const res = await fetch(`./guide/${name}.md`);
-        const md = await res.text();
-        const html = marked.parse(md);
-        contentEl.innerHTML = html;
-        contentEl.querySelectorAll('table').forEach(t => t.classList.add('doc-table'));
+        if (name === 'changelog'){
+          await loadChangelog();
+        } else {
+          const res = await fetch(`./guide/${name}.md`);
+          const md = await res.text();
+          const html = marked.parse(md);
+          contentEl.innerHTML = html;
+          contentEl.querySelectorAll('table').forEach(t => t.classList.add('doc-table'));
+        }
       }catch(err){
         contentEl.innerHTML = '<p>Failed to load document.</p>';
       }
@@ -92,6 +105,64 @@
 
     window.addEventListener('popstate', () => navigate());
     navigate();
+
+    // Simple client-side filter for sidebar items
+    const searchInput = document.getElementById('doc-search');
+    if (searchInput){
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        document.querySelectorAll('.docs-sidebar li').forEach(li => {
+          const a = li.querySelector('a');
+          const text = (a?.textContent || '').toLowerCase();
+          li.style.display = !q || text.includes(q) ? '' : 'none';
+        });
+      });
+    }
+
+  async function loadChangelog(){
+      // Try to resolve the latest release notes from the repository using known filenames
+      // Primary: use version.json to pick the file; Fallback: show links to release note files present in repo site.
+      try{
+    // Attempt to pull version.json (from GitHub raw) to decide which release notes to show
+    const versionRes = await fetch('https://raw.githubusercontent.com/thecdrz/DeadLink/master/version.json', { cache: 'no-store' });
+        const versionData = versionRes.ok ? await versionRes.json() : null;
+        const v = versionData?.lastAnnouncedVersion;
+        const fileName = v ? `RELEASE_NOTES_v${v}.md` : null;
+        contentEl.innerHTML = '<div class="loading">Loading changelog…</div>';
+
+        // Prefer GitHub raw to avoid relative path issues on Pages subpath
+        const tryUrls = [];
+        if (fileName){
+          tryUrls.push(`https://raw.githubusercontent.com/thecdrz/DeadLink/master/${fileName}`);
+        }
+        // Fallback: two most recent known versions
+        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/master/RELEASE_NOTES_v2.12.1.md');
+        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/master/RELEASE_NOTES_v2.12.0.md');
+
+        let md = null;
+        for (const url of tryUrls){
+          try{
+            const r = await fetch(url, { cache: 'no-store' });
+            if (r.ok){ md = await r.text(); break; }
+          }catch(_){}
+        }
+        if (!md){
+          // Local fallback page inside docs
+          try{
+            const local = await fetch('./guide/changelog.md');
+            if (local.ok){ md = await local.text(); }
+          }catch(_){ /* ignore */ }
+          if (!md){
+            contentEl.innerHTML = '<p>Could not load latest release notes. See <a href="https://github.com/thecdrz/DeadLink/releases" target="_blank" rel="noopener">GitHub Releases</a>.</p>';
+            return;
+          }
+        }
+        const html = marked.parse(md);
+        contentEl.innerHTML = `<article class="doc-changelog">${html}</article>`;
+      }catch(err){
+        contentEl.innerHTML = '<p>Failed to load changelog. See <a href="https://github.com/thecdrz/DeadLink/releases" target="_blank" rel="noopener">GitHub Releases</a>.</p>';
+      }
+    }
   </script>
 </body>
 </html>
