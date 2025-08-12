@@ -74,3 +74,129 @@
 01:42:43.973 [DISCORD] Logged in as DeadLink#8637
 01:42:43.976 [DISCORD] Bound to channel 1404124535900602379
 01:42:45.756 [HB] Heartbeat: players=3 dataPoints=66
+02:05:01.210 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:05:01.215 [SEC] Use only on trusted networks with a unique telnet password.
+02:05:01.218 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:05:01.221 [LOG] Existing log files: deadlink.log(5KB)
+02:05:01.435 [TELNET] Connected
+02:05:02.100 [DISCORD] Logged in as DeadLink#8637
+02:05:02.104 [DISCORD] Bound to channel 1404124535900602379
+02:05:03.891 [HB] Heartbeat: players=3 dataPoints=66
+02:06:38.287 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:06:38.292 [SEC] Use only on trusted networks with a unique telnet password.
+02:06:38.295 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:06:38.299 [LOG] Existing log files: deadlink.log(6KB)
+02:06:38.499 [TELNET] Connected
+02:06:39.035 [DISCORD] Logged in as DeadLink#8637
+02:06:39.039 [DISCORD] Bound to channel 1404124535900602379
+02:06:40.954 [HB] Heartbeat: players=3 dataPoints=66
+02:11:19.329 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:11:19.334 [SEC] Use only on trusted networks with a unique telnet password.
+02:11:19.338 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:11:19.343 [LOG] Existing log files: deadlink.log(6KB)
+02:11:19.347 [CHARTS] PNG charts not available (using ASCII fallback)
+02:11:19.575 [TELNET] Connected
+02:11:20.225 [DISCORD] Logged in as DeadLink#8637
+02:11:20.233 [DISCORD] Bound to channel 1404124535900602379
+02:11:22.021 [HB] Heartbeat: players=3 dataPoints=66
+02:23:11.530 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:23:11.536 [SEC] Use only on trusted networks with a unique telnet password.
+02:23:11.539 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:23:11.543 [LOG] Existing log files: deadlink.log(7KB)
+02:23:11.547 [CHARTS] PNG charts not available (using ASCII fallback)
+02:23:11.552 [ENV] Using Discord token from environment variable
+02:23:11.555 [ENV] Using telnet password from environment variable
+02:23:11.559 [ENV] Using telnet IP from environment variable
+02:23:11.562 [ENV] Using telnet port from environment variable
+02:23:11.566 [ENV] Using Discord channel from environment variable
+02:23:11.768 [TELNET] Connected
+02:23:12.403 [DISCORD] Logged in as DeadLink#8637
+02:23:12.407 [DISCORD] Bound to channel 1404124535900602379
+02:23:14.219 [HB] Heartbeat: players=0 dataPoints=67
+02:23:48.912 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:23:48.918 [SEC] Use only on trusted networks with a unique telnet password.
+02:23:48.921 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:23:48.925 [LOG] Existing log files: deadlink.log(8KB)
+02:23:48.928 [CHARTS] PNG charts not available (using ASCII fallback)
+02:23:48.933 [ENV] Using Discord token from environment variable
+02:23:48.936 [ENV] Using telnet password from environment variable
+02:23:48.939 [ENV] Using telnet IP from environment variable
+02:23:48.944 [ENV] Using telnet port from environment variable
+02:23:48.947 [ENV] Using Discord channel from environment variable
+02:23:49.146 [TELNET] Connected
+02:23:49.688 [DISCORD] Logged in as DeadLink#8637
+02:23:49.692 [DISCORD] Bound to channel 1404124535900602379
+02:23:51.599 [HB] Heartbeat: players=0 dataPoints=67
+02:24:43.310 [UI] Select menu chosen values=["Mike"] by cdrz
+02:28:51.758 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:28:51.764 [SEC] Use only on trusted networks with a unique telnet password.
+02:28:51.767 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:28:51.770 [LOG] Existing log files: deadlink.log(9KB)
+02:28:51.774 [CHARTS] PNG charts not available (using ASCII fallback)
+02:28:51.779 [ENV] Using Discord token from environment variable
+02:28:51.782 [ENV] Using telnet password from environment variable
+02:28:51.786 [ENV] Using telnet IP from environment variable
+02:28:51.790 [ENV] Using telnet port from environment variable
+02:28:51.793 [ENV] Using Discord channel from environment variable
+02:28:51.990 [TELNET] Connected
+02:28:52.495 [DISCORD] Logged in as DeadLink#8637
+02:28:52.499 [DISCORD] Bound to channel 1404124535900602379
+02:28:54.446 [HB] Heartbeat: players=0 dataPoints=67
+02:29:17.194 [UI] Select menu chosen values=["John"] by cdrz
+02:51:26.282 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:51:26.288 [SEC] Use only on trusted networks with a unique telnet password.
+02:51:26.291 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:51:26.295 [LOG] Existing log files: deadlink.log(10KB)
+02:51:26.299 [CHARTS] PNG charts not available (using ASCII fallback)
+02:51:26.304 [ENV] Using Discord token from environment variable
+02:51:26.308 [ENV] Using telnet password from environment variable
+02:51:26.314 [ENV] Using telnet IP from environment variable
+02:51:26.319 [ENV] Using telnet port from environment variable
+02:51:26.324 [ENV] Using Discord channel from environment variable
+02:51:26.539 [TELNET] Connected
+02:51:27.068 [DISCORD] Logged in as DeadLink#8637
+02:51:27.072 [DISCORD] Bound to channel 1404124535900602379
+02:51:28.997 [HB] Heartbeat: players=0 dataPoints=67
+02:52:19.317 [TRENDS] Tracked 1 players @ 10:52:19 PM
+02:54:10.349 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+02:54:10.355 [SEC] Use only on trusted networks with a unique telnet password.
+02:54:10.358 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+02:54:10.362 [LOG] Existing log files: deadlink.log(11KB)
+02:54:10.365 [CHARTS] PNG charts not available (using ASCII fallback)
+02:54:10.371 [ENV] Using Discord token from environment variable
+02:54:10.375 [ENV] Using telnet password from environment variable
+02:54:10.379 [ENV] Using telnet IP from environment variable
+02:54:10.382 [ENV] Using telnet port from environment variable
+02:54:10.386 [ENV] Using Discord channel from environment variable
+02:54:10.583 [TELNET] Connected
+02:54:11.151 [DISCORD] Logged in as DeadLink#8637
+02:54:11.155 [DISCORD] Bound to channel 1404124535900602379
+02:54:13.045 [HB] Heartbeat: players=1 dataPoints=68
+03:06:46.747 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+03:06:46.752 [SEC] Use only on trusted networks with a unique telnet password.
+03:06:46.755 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+03:06:46.760 [LOG] Existing log files: deadlink.log(12KB)
+03:06:46.763 [CHARTS] PNG charts not available (using ASCII fallback)
+03:06:46.768 [ENV] Using Discord token from environment variable
+03:06:46.772 [ENV] Using telnet password from environment variable
+03:06:46.776 [ENV] Using telnet IP from environment variable
+03:06:46.780 [ENV] Using telnet port from environment variable
+03:06:46.783 [ENV] Using Discord channel from environment variable
+03:06:47.071 [TELNET] Connected
+03:06:47.612 [DISCORD] Logged in as DeadLink#8637
+03:06:47.617 [DISCORD] Bound to channel 1404124535900602379
+03:06:49.531 [HB] Heartbeat: players=1 dataPoints=68
+03:09:06.116 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+03:09:06.122 [SEC] Use only on trusted networks with a unique telnet password.
+03:09:06.125 [CREDITS] Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.
+03:09:06.128 [LOG] Existing log files: deadlink.log(13KB)
+03:09:06.131 [CHARTS] PNG charts not available (using ASCII fallback)
+03:09:06.137 [ENV] Using Discord token from environment variable
+03:09:06.140 [ENV] Using telnet password from environment variable
+03:09:06.144 [ENV] Using telnet IP from environment variable
+03:09:06.147 [ENV] Using telnet port from environment variable
+03:09:06.150 [ENV] Using Discord channel from environment variable
+03:09:06.401 [TELNET] Connected
+03:09:06.892 [DISCORD] Logged in as DeadLink#8637
+03:09:06.898 [DISCORD] Bound to channel 1404124535900602379
+03:09:08.840 [HB] Heartbeat: players=1 dataPoints=68

@@ -13,8 +13,13 @@ const UpdatesService = require("./lib/updates.js");
 var TelnetClient = require("telnet-client");
 const DishordeInitializer = require("./lib/init.js");
 const Logger = require("./lib/log.js");
+const { createPinoLogger, patchConsoleToPino } = require("./lib/pinoLogger.js");
+const { serverAnalyticsEmbed } = require("./lib/embeds.js");
+const { buildTrendsPayload } = require("./lib/trendsHarness.js");
 const { TelnetQueue, friendlyError } = require("./lib/telnetQueue.js");
 const { renderTrendPng, isChartPngAvailable } = require("./lib/charts.js");
+const { initTelemetry } = require("./lib/telemetry.js");
+const { calculateActivityLevel, calculateConsistency } = require("./lib/analyticsUtils.js");
 const { validateConfig } = require("./lib/configSchema.js");
 const c = require("./lib/colors.js");
 
@@ -32,6 +37,26 @@ const banner = `
                                |___/`;
 
 const log = (() => {
+  // Optional Pino logger (pretty if available). Activated when LOG_ENGINE=pino
+  const desiredEngine = String(process.env.LOG_ENGINE || '').toLowerCase();
+  const desiredLevel = String(process.env.LOG_LEVEL || 'info').toLowerCase();
+  if (desiredEngine === 'pino') {
+    const pino = createPinoLogger(desiredLevel);
+    if (pino) {
+      // If LOG_ENGINE=pino+console, also patch console.* to route through Pino
+      if (String(process.env.LOG_ENGINE).toLowerCase().includes('+console')) {
+        patchConsoleToPino(pino);
+      }
+      const wrap = (level) => (scope, msg) => pino[level]({ scope }, msg);
+      return {
+        error: wrap('error'),
+        warn: wrap('warn'),
+        info: wrap('info'),
+        debug: wrap('debug'),
+        success: wrap('info')
+      };
+    }
+  }
   const levelMap = { error:0, warn:1, info:2, debug:3 };
   const desired = (process.env.LOG_LEVEL || 'info').toLowerCase();
   const current = levelMap[desired] != null ? levelMap[desired] : 2;
@@ -104,7 +129,11 @@ try {
 } catch(_) {}
 
 // Indicate whether PNG charts are available
-try { log.info('[CHARTS]', isChartPngAvailable() ? 'PNG charts enabled' : 'PNG charts not available (using ASCII fallback)'); } catch(_) {}
+let chartsAvailable = false;
+try { chartsAvailable = !!isChartPngAvailable(); log.info('[CHARTS]', chartsAvailable ? 'PNG charts enabled' : 'PNG charts not available (using ASCII fallback)'); } catch(_) {}
+
+// Telemetry (anonymous, privacy-first; default on with opt-out)
+let telemetry = { send: async () => {} };
 
 // Heartbeat (initialized after config load)
 let HEARTBEAT_MINUTES = 15;
@@ -290,6 +319,9 @@ if(config["log-console"]) {
 var telnet = config["dev-mode"]?require("./lib/demoServer.js").client:new TelnetClient();
 // Safer command execution queue with light rate limiting
 const telnetQueue = new TelnetQueue(telnet, { minIntervalMs: 350, defaultTimeout: 6000 });
+
+// Initialize telemetry after config known
+try { telemetry = initTelemetry(config, pjson, chartsAvailable); telemetry.send('startup', {}); } catch(_) {}
 
 // IP
 // This argument allows you to run the bot on a remote network.
@@ -822,51 +854,7 @@ function processTelnetResponse(response, onLine) {
   } catch (_) { /* ignore parse errors */ }
 }
 
-function handleTime(line, msg) {
-  let hordeFreq = 7;
-  if(config["horde-frequency"] != null) {
-    hordeFreq = parseInt(config["horde-frequency"]);
-  }
-
-  const messageValues = line.split(",");
-  const day = parseInt(messageValues[0].replace("Day ", ""));
-  const hour = parseInt(messageValues[1].split(":")[0]);
-  const daysFromHorde = day % hordeFreq;
-  let hordeMsg = "";
-
-  const isFirstWeek = day === 1 || day === 2;
-  const isHordeHour = (daysFromHorde === 0 && hour >= 22) || (daysFromHorde === 1 && hour < 4);
-
-  const isHordeNow = !isFirstWeek && isHordeHour;
-
-  if (daysFromHorde === 0 && hour < 22) {
-    const hoursToHorde = 22 - hour;
-    const hourStr = hour === 21 ? "less than an hour" : `${hoursToHorde} hour${hoursToHorde === 1 ? "" : "s"}`;
-
-    hordeMsg = `The blood moon horde begins in ${hourStr}.`;
-  } else if (isHordeNow) {
-    hordeMsg = "The horde is rampaging now!";
-  } else if (daysFromHorde !== 0) {
-    const daysToHorde = parseInt(hordeFreq) - daysFromHorde;
-    hordeMsg = `The blood moon horde begins on Day ${day+daysToHorde} (in ${daysToHorde} day${daysToHorde === 1 ? "" : "s"}).`;
-  }
-
-  // Create consistent embed format
-  const embed = {
-    color: 0x3498db, // Blue color
-    title: "⏰ Current Game Time",
-    description: `${line}\n${hordeMsg}`,
-    footer: {
-      text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
-    }
-  };
-
-  msg.channel.send({ embeds: [embed] })
-    .catch(() => {
-      // Fallback to plain text if embed fails
-      msg.channel.send(`${line}\n${hordeMsg}`);
-    });
-}
+// (removed legacy handleTime(line, msg))
 
 function handlePlayerCount(line, msg) {
   // Extract player count from line like "Total of 3 players online"
@@ -1696,19 +1684,6 @@ function generateEnhancedAnalytics(history) {
   return analytics;
 }
 
-function calculateActivityLevel(dataPoints) {
-  if (dataPoints.length === 0) return { level: "No Data", avg: 0 };
-  
-  const counts = dataPoints.map(d => d.count);
-  const avg = Math.round(counts.reduce((a, b) => a + b, 0) / counts.length * 10) / 10;
-  const max = Math.max(...counts);
-  
-  let level = "Low";
-  if (avg >= 5) level = "High";
-  else if (avg >= 2) level = "Moderate";
-  
-  return { level, avg, max };
-}
 
 function analyzePlayerSessions(history) {
   if (history.length < 6) return null;
@@ -1846,20 +1821,7 @@ function findPeakActivityTime(history) {
   return null;
 }
 
-function calculateConsistency(history) {
-  if (history.length < 6) return "Insufficient data";
-  
-  const counts = history.map(h => h.count);
-  const avg = counts.reduce((a, b) => a + b, 0) / counts.length;
-  const variance = counts.reduce((sum, count) => sum + Math.pow(count - avg, 2), 0) / counts.length;
-  const stdDev = Math.sqrt(variance);
-  const coefficient = (stdDev / avg) * 100;
-  
-  if (coefficient < 20) return "Very consistent";
-  if (coefficient < 40) return "Moderately consistent";
-  if (coefficient < 60) return "Variable";
-  return "Highly variable";
-}
+// calculateActivityLevel and calculateConsistency are provided by ./lib/analyticsUtils.js
 
 function generateMiniChart(data) {
   if (data.length === 0) return "No data";
@@ -1895,24 +1857,23 @@ function formatHour(hour) {
 function handleTrends(msg) {
   try {
     const trendsReport = generateTrendsReport();
-    const sendAscii = () => msg.channel.send({ embeds: [{
-      color: 0x3498db,
-      title: "📊 Server Analytics Dashboard",
-      description: trendsReport,
-      footer: { text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
-    }] }).catch(() => msg.channel.send(trendsReport).catch(()=>{}));
-
     (async () => {
       try {
-        const png = await renderTrendPng(d7dtdState.playerTrends.history);
-        if (!png) return sendAscii();
-        await msg.channel.send({ files: [{ attachment: png, name: 'trends.png' }], embeds: [{
-          color: 0x3498db,
-          title: "📊 Server Analytics Dashboard",
-          description: trendsReport.split('\n').slice(0, 12).join('\n'),
-          image: { url: 'attachment://trends.png' }
-        }] });
-      } catch (_) { sendAscii(); }
+        const payload = await buildTrendsPayload(d7dtdState.playerTrends.history, trendsReport);
+        await msg.channel.send(payload);
+      } catch (_) {
+        // Fallback to ASCII-only embed, then plain text
+        try {
+          await msg.channel.send({ embeds: [{
+            color: 0x3498db,
+            title: "📊 Server Analytics Dashboard",
+            description: trendsReport,
+            footer: { text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
+          }] });
+        } catch {
+          await msg.channel.send(trendsReport).catch(()=>{});
+        }
+      }
     })();
   } catch (_) { /* ignore */ }
 }
@@ -1972,96 +1933,22 @@ function createDashboardEmbed() {
 }
 
 function createDashboardButtons() {
+  // Fixed order; "dashboard" always on the far left
   return {
     type: 1, // Action Row
     components: [
-      {
-        type: 2, // Button
-        style: 1, // Blue (Primary)
-        label: "🎯 Activity",
-        custom_id: "dashboard_activity",
-        disabled: d7dtdState.connStatus !== 1
-      },
-      {
-        type: 2, // Button
-        style: 1, // Blue (Primary)
-        label: "📊 Trends",
-        custom_id: "dashboard_trends",
-        disabled: false
-      },
-      {
-        type: 2, // Button
-        style: 3, // Green (Success)
-        label: "👥 Players",
-        custom_id: "dashboard_players",
-        disabled: d7dtdState.connStatus !== 1
-      },
-      {
-        type: 2, // Button
-        style: 1, // Blue (Primary)
-        label: "⏰ Time",
-        custom_id: "dashboard_time",
-        disabled: d7dtdState.connStatus !== 1
-      },
-      {
-        type: 2, // Button
-        style: 4, // Red (Danger) - High contrast for Info
-        label: "ℹ️ Info",
-        custom_id: "dashboard_info",
-        disabled: false
-      }
+      { type: 2, style: 1, label: '🏠 Dashboard', custom_id: 'dashboard', disabled: false },
+      { type: 2, style: 1, label: '🎯 Activity', custom_id: 'dashboard_activity', disabled: d7dtdState.connStatus !== 1 },
+      { type: 2, style: 3, label: '👥 Players', custom_id: 'dashboard_players', disabled: d7dtdState.connStatus !== 1 },
+      { type: 2, style: 1, label: '⏰ Time', custom_id: 'dashboard_time', disabled: d7dtdState.connStatus !== 1 },
+      { type: 2, style: 4, label: 'ℹ️ Info', custom_id: 'dashboard_info', disabled: false }
     ]
   };
 }
 
 // Create navigation buttons for feature screens
-function createNavigationButtons(currentFeature) {
-  const buttons = [];
-  
-  // Define all features with consistent styling and fixed positions
-  const features = [
-    { id: 'dashboard_activity', label: '🎯 Activity', style: 1, position: 0 }, // Blue (Primary)
-    { id: 'dashboard_trends', label: '📊 Trends', style: 1, position: 1 }, // Blue (Primary)
-    { id: 'dashboard_players', label: '👥 Players', style: 3, position: 2 }, // Green (Success)
-    { id: 'dashboard_time', label: '⏰ Time', style: 1, position: 3 }, // Blue (Primary)
-    { id: 'dashboard_info', label: 'ℹ️ Info', style: 4, position: 4 } // Red (Danger)
-  ];
-  
-  // Create buttons maintaining original positions, but skip current feature
-  features.forEach(feature => {
-    if (feature.id !== currentFeature) {
-      buttons.push({
-        type: 2, // Button
-        style: feature.style,
-        label: feature.label,
-        custom_id: feature.id,
-        disabled: feature.id.includes('activity') || feature.id.includes('players') || feature.id.includes('time') ? d7dtdState.connStatus !== 1 : false,
-        position: feature.position // Keep track of original position for consistency
-      });
-    } else {
-      // Add a "Back to Dashboard" button in place of current feature
-      buttons.push({
-        type: 2, // Button
-        style: 1, // Primary (blue)
-        label: '🏠 Dashboard',
-        custom_id: 'back_to_dashboard',
-        disabled: false,
-        position: feature.position
-      });
-    }
-  });
-  
-  // Sort buttons by position to maintain consistent layout
-  buttons.sort((a, b) => a.position - b.position);
-  
-  // Remove position property before returning (Discord doesn't need it)
-  buttons.forEach(button => delete button.position);
-  
-  return {
-    type: 1, // Action Row
-    components: buttons.slice(0, 5) // Discord limit of 5 buttons per row
-  };
-}
+// For feature screens, always return the same fixed row
+function createNavigationButtons() { return createDashboardButtons(); }
 
 // Build a select menu (string select) for choosing a player to deep dive from the Players screen
 function createPlayerSelect(players, selectedName) {
@@ -2121,35 +2008,42 @@ function handleButtonInteraction(interaction) {
   const customId = interaction.customId;
   
   switch(customId) {
+    case 'dashboard':
+      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Dashboard button`);
+  try { telemetry.send('ui_click', { target: 'dashboard' }); } catch(_) {}
+      handleBackToDashboard(interaction);
+      break;
     case 'dashboard_activity':
       console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Activity button`);
+  try { telemetry.send('ui_click', { target: 'activity' }); } catch(_) {}
       handleActivityFromButton(interaction);
       break;
       
     case 'dashboard_trends':
       console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Trends button`);
+  try { telemetry.send('ui_click', { target: 'trends' }); } catch(_) {}
       handleTrendsFromButton(interaction);
       break;
       
     case 'dashboard_players':
       console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Players button`);
+  try { telemetry.send('ui_click', { target: 'players' }); } catch(_) {}
       handlePlayersFromButton(interaction);
       break;
       
     case 'dashboard_time':
       console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Time button`);
+  try { telemetry.send('ui_click', { target: 'time' }); } catch(_) {}
       handleTimeFromButton(interaction);
       break;
       
     case 'dashboard_info':
       console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Info button`);
+  try { telemetry.send('ui_click', { target: 'info' }); } catch(_) {}
       handleInfoFromButton(interaction);
       break;
       
-    case 'back_to_dashboard':
-      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Back to Dashboard button`);
-      handleBackToDashboard(interaction);
-      break;
+  // deprecated: back_to_dashboard replaced with persistent Dashboard button
       
     default:
       interaction.reply("❌ Unknown button interaction.").catch(console.error);
@@ -2213,7 +2107,7 @@ function handleActivityFromButton(interaction) {
                   }
                 };
                 
-                const navigationButtons = createNavigationButtons('dashboard_activity');
+                const navigationButtons = createNavigationButtons();
                 interaction.editReply({ 
                   embeds: [embed],
                   components: [navigationButtons]
@@ -2234,21 +2128,25 @@ function handleActivityFromButton(interaction) {
 function handleTrendsFromButton(interaction) {
   interaction.deferReply().then(() => {
     const trendsReport = generateTrendsReport();
-    
-    const embed = {
-      color: 0x3498db,
-      title: "📊 Server Analytics Dashboard",
-      description: trendsReport,
-      footer: {
-        text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+    (async () => {
+      try {
+        const navigationButtons = createNavigationButtons();
+        const payload = await buildTrendsPayload(d7dtdState.playerTrends.history, trendsReport);
+        payload.components = [navigationButtons];
+        await interaction.editReply(payload);
+      } catch (_) {
+        const embed = {
+          color: 0x3498db,
+          title: "📊 Server Analytics Dashboard",
+          description: trendsReport,
+          footer: {
+            text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
+          }
+        };
+        const navigationButtons = createNavigationButtons();
+        interaction.editReply({ embeds: [embed], components: [navigationButtons] }).catch(console.error);
       }
-    };
-    
-    const navigationButtons = createNavigationButtons('dashboard_trends');
-    interaction.editReply({ 
-      embeds: [embed],
-      components: [navigationButtons]
-    }).catch(console.error);
+    })();
   }).catch(console.error);
 }
 
@@ -2269,7 +2167,7 @@ function handlePlayersFromButton(interaction) {
         }
       });
       const embed = buildPlayersEmbed(players, totalLine);
-      const navigationButtons = createNavigationButtons('dashboard_players');
+  const navigationButtons = createNavigationButtons();
   const select = createPlayerSelect(players);
   const components = [navigationButtons];
   if (select) components.push(select);
@@ -2291,7 +2189,7 @@ function handleTimeFromButton(interaction) {
           description: timeData,
           footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
         };
-        const navigationButtons = createNavigationButtons('dashboard_time');
+  const navigationButtons = createNavigationButtons();
         interaction.editReply({ 
           embeds: [embed],
           components: [navigationButtons]
@@ -2324,7 +2222,7 @@ function handleInfoFromButton(interaction) {
       }
     };
     
-    const navigationButtons = createNavigationButtons('dashboard_info');
+  const navigationButtons = createNavigationButtons();
     interaction.editReply({ 
       embeds: [embed],
       components: [navigationButtons]
@@ -2445,30 +2343,7 @@ function handleActivity(msg) {
   });
 }
 
-function handleTrends(msg) {
-  try {
-    const trendsReport = generateTrendsReport();
-    const sendAscii = () => msg.channel.send({ embeds: [{
-      color: 0x3498db,
-      title: "📊 Server Analytics Dashboard",
-      description: trendsReport,
-      footer: { text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
-    }] }).catch(() => msg.channel.send(trendsReport).catch(()=>{}));
-
-    (async () => {
-      try {
-        const png = await renderTrendPng(d7dtdState.playerTrends.history);
-        if (!png) return sendAscii();
-        await msg.channel.send({ files: [{ attachment: png, name: 'trends.png' }], embeds: [{
-          color: 0x3498db,
-          title: "📊 Server Analytics Dashboard",
-          description: trendsReport.split('\n').slice(0, 12).join('\n'),
-          image: { url: 'attachment://trends.png' }
-        }] });
-      } catch (_) { sendAscii(); }
-    })();
-  } catch (_) { /* ignore */ }
-}
+// (canonical handleTrends defined later)
 
 function handlePlayers(msg) {
   try {
@@ -2608,6 +2483,7 @@ function calculateHordeStatus(timeStr) {
 client.on('ready', async () => {
   try {
   log.success('[DISCORD]', `Logged in as ${client.user.tag}`);
+  try { telemetry.send('discord_ready', {}); } catch(_) {}
   // Bind channel immediately on ready (no text command binding)
   if (config.channel) {
     try {
@@ -2617,6 +2493,7 @@ client.on('ready', async () => {
         guild = ch.guild || guild;
         bloodMoon.start();
   log.info('[DISCORD]', `Bound to channel ${ch.id}`);
+  try { telemetry.send('channel_bound', { bound: true }); } catch(_) {}
       }
     } catch (_) { /* ignore */ }
   }
@@ -2655,7 +2532,7 @@ client.on('interactionCreate', async (interaction) => {
               if (snapshot) ensurePlayerSession(snapshot.name);
               embed = buildSinglePlayerEmbed(chosen, snapshot);
             }
-            const nav = createNavigationButtons('dashboard_players');
+            const nav = createNavigationButtons();
             const select = createPlayerSelect(players, chosen || '__ALL__');
             const components = [nav];
             if (select) components.push(select);

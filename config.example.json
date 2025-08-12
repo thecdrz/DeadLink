@@ -28,6 +28,12 @@
 
   "horde-frequency": 7,
 
+  "analytics": {
+    "enabled": true,
+    "endpoint": "https://telemetry.deadlink.lol/v1/event",
+    "storagePath": "./telemetry.json"
+  },
+
   "updates": {
     "enabled": true,
     "intervalHours": 24,
