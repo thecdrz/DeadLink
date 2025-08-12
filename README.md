@@ -99,6 +99,17 @@ Admin-only helpers (Manage Server permission) are available via UI/buttons or fu
 
 *Rich embed showing the latest release. Auto-posts can be enabled via the `updates` config.*
 
+### Live Embed Previews (Generated)
+The following previews are generated with our Puppeteer snapshot tool and reflect the current UI styling:
+
+![Dashboard Trends](screenshots/dashboard-trends.png)
+![Activity](screenshots/activity.png)
+![Players](screenshots/players.png)
+![Time](screenshots/time.png)
+![Player Deep Dive](screenshots/player-deep-dive.png)
+
+See the website for a quick tour: https://thecdrz.github.io/DeadLink/
+
 ## Latest Release: v2.12.1
 
 Key additions:

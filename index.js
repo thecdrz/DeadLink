@@ -1032,29 +1032,37 @@ function getSoloActivity(player, timeOfDay) {
       "starting their day with a careful survey of",
       "cautiously exploring", 
       "scavenging through",
-      "methodically searching",
-      "bravely venturing into"
+  "methodically searching",
+  "bravely venturing into",
+  "plotting a route across",
+  "checking supplies while passing through"
     ],
     afternoon: [
       "battling the heat while exploring",
       "pushing through the sweltering conditions in",
       "making the most of daylight in",
-      "working tirelessly in",
-      "persevering through"
+  "working tirelessly in",
+  "persevering through",
+  "hauling loot across",
+  "patching gear before heading deeper into"
     ],
     evening: [
       "racing against the setting sun in",
       "preparing for nightfall while in",
       "making final preparations in",
-      "seeking shelter in",
-      "hurrying through"
+  "seeking shelter in",
+  "hurrying through",
+  "laying low as shadows stretch over",
+  "hunting for last-minute resources near"
     ],
     night: [
       "daringly moving through",
       "sneaking carefully through",
       "fighting for survival in",
-      "desperately trying to escape",
-      "courageously facing the darkness of"
+  "desperately trying to escape",
+  "courageously facing the darkness of",
+  "weaving between the undead across",
+  "listening for growls while crossing"
     ]
   };
 
@@ -1212,6 +1220,21 @@ function getSurvivalSuggestions(player, time, hordeInfo) {
     } else if (level > 50) {
       suggestions.push("🏆 Veteran: Consider helping others or tackling high-level challenges");
     }
+  }
+
+  // Positional advice (distance from center) and network guidance
+  if (player.pos) {
+    try {
+      const [xs, ys, zs] = String(player.pos).split(',');
+      const x = parseFloat(xs), z = parseFloat(zs);
+      const dist = Math.sqrt((x||0)*(x||0) + (z||0)*(z||0));
+      if (dist > 1500) suggestions.push("🧭 Far from center—budget time and fuel for return trips.");
+      else if (dist < 200) suggestions.push("🏙️ Near the center—expect increased noise and patrols.");
+    } catch(_) {}
+  }
+  if (player.ping) {
+    const p = parseInt(player.ping);
+    if (!isNaN(p) && p > 120) suggestions.push("📶 High latency—favor ranged combat and avoid risky melee.");
   }
   
   // Combine all suggestions with proper formatting

@@ -7,7 +7,8 @@
     "start": "node index.js",
     "test": "jest --runInBand",
     "slash:global": "node scripts/register-commands.js --global",
-    "slash:guild": "node scripts/register-commands.js --guild"
+  "slash:guild": "node scripts/register-commands.js --guild",
+  "snapshots": "node scripts/snapshot-embeds.js"
   },
   "author": "CDRZ (built on Dishorde by LakeYS)",
   "license": "MIT",
@@ -34,7 +35,8 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
-    "jest": "^29.7.0"
+  "jest": "^29.7.0",
+  "puppeteer": "^24.9.0"
   },
   "optionalDependencies": {
     "canvas": "^2.11.2",
