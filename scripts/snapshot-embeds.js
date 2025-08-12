@@ -6,11 +6,15 @@ const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
 const { serverAnalyticsEmbed, activityEmbed, playersListEmbed, timeEmbed, playerDeepDiveEmbed } = require('../lib/embeds');
+const pjson = require('../package.json');
 
 function sampleEmbeds() {
   return [
     { name: 'dashboard-trends', embed: serverAnalyticsEmbed({ description: '📈 Current: 7 players\n📋 24h Avg: 5.3\n🔝 Peak: 12 | 🔽 Low: 1\n\n🎯 Activity Insights\n🕐 Last Hour: High (7.2 avg)\n⏰ Last 3 Hours: Moderate (4.8 avg)\n📅 Last 6 Hours: Moderate (3.9 avg)\n\n📊 Activity Patterns\n📊 Activity increasing by 18%\n🎯 Consistency: Moderately consistent', withImage: true }) },
-    { name: 'activity', embed: activityEmbed({ description: '👤 John is cautiously exploring the distant eastern ash lands\nHe is in excellent health and moving quickly.\n\nTips:\n✅ Managing well - maintain vigilance.' }) },
+    // Activity (brief)
+    { name: 'activity-brief', embed: activityEmbed({ description: '� 8 online | Day 14, 21:05\n🩸 Blood Moon Warning\n> Horde begins in less than an hour\n🩹 Low HP: Mina 33%\n📶 High ping: Kai 172ms\n🏘️ Clusters: 3 | Largest: 3 | Isolated: 2\n\nNova L20 ❤️78% 🟢62ms · Rex L21 ❤️82% 🟢59ms · Mina L9 ❤️33% 🟠188ms · Kai L13 ❤️57% 🟠172ms · Ivy L26 ❤️91% 🟢44ms · Thorn L17 ❤️66% 🟢51ms +2 more' }) },
+    // Activity (full)
+    { name: 'activity-full', embed: activityEmbed({ description: 'Night falls over the far northern pine forests as Nova scouts the ridgeline. Health holds at 78% and spirits are high.\n\nMina is in trouble in the southern wastelands—critically low at 33%. If you can reach her, bring meds and cover.\n\nRex and Ivy move in tandem across the ash lands; signs of looting but no major threats yet.\n\n🩸 Blood Moon Warning: begins in less than an hour. Fortify, craft spikes, and ensure ammo stocks are ready.\n\nTips:\n• Low HP players should regroup and heal before venturing out.\n• Expect increased zombie aggression near towns after dark.' }) },
     { name: 'players', embed: playersListEmbed({ description: 'Total of 3 in the game\n\n**John** L18 | ❤️ 85% (Excellent) | K/D 25.0 | 🧟 25 | ⚔️ 0.8kpm | ☠️ 1 | 🟢 50ms | 📏 430m | ⏱️ 34m | 🔥 16m (PB 45m)\n↳ the distant eastern ash lands\n\n**Sarah** L8 | ❤️ 30% (Critical) | K/D 1.6 | 🧟 8 | ⚔️ 0.4kpm | ☠️ 5 | 🟡 45ms | 📏 220m | ⏱️ 12m | 🔥 5m (PB 18m)\n↳ the far northern woodlands\n\nClusters: 2 | Largest: 2 | Isolated: 1' }) },
     { name: 'time', embed: timeEmbed({ description: 'Day 7, 21:05\nHorde begins in 55 minutes.' }) },
     { name: 'player-deep-dive', embed: playerDeepDiveEmbed({ title: '🎯 Player Deep Dive', description: '**John**\nLevel: 18 | ❤️ 85% (Excellent) | Ping: 🟢 50ms\nKills: 25 | Deaths: 1 | K/D: 25.0 | Kill Rate: 0.8 kpm\nSession: 34m\nDistance: 430m (Lifetime 12,300m) | Avg Speed: 12.6 m/min\nDeathless Streak: 16m (PB 45m)\nLocation: the distant eastern ash lands' }) }
@@ -19,13 +23,13 @@ function sampleEmbeds() {
 
 function terminalStartupCard(){
   const lines = [
-    'DeadLink v2.12.1  |  mode: DEV  |  logs: ./logs',
+  `DeadLink v${pjson.version}  |  mode: DEV  |  logs: ./logs`,
     '— — — — — — — — — — — — — — — — — — — — — — —',
     '[init]   reading config.json … ok',
     '[telnet] connecting to 127.0.0.1:8081 … connected',
     '[discord] logging in … ready (1 guild)',
     '[analytics] loaded analytics.json (sessions: 24)',
-    '[updates] checked GitHub releases (latest v2.12.1)',
+  `[updates] checked GitHub releases (latest v${pjson.version})`,
     '[heartbeat] scheduled (post-connect)',
     '',
     'Tip: /dashboard for the UI • DEV_MODE=true to simulate telnet'

@@ -65,9 +65,10 @@ Below are quick previews of the main dashboards. Click to open the full image in
 </figure>
 
 <figure>
-  <a href="assets/snapshots/activity.png" target="_blank" rel="noopener">
-    <img alt="Activity view with narrative events and blood moon context" src="assets/snapshots/activity.png">
+  <a href="assets/snapshots/activity-brief.png" target="_blank" rel="noopener">
+    <img alt="Activity (brief) with blood moon context and alerts" src="assets/snapshots/activity-brief.png">
   </a>
+  <p>Prefer the full narrative? See <a href="assets/snapshots/activity-full.png" target="_blank" rel="noopener">Activity (full)</a>.</p>
   <figcaption>
     Activity – Narrative feed enriched with biome, time-of-day, and horde-night cues.
   </figcaption>
