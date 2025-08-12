@@ -15,10 +15,10 @@ DeadLink is a modern 7 Days to Die Server Companion that integrates your server 
 - Optional config validation (zod) with human-readable warnings
 - Test scaffolding (Jest) for quick smoke checks
 
-Note: PNG charts and validation use optional deps; install them with npm if desired:
+Note: PNG trend charts and config validation are optional features. They are listed as optionalDependencies and will install on supported systems; if they fail to build, you can install them manually:
 `npm i chartjs-node-canvas chart.js canvas zod`
 
-DeadLink runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
+DeadLink runs as a separate companion via telnet—no game mods required. **Supports Windows and Linux dedicated servers; console servers aren’t supported.**
 
 ## Slash Commands
 DeadLink now uses slash commands for everything. Use these:
