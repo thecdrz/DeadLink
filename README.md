@@ -9,13 +9,14 @@
 DeadLink is a modern 7 Days to Die Server Companion that integrates your server with Discord. It provides a clean dashboard, real‑time analytics, horde‑night context, and safe server actions—purpose‑built for running and showcasing your world. Docker‑friendly, secure by default, and tuned for smooth screenshot and admin workflows.
 
 ## Highlights
-### Highlights
-- Slash commands + Dashboard UI for all interactions (legacy text commands removed)
-- Safer telnet commands via a queued executor with light rate limiting
-- Friendlier user errors when the server is loading/not connected/timeouts
-- Optional PNG trend charts in Trends (falls back to ASCII if deps missing)
-- Optional config validation (zod) with human-readable warnings
-- Test scaffolding (Jest) for quick smoke checks
+- Fully rewritten, dashboard‑first GUI (buttons, selects) — fast, clean, slash‑only
+- Update system: check releases, view notes, and optionally announce to a channel
+- Persistent, structured logs (rotating) with startup summary and clear levels
+- Reliable telnet pipeline (queued, timed, reconnecting) with scoped actions
+- Analytics: player trends, clusters, MVP, deep‑dive stats (session, distance, streaks)
+- Optional PNG charts (auto‑fallback to ASCII if native deps missing)
+- Optional config validation (zod) with readable warnings
+- Jest smoke and unit tests for quick validation
 
 Note: PNG trend charts and config validation are optional features. They are listed as optionalDependencies and will install on supported systems; if they fail to build, you can install them manually:
 `npm i chartjs-node-canvas chart.js canvas zod`
@@ -115,7 +116,7 @@ DeadLink extends and modernizes the excellent Dishorde project by LakeYS with an
 Original project: https://github.com/LakeYS/Dishorde
 
 # Authors
-**DeadLink**: CDRZ | Discord: <@217012303063678978>
+**DeadLink**: CDRZ · 🗨️ [Discord](https://discord.com/users/217012303063678978) (<@217012303063678978>)
 
 # Terminal Commands
 `exit`
