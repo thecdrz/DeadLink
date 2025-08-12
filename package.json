@@ -9,7 +9,8 @@
     "slash:global": "node scripts/register-commands.js --global",
   "slash:guild": "node scripts/register-commands.js --guild",
   "snapshots": "node scripts/snapshot-embeds.js",
-  "snapshots:anim": "node scripts/snapshot-anim.js"
+  "snapshots:anim": "node scripts/snapshot-anim.js",
+  "telemetry:serve": "node scripts/telemetry-server.js"
   },
   "author": "CDRZ (built on Dishorde by LakeYS)",
   "license": "MIT",

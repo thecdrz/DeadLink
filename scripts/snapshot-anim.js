@@ -18,8 +18,9 @@ function htmlFor(embed){
   body{background:#2b2d31;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Noto Sans',sans-serif}
   .wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
   .tabs{display:flex;gap:8px}
-  .tabs button{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:#3a3c42;color:#e9e6df;cursor:pointer}
-  .tabs button.active{background:#51545b}
+  .tabs button{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:#3a3c42;color:#e9e6df;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease}
+  .tabs button.active{background:#51545b;box-shadow:0 0 0 2px rgba(255,255,255,0.10) inset, 0 4px 10px rgba(0,0,0,0.25);animation:pulse 1.2s infinite}
+  @keyframes pulse{0%{transform:translateY(0)}50%{transform:translateY(-1px)}100%{transform:translateY(0)}}
   .card{max-width:${maxWidth}px;background:#313338;color:#dbdee1;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3);}
   .title{padding:${pad}px ${pad}px 0 ${pad}px;font-weight:600}
   .desc{white-space:pre-wrap;padding:${pad}px;color:#b5bac1}
@@ -57,18 +58,29 @@ function htmlFor(embed){
       card.querySelector('.footer').textContent = (e.footer && e.footer.text) || '';
       document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab===name));
     }
+    // Per-frame ticker to simulate live changes
+    window.__base = 7;
+    window.tick = function(i){
+      const d = document.querySelector('.desc');
+      if (!d) return;
+      d.textContent = d.textContent.replace(/Current:\s*\d+\s+players/, function(){
+        const v = window.__base + ((i%3)-1); // 6,7,8 cycle
+        return 'Current: ' + v + ' players';
+      });
+    }
     document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', ()=>render(b.dataset.tab)));
     render('trends');
   </script>`;
 }
 
 async function generateFrames(page, framesDir){
-  const sequence = [
-    { tab: 'trends', hold: 18 },
-    { tab: 'activity', hold: 18 },
-    { tab: 'players', hold: 18 },
-    { tab: 'time', hold: 18 }
+  const base = [
+    { tab: 'trends', hold: 12 },
+    { tab: 'activity', hold: 12 },
+    { tab: 'players', hold: 12 },
+    { tab: 'time', hold: 12 }
   ];
+  const sequence = base.concat(base); // two cycles
   let i = 0;
   for (const step of sequence){
     await page.evaluate(t => { window.render(t); }, step.tab);
@@ -76,7 +88,10 @@ async function generateFrames(page, framesDir){
   await new Promise(r => setTimeout(r, 250));
     for (let j=0;j<step.hold;j++){
       const file = path.join(framesDir, `frame_${String(i).padStart(4,'0')}.png`);
+      // tick content and wait for smooth animation (~12fps)
+      await page.evaluate(n => window.tick && window.tick(n), i);
       await page.screenshot({ path: file });
+      await new Promise(r => setTimeout(r, 85));
       i++;
     }
   }
