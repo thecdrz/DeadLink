@@ -1,24 +1,21 @@
 {
-  "discord": {
-    "token": "YOUR_DISCORD_BOT_TOKEN",
-    "channel": "YOUR_CHANNEL_ID",
-    "prefix": "7d!",
-    "intents": ["GUILDS", "GUILD_MESSAGES", "GUILD_MEMBERS", "MESSAGE_CONTENT"]
-  },
-  "telnet": {
-    "ip": "127.0.0.1",
-    "port": 8081,
-    "password": "YOUR_TELNET_PASSWORD"
-  },
+  "token": "YOUR_DISCORD_BOT_TOKEN",
+  "channel": "YOUR_CHANNEL_ID",
+  "ip": "127.0.0.1",
+  "port": 8081,
+  "password": "YOUR_TELNET_PASSWORD",
+  "dev-mode": false,
   "updates": {
     "enabled": true,
-    "announcePublic": false,
-    "checkIntervalHours": 24,
-    "repo": { "author": "thecdrz", "name": "DeadLink" }
+    "intervalHours": 24,
+    "prerelease": false,
+    "notifyMode": "channel",
+    "notifyChannel": "YOUR_UPDATES_CHANNEL_ID"
   },
-  "charts": {
+  "bloodMoon": {
     "enabled": true,
-    "width": 900,
-    "height": 400
+    "intervalSeconds": 60,
+    "frequency": 7,
+    "broadcastInGame": true
   }
 }

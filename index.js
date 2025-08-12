@@ -19,10 +19,10 @@ const { validateConfig } = require("./lib/configSchema.js");
 const c = require("./lib/colors.js");
 
 const { Client, Intents } = Discord;
-// Request explicit gateway intents via constants (v13)
-const requestedIntents = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
+// Only require guilds intent; legacy text command handling is removed
+const requestedIntents = [Intents.FLAGS.GUILDS];
 
-// Fancy ASCII banner
+// Fancy ASCII banner & unified logging helper
 const banner = `
   ____               _ _ _ _       _
  |  _ \\ ___  ___ __| (_) | | __ _| |__
@@ -30,10 +30,97 @@ const banner = `
  | |_| |  __/ (_| (_| | | | | (_| | | | |
  |____/ \\___|\\__\\__,_|_|_|_|\\__, |_| |_|
                                |___/`;
+
+const log = (() => {
+  const levelMap = { error:0, warn:1, info:2, debug:3 };
+  const desired = (process.env.LOG_LEVEL || 'info').toLowerCase();
+  const current = levelMap[desired] != null ? levelMap[desired] : 2;
+  const ts = () => new Date().toISOString().split('T')[1].replace('Z','');
+  const scopeColor = (s) => c.magenta(s);
+  const fmt = (scope, msg) => `${c.dim(ts())} ${scopeColor(scope)} ${msg}`;
+  // Minimal file logging with rotation
+  const logDir = './logs';
+  const maxSize = 512 * 1024; // 512KB per file
+  const maxFiles = 5;
+  function ensureDir() { try { if (!fs.existsSync(logDir)) fs.mkdirSync(logDir); } catch(_) {} }
+  function activeFile() { return `${logDir}/deadlink.log`; }
+  function rotateIfNeeded() {
+    try {
+      ensureDir();
+      const f = activeFile();
+      if (fs.existsSync(f)) {
+        const stat = fs.statSync(f);
+        if (stat.size >= maxSize) {
+          // shift older files
+          for (let i = maxFiles-1; i >=0; i--) {
+            const src = i===0 ? f : `${f}.${i}`;
+            const dest = `${f}.${i+1}`;
+            if (fs.existsSync(src)) {
+              if (i+1 >= maxFiles) { try { fs.unlinkSync(src); } catch(_) {} }
+              else { try { fs.renameSync(src, dest); } catch(_) {} }
+            }
+          }
+        }
+      }
+    } catch(_) {}
+  }
+  function writeFileLine(line) {
+    try {
+      rotateIfNeeded();
+      fs.appendFileSync(activeFile(), line + '\n');
+    } catch(_) {}
+  }
+  function out(scope,colorFn,msg,levelColorFn) {
+    const line = fmt(scope, msg);
+    const colored = levelColorFn ? levelColorFn(line) : line;
+    console.log(colored);
+    writeFileLine(line.replace(/\u001b\[[0-9;]*m/g,'')); // strip ANSI for file
+  }
+  return {
+    error(scope,msg){ if(current>=0) out(scope,c.red,msg,c.red); },
+    warn(scope,msg){ if(current>=1) out(scope,c.yellow,msg,c.yellow); },
+    info(scope,msg){ if(current>=2) out(scope,c.white,msg); },
+    debug(scope,msg){ if(current>=3) out(scope,c.gray,msg,c.gray); },
+    success(scope,msg){ if(current>=2) out(scope,c.green,msg,c.green); }
+  };
+})();
+
 console.log(banner + "\n" + c.bold(`DeadLink v${pjson.version}`));
-console.log(c.yellow("NOTICE:"), "Remote connections to 7 Days to Die servers are not encrypted.");
-console.log("To keep your server secure, do not run this application on a public network and be sure to use a unique telnet password.\n");
-console.log(c.cyan("Shoutout to LakeYS (Dishorde) for the awesome base!\n"));
+log.warn('[SEC]', 'Remote connections to 7 Days to Die servers are not encrypted.');
+log.info('[SEC]', 'Use only on trusted networks with a unique telnet password.');
+log.info('[CREDITS]', 'Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.');
+// Summarize existing rotated logs
+try {
+  const dir = './logs';
+  if (fs.existsSync(dir)) {
+    const files = fs.readdirSync(dir).filter(f=>f.startsWith('deadlink.log'));
+    if (files.length) {
+      const summary = files.sort().map(f=>{
+        try { const s=fs.statSync(`${dir}/${f}`); return `${f}(${Math.round(s.size/1024)}KB)`; } catch(_) { return f; }
+      }).join(', ');
+      log.info('[LOG]', `Existing log files: ${summary}`);
+    }
+  }
+} catch(_) {}
+
+// Heartbeat (initialized after config load)
+let HEARTBEAT_MINUTES = 15;
+let heartbeatTimer = null;
+function startHeartbeat() {
+  try { HEARTBEAT_MINUTES = parseInt(process.env.HEARTBEAT_MINUTES || (config && config.heartbeatMinutes) || '15'); } catch(_) {}
+  if (!HEARTBEAT_MINUTES || HEARTBEAT_MINUTES <= 0) { log.debug('[HB]', 'Heartbeat disabled'); return; }
+  const intervalMs = HEARTBEAT_MINUTES * 60000;
+  function beat() {
+    try {
+      const history = d7dtdState.playerTrends.history;
+      const last = history[history.length-1];
+      const count = last ? last.count : 0;
+      log.info('[HB]', `Heartbeat: players=${count} dataPoints=${history.length}`);
+    } catch(e){ log.warn('[HB]', 'Heartbeat error'); }
+  }
+  beat();
+  heartbeatTimer = setInterval(beat, intervalMs);
+}
 
 const lineSplit = /\n|\r/g;
 
@@ -77,6 +164,12 @@ var d7dtdState = {
   // -100 = Override or N/A (value is ignored)
   connStatus: -100
 };
+// Runtime session tracking for enhanced player stats (not persisted yet)
+d7dtdState.playerSessions = {}; // name -> { start: ts, lastSeen: ts }
+d7dtdState.playerBaselines = {}; // name -> { killsAtStart: number, deathsAtStart: number }
+d7dtdState.playerStreaks = {}; // name -> { lastDeathAt: ts|null, longestMinutes: number }
+d7dtdState.playerTravel = {}; // name -> { lastPos: {x,y,z}, sessionDistance: number, totalDistance: number }
+d7dtdState.playerCraft = {}; // name -> { // future: track crafted counts by category or total }
 ////// # Arguments # //////
 // We have to treat the channel ID as a string or the number will parse incorrectly.
 var argv = minimist(process.argv.slice(2), {string: ["channel","port"]});
@@ -102,27 +195,27 @@ else {
   // This allows keeping secrets out of the config file
   if (process.env.DISCORD_TOKEN) {
     config.token = process.env.DISCORD_TOKEN;
-    console.log(c.gray("Using Discord token from environment variable"));
+  log.debug('[ENV]', 'Using Discord token from environment variable');
   }
   
   if (process.env.TELNET_PASSWORD) {
     config.password = process.env.TELNET_PASSWORD;
-    console.log(c.gray("Using telnet password from environment variable"));
+  log.debug('[ENV]', 'Using telnet password from environment variable');
   }
   
   if (process.env.TELNET_IP) {
     config.ip = process.env.TELNET_IP;
-    console.log(c.gray("Using telnet IP from environment variable"));
+  log.debug('[ENV]', 'Using telnet IP from environment variable');
   }
   
   if (process.env.TELNET_PORT) {
     config.port = process.env.TELNET_PORT;
-    console.log(c.gray("Using telnet port from environment variable"));
+  log.debug('[ENV]', 'Using telnet port from environment variable');
   }
   
   if (process.env.DISCORD_CHANNEL) {
     config.channel = process.env.DISCORD_CHANNEL;
-    console.log(c.gray("Using Discord channel from environment variable"));
+  log.debug('[ENV]', 'Using Discord channel from environment variable');
   }
   
   // Allow controlling dev mode via environment variables
@@ -137,10 +230,10 @@ else {
   const devFromDEMO = parseBool(process.env.DEMO_MODE);
   if (devFromDEV !== null) {
     config["dev-mode"] = devFromDEV;
-    console.log(devFromDEV ? c.green("Dev mode enabled via environment variable (DEV_MODE)") : c.yellow("Dev mode disabled via environment variable (DEV_MODE)"));
+    console.log(devFromDEV ? c.green("Mode: 🧪 Dev (simulated telnet)") : c.green("Mode: Live (real telnet)"));
   } else if (devFromDEMO !== null) {
     config["dev-mode"] = devFromDEMO;
-    console.log(devFromDEMO ? c.green("Dev mode enabled via environment variable (DEMO_MODE alias)") : c.yellow("Dev mode disabled via environment variable (DEMO_MODE alias)"));
+    console.log(devFromDEMO ? c.green("Mode: 🧪 Dev (simulated telnet)") : c.green("Mode: Live (real telnet)"));
   }
   
   // Validate required configuration
@@ -172,7 +265,6 @@ if (argv.check) {
   try {
     const summary = {
       version: pjson.version,
-      prefix: typeof config.prefix === 'string' ? config.prefix : '7d!',
       channel: config.channel ? String(config.channel) : '(unset)',
       ip: config.ip,
       port: config.port,
@@ -232,7 +324,7 @@ var token = config.token;
 // Discord channel
 var skipChannelCheck;
 if(typeof config.channel === "undefined" || config.channel === "channelid") {
-  console.warn("\x1b[33mWARNING: No Discord channel specified! You will need to set one with 'setchannel #channelname'\x1b[0m");
+  console.warn("\x1b[33mWARNING: No Discord channel specified! Set DISCORD_CHANNEL or 'channel' in config.json.\x1b[0m");
   skipChannelCheck = 1;
 }
 else {
@@ -240,14 +332,7 @@ else {
 }
 var channelid = config.channel.toString();
 
-// Prefix
-// Do not force-case the configured prefix; match user input case-insensitively later
-var prefix;
-if (typeof config.prefix !== "string") {
-  prefix = "7d!";
-} else {
-  prefix = config.prefix;
-}
+// Legacy text command prefix removed — interactions and dashboard only
 
 // Load the Discord client
 const client = new Client({
@@ -283,15 +368,15 @@ function startTelnet() {
     };
     if (!d7dtdState.telnetListenersAttached) {
       d7dtdState.telnetListenersAttached = 1;
-      try { telnet.on && telnet.on('close', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) console.log('[TELNET] Closed'); scheduleReconnect(); }); } catch(_) {}
-      try { telnet.on && telnet.on('end', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) console.log('[TELNET] End'); scheduleReconnect(); }); } catch(_) {}
-      try { telnet.on && telnet.on('timeout', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) console.log('[TELNET] Timeout'); scheduleReconnect(); }); } catch(_) {}
-      try { telnet.on && telnet.on('error', (e) => { d7dtdState.connStatus = -1; console.warn('[TELNET] Error:', e && e.message); }); } catch(_) {}
+  try { telnet.on && telnet.on('close', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) log.warn('[TELNET]', 'Closed'); scheduleReconnect(); }); } catch(_) {}
+  try { telnet.on && telnet.on('end', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) log.warn('[TELNET]', 'End'); scheduleReconnect(); }); } catch(_) {}
+  try { telnet.on && telnet.on('timeout', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) log.warn('[TELNET]', 'Timeout'); scheduleReconnect(); }); } catch(_) {}
+  try { telnet.on && telnet.on('error', (e) => { d7dtdState.connStatus = -1; log.error('[TELNET]', `Error: ${e && e.message}`); }); } catch(_) {}
     }
     if (typeof telnet.connect === 'function') {
       telnet.connect(params).then(() => {
         d7dtdState.connStatus = 1;
-        if (config["log-telnet"]) console.log('[TELNET] Connected');
+  if (config["log-telnet"]) log.success('[TELNET]', 'Connected');
         // Best-effort authentication for 7DTD telnet
         try {
           if (pass) {
@@ -303,19 +388,24 @@ function startTelnet() {
         } catch(_) {}
       }).catch((e) => {
         d7dtdState.connStatus = -1;
-        console.warn('[TELNET] Connect failed:', e && e.message);
+  log.error('[TELNET]', `Connect failed: ${e && e.message}`);
         scheduleReconnect(8000);
       });
     }
   } catch (e) {
     d7dtdState.connStatus = -1;
-    console.warn('[TELNET] Unexpected connect error:', e && e.message);
+  log.error('[TELNET]', `Unexpected connect error: ${e && e.message}`);
     scheduleReconnect(8000);
   }
 }
 
 // Start telnet connection on boot
 startTelnet();
+// Delay heartbeat until after analytics load & telnet connection established
+setTimeout(() => {
+  if (d7dtdState.connStatus === 1) startHeartbeat();
+  else ensureTelnetReady(10000).then(()=> startHeartbeat());
+}, 2500);
 
 async function ensureTelnetReady(timeoutMs = 8000) {
   if (d7dtdState.connStatus === 1) return true;
@@ -330,10 +420,57 @@ async function ensureTelnetReady(timeoutMs = 8000) {
     tick();
   });
 }
+  // (ensurePlayerSession defined earlier with baseline & streak init)
 
-// 7d!exec command
-if(config["allow-exec-command"] === true) {
-  console.warn("\x1b[33mWARNING: Config option 'allow-exec-command' is enabled. This may pose a security risk for your server.\x1b[0m");
+function buildSinglePlayerEmbed(playerName, snapshot) {
+  const now = Date.now();
+  const sess = d7dtdState.playerSessions[playerName];
+  const streakInfo = d7dtdState.playerStreaks[playerName] || { lastDeathAt: null, longestMinutes: 0 };
+  const currentStreakMins = streakInfo.lastDeathAt ? Math.floor((now - streakInfo.lastDeathAt)/60000) : 0;
+  let desc = '';
+  if (snapshot) {
+    const k = parseInt(snapshot.zombiesKilled||'0');
+    const d = parseInt(snapshot.deaths||'0');
+    const kd = d===0? k : (k/d).toFixed(1);
+    const hp = snapshot.health ? `${snapshot.health}%` : '—';
+    const hs = healthStatus(snapshot.health);
+    const pq = pingQuality(snapshot.ping);
+    const dur = sess ? formatDuration(now - sess.start) : '—';
+    let loc = getLocationDescription(snapshot.pos);
+    if (loc.length > 120) loc = loc.slice(0,117)+'…';
+    const base = d7dtdState.playerBaselines[playerName] || { killsAtStart: k };
+    const mins = sess ? Math.max(1, Math.floor((now - sess.start)/60000)) : 1;
+    const kpm = ((k - base.killsAtStart)/mins).toFixed(2);
+  const travel = d7dtdState.playerTravel[playerName] || { sessionDistance: 0, totalDistance: 0 };
+  const sessionDist = Math.round(travel.sessionDistance||0);
+  const totalDist = Math.round(travel.totalDistance||0);
+  const minsPlayed = sess ? Math.max(1, Math.floor((now - sess.start)/60000)) : 1;
+  const mpm = sessionDist && minsPlayed ? (sessionDist / minsPlayed).toFixed(1) : '0';
+  desc += `**${playerName}**\n` +
+      `Level: ${snapshot.level||'?'} | ❤️ ${hp} (${hs}) | Ping: ${pq} ${snapshot.ping||'?'}ms\n` +
+      `Kills: ${k} | Deaths: ${d} | K/D: ${kd} | Kill Rate: ${kpm} kpm\n` +
+      `Session: ${dur}\n` +
+      `Distance: ${sessionDist}m (Lifetime ${totalDist}m) | Avg Speed: ${mpm} m/min\n` +
+      `Deathless Streak: ${currentStreakMins}m (PB ${streakInfo.longestMinutes}m)\n` +
+      `Location: ${loc}`;
+  } else {
+  const travel = d7dtdState.playerTravel[playerName] || { sessionDistance: 0, totalDistance: 0 };
+  const sessionsTracked = Object.keys(d7dtdState.playerSessions).includes(playerName) ? 1 : 0; // simple count placeholder
+  const sessData = d7dtdState.playerSessions[playerName];
+  const lastSeen = sessData ? new Date(sessData.lastSeen).toLocaleString('en-US',{hour12:false}) : 'Unknown';
+  const totalDist = Math.round(travel.totalDistance||0);
+  desc = `No live snapshot for ${playerName} (offline).
+Last Seen: ${lastSeen}
+Sessions Tracked: ${sessionsTracked}
+Lifetime Distance: ${totalDist}m
+Deathless PB: ${streakInfo.longestMinutes}m`;
+  }
+  return {
+    color: 0x5865f2,
+    title: `🎯 Player Deep Dive`,
+    description: desc.slice(0, 4000),
+    footer: { text: `Generated at ${new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit'})}` }
+  };
 }
 
 ////// # Init/Version Check # //////
@@ -389,7 +526,7 @@ function buildUpdateEmbed(info, currentVersion, opts = {}) {
     color: upToDate ? 0x2ecc71 : 0x7289da,
     title,
     description,
-    fields: whatsNew ? [{ name: "What's new", value: whatsNew }] : [],
+  fields: whatsNew ? [{ name: "What's new", value: whatsNew }] : [],
     timestamp: new Date().toISOString()
   };
   return embed;
@@ -598,6 +735,8 @@ function sendEnhancedGameMessage(message) {
     const deathMatch = message.match(/Player '([^']+)' died/);
     if (deathMatch) {
       const playerName = deathMatch[1];
+  // Update deathless streak tracking
+  try { recordPlayerDeath(playerName); } catch(_) {}
       
       // Extract cause of death if available
       let deathCause = "unknown circumstances";
@@ -1233,11 +1372,24 @@ function formatPlayerList(players) {
   return `${players.slice(0, -1).join(", ")}, and ${players[players.length - 1]}`;
 }
 
-// Analytics persistence functions
+// ---- Analytics persistence (player trends, sessions, baselines, streaks) ----
+let saveTimer = null;
+function scheduleAnalyticsSave(delayMs = 4000) {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    saveAnalyticsData();
+  }, delayMs);
+}
+
 function saveAnalyticsData() {
   try {
     const analyticsData = {
       playerTrends: d7dtdState.playerTrends,
+      playerSessions: d7dtdState.playerSessions,
+      playerBaselines: d7dtdState.playerBaselines,
+      playerStreaks: d7dtdState.playerStreaks,
+  playerTravel: d7dtdState.playerTravel,
+  playerCraft: d7dtdState.playerCraft,
       lastSaved: Date.now()
     };
     fs.writeFileSync('./analytics.json', JSON.stringify(analyticsData, null, 2), 'utf8');
@@ -1248,15 +1400,27 @@ function saveAnalyticsData() {
 
 function loadAnalyticsData() {
   try {
-    if (fs.existsSync('./analytics.json')) {
-      const data = fs.readFileSync('./analytics.json', 'utf8');
-      const analyticsData = JSON.parse(data);
-      
-      // Restore player trends data
-      if (analyticsData.playerTrends) {
-        d7dtdState.playerTrends = analyticsData.playerTrends;
-  console.log(c.gray(`Analytics data loaded: ${d7dtdState.playerTrends.history.length} data points restored`));
-      }
+    if (!fs.existsSync('./analytics.json')) return;
+    const data = fs.readFileSync('./analytics.json', 'utf8');
+    const analyticsData = JSON.parse(data);
+    if (analyticsData.playerTrends) {
+      d7dtdState.playerTrends = analyticsData.playerTrends;
+      console.log(c.gray(`Analytics data loaded: ${d7dtdState.playerTrends.history.length} data points restored`));
+    }
+    if (analyticsData.playerSessions) {
+      d7dtdState.playerSessions = analyticsData.playerSessions;
+    }
+    if (analyticsData.playerBaselines) {
+      d7dtdState.playerBaselines = analyticsData.playerBaselines;
+    }
+    if (analyticsData.playerStreaks) {
+      d7dtdState.playerStreaks = analyticsData.playerStreaks;
+    }
+    if (analyticsData.playerTravel) {
+      d7dtdState.playerTravel = analyticsData.playerTravel;
+    }
+    if (analyticsData.playerCraft) {
+      d7dtdState.playerCraft = analyticsData.playerCraft;
     }
   } catch (error) {
     console.warn('Warning: Failed to load analytics data:', error.message);
@@ -1352,7 +1516,7 @@ function announceNewVersion(version) {
       },
       {
         name: "📋 Commands",
-        value: "`7d!info` - View all features and changelog\n`7d!dashboard` - Interactive control panel",
+        value: "`/info` - View all features and changelog\n`/dashboard` - Interactive control panel",
         inline: false
       }
     ],
@@ -1394,7 +1558,7 @@ function trackPlayerCount(playerCount, playerNames = []) {
   // Save analytics data after each update
   saveAnalyticsData();
   
-  console.log(`[TRENDS] Tracked ${playerCount} players at ${new Date().toLocaleTimeString()}`);
+  log.debug('[TRENDS]', `Tracked ${playerCount} players @ ${new Date().toLocaleTimeString()}`);
 }
 
 function generateTrendsReport() {
@@ -1442,6 +1606,7 @@ function generateTrendsReport() {
   report += `${trendEmoji} **Current**: ${currentCount} player${currentCount === 1 ? '' : 's'}\n`;
   report += `📋 **24h Average**: ${avgCount} players\n`;
   report += `🔝 **Peak**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
+  report += `\n`;
   
   // Enhanced activity insights
   report += `🎯 **Activity Insights**\n`;
@@ -1469,6 +1634,14 @@ function generateTrendsReport() {
   
   // Data collection info
   const dataAge = Math.round((Date.now() - history[0].timestamp) / (1000 * 60 * 60) * 10) / 10;
+  // Retention: unique players in last 24h
+  const twentyFourAgo = Date.now() - 24*60*60*1000;
+  const recentEntries = history.filter(h => h.timestamp >= twentyFourAgo);
+  const uniqueRecent = new Set();
+  recentEntries.forEach(e => (e.players||[]).forEach(p => uniqueRecent.add(p)));
+  const currentPlayersList = history[history.length-1].players || [];
+  const retention = uniqueRecent.size ? Math.round((currentPlayersList.length/uniqueRecent.size)*100) : 0;
+  report += `👥 **24h Unique**: ${uniqueRecent.size} | 🔄 **Retention**: ${retention}%\n`;
   report += `\n📡 *Tracking ${history.length} data points over ${dataAge}h*`;
   
   return report;
@@ -1750,26 +1923,16 @@ function generateChangesReport() {
   const v = pjson.version;
 
   return (
-  `**ℹ️ DeadLink v${v}** *(${currentDate})*\n` +
-
   `**🆕 Updates & Releases**\n` +
   `⬆️ **Update checks** — Private checks for new releases with admin helpers\n` +
-  `📢 **Public announcements** — Auto-post to a configured channel (updates.notifyMode/channel)\n` +
-  `📣 **On-demand announce** — \`7d!update announce\` posts the rich update embed\n` +
-  `📗 **Upgrade guides** — OS-specific steps reference the actual release tag\n\n` +
-    `**🎮 Core Commands**\n` +
-    `🎮 \`7d!dashboard\` — Interactive control panel\n` +
-    `📊 \`7d!trends\` — Player count analytics & trends\n` +
-  `🎯 \`7d!activity\` — Narrative activity with survival tips\n` +
-  `👥 \`7d!players\` — Who’s online\n` +
-    `⏰ \`7d!time\` — Current game time & horde context\n` +
-  `ℹ️ \`7d!info\` — This overview\n\n` +
-
-  `**🛠️ Update Helpers (admin-only)**\n` +
-  `🔎 \`7d!update check\` — Check latest release\n` +
-  `📝 \`7d!update notes\` — View release notes\n` +
-  `⬇️ \`7d!update guide [windows|linux]\` — Step-by-step upgrade\n` +
-  `📣 \`7d!update announce\` — Post the update embed on demand\n\n` +
+  `📢 **Public announcements** — Auto-post to a configured channel (updates.notifyMode/channel)\n\n` +
+    `**🎮 Core Actions**\n` +
+  `🎮 \`/dashboard\` — Interactive control panel (buttons for Activity, Players, Time)\n` +
+  `🎯 \`/activity\` — Narrative activity with survival tips\n` +
+  `👥 \`/players\` — Show current players online\n` +
+  `⏰ \`/time\` — Show current in-game time\n` +
+    `📊 \`/trends\` — Player count analytics & trends\n` +
+    `ℹ️ \`/info\` — This overview\n\n` +
 
   `**🤖 Intelligent Features**\n` +
   `🧠 Context-aware survival guidance\n` +
@@ -1779,22 +1942,19 @@ function generateChangesReport() {
   `**⚙️ Reliability & Security**\n` +
   `🔌 Telnet connect/reconnect lifecycle with basic auth\n` +
   `⏱️ Per-command timeouts; soft-success when servers don’t echo\n` +
-  `🔒 Secrets via environment variables; single-instance protection\n\n` +
-
-    `**🧩 Optional Config Snippets**\n` +
-    `bloodMoon: { enabled, intervalSeconds, frequency, broadcastInGame }\n` +
-  `updates: { enabled, intervalHours, prerelease, notifyMode, notifyChannel }`
+  `🔒 Secrets via environment variables; single-instance protection`
   );
 }
 
 function createDashboardEmbed() {
   const statusEmoji = d7dtdState.connStatus === 1 ? "🟢" : d7dtdState.connStatus === 0 ? "🟡" : "🔴";
   const statusText = d7dtdState.connStatus === 1 ? "Online" : d7dtdState.connStatus === 0 ? "Connecting..." : "Error";
+  const modeMsg = config["dev-mode"] ? "🧪 Dev" : "Live";
   
   return {
     color: 0x7289da, // Discord blurple
     title: "🎮 7 Days to Die Server Dashboard",
-    description: `${statusEmoji} **Server Status**: ${statusText}\n\n` +
+  description: `${statusEmoji} **Server Status**: ${statusText}\n🛠️ **Mode**: ${modeMsg}\n\n` +
                  `Welcome to the interactive server control panel! Use the buttons below to quickly access server information and analytics.\n\n` +
                  `🎯 **Activity** - Get detailed player activity reports\n` +
                  `📊 **Trends** - View player count analytics and trends\n` +
@@ -1897,6 +2057,46 @@ function createNavigationButtons(currentFeature) {
     type: 1, // Action Row
     components: buttons.slice(0, 5) // Discord limit of 5 buttons per row
   };
+}
+
+// Build a select menu (string select) for choosing a player to deep dive from the Players screen
+function createPlayerSelect(players, selectedName) {
+  try {
+    if (!Array.isArray(players) || players.length === 0) return null;
+    // Deduplicate by name & sort alphabetically
+    const uniq = Array.from(new Set(players.map(p => p.name))).sort((a,b)=>a.localeCompare(b));
+    const options = [];
+    if (uniq.length > 1) {
+      options.push({
+        label: 'All Players (List View)',
+        value: '__ALL__',
+        description: 'Return to full list view',
+        default: !selectedName || selectedName === '__ALL__'
+      });
+    }
+    uniq.slice(0, 24).forEach(name => { // 25 options max; reserve 1 for ALL
+      options.push({
+        label: name.length > 25 ? name.slice(0,22) + '…' : name,
+        value: name,
+        description: 'Deep dive analytics',
+        default: !!selectedName && selectedName.toLowerCase() === name.toLowerCase()
+      });
+    });
+    if (!options.length) return null;
+    return {
+      type: 1, // action row
+      components: [
+        {
+          type: 3, // string select
+          custom_id: 'player_select',
+          placeholder: 'Select player for deep dive',
+          min_values: 1,
+            max_values: 1,
+          options
+        }
+      ]
+    };
+  } catch(_) { return null; }
 }
 
 function handleDashboard(msg) {
@@ -2052,35 +2252,24 @@ function handlePlayersFromButton(interaction) {
   interaction.deferReply().then(() => {
   telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
-      let playerData = "";
+      const players = [];
+      let totalLine = '';
       processTelnetResponse(response, (line) => {
-        if (line.startsWith("Total of ")) {
-          playerData = line;
-          
+        if (line.includes('id=') && line.includes('pos=')) {
+          const p = parsePlayerData(line);
+          if (p) players.push(p);
+        } else if (line.startsWith('Total of ')) {
+          totalLine = line;
           const match = line.match(/Total of (\d+) players/);
-          if (match) {
-            const playerCount = parseInt(match[1]);
-            trackPlayerCount(playerCount);
-          }
+          if (match) trackPlayerCount(parseInt(match[1]));
         }
       });
-      
-      if (playerData) {
-        const embed = {
-          color: 0x2ecc71,
-          title: "👥 Current Players Online",
-          description: playerData,
-          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
-        };
-        
-        const navigationButtons = createNavigationButtons('dashboard_players');
-        interaction.editReply({ 
-          embeds: [embed],
-          components: [navigationButtons]
-        }).catch(console.error);
-      } else {
-        interaction.editReply("❌ No player data received.").catch(console.error);
-      }
+      const embed = buildPlayersEmbed(players, totalLine);
+      const navigationButtons = createNavigationButtons('dashboard_players');
+  const select = createPlayerSelect(players);
+  const components = [navigationButtons];
+  if (select) components.push(select);
+  interaction.editReply({ embeds: [embed], components }).catch(console.error);
   });
   }).catch(console.error);
 }
@@ -2119,13 +2308,7 @@ function handleInfoFromButton(interaction) {
     
     // Use the comprehensive changes content for info (same as main info command)
     const changesReport = generateChangesReport();
-    let latestLine = '';
-    try {
-      const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
-      if (info && info.tag && info.url) {
-        latestLine = `\n\n**Updates**\nLatest release: ${info.tag} • ${info.url}`;
-      }
-    } catch (_) { /* ignore */ }
+    const latestLine = `\n\n**Updates**\nLatest release: https://DeadLink.lol`;
   const infoContent = `Server connection: ${statusMsg}\nMode: ${modeMsg}\n\n${changesReport}${latestLine}`;
     
     const embed = {
@@ -2133,7 +2316,7 @@ function handleInfoFromButton(interaction) {
   title: "🎮 DeadLink Information & Features",
       description: infoContent,
       footer: {
-  text: `DeadLink v${pjson.version}`,
+  text: `DeadLink by CDRZ`,
       }
     };
     
@@ -2143,6 +2326,42 @@ function handleInfoFromButton(interaction) {
       components: [navigationButtons]
     }).catch(console.error);
   }).catch(console.error);
+}
+
+// Slash: /update with options { action: check|notes|announce }
+async function handleUpdateFromSlash(interaction) {
+  try {
+    // Defer to allow API calls
+    await interaction.deferReply({ ephemeral: false });
+    const action = (interaction.options && interaction.options.getString ? (interaction.options.getString('action') || 'check') : 'check').toLowerCase();
+    const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+    if (!info) {
+      return interaction.editReply('❌ Could not fetch release info.').catch(() => {});
+    }
+    const upToDate = !updates.isNewer(info.version);
+    const embed = buildUpdateEmbed(info, pjson.version, { upToDate });
+
+    // Always post publicly to the main channel (the interaction channel), per request
+    if (action === 'check') {
+      return interaction.editReply({ embeds: [embed] }).catch(() => {});
+    }
+    if (action === 'notes') {
+      const body = info.body && info.body.trim() ? info.body.slice(0, 3900) : 'No release notes available.';
+      const content = `Release notes for ${info.tag}:\n\n${body}\n\n${info.url}`;
+      return interaction.editReply({ content }).catch(() => {});
+    }
+    if (action === 'announce') {
+      // Announce to the channel where the command was used
+      try {
+        await interaction.editReply({ embeds: [embed] });
+      } catch (_) {}
+      return; // nothing else needed; this is the public announce
+    }
+    // Fallback
+    return interaction.editReply({ embeds: [embed] }).catch(() => {});
+  } catch (e) {
+    try { await interaction.editReply('❌ Update command failed.'); } catch(_) {}
+  }
 }
 
 function handleActivity(msg) {
@@ -2250,25 +2469,20 @@ function handlePlayers(msg) {
   try {
   telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
-      let playerData = "";
+      const players = [];
+      let totalLine = '';
       processTelnetResponse(response, (line) => {
-        if (line.startsWith("Total of ")) {
-          playerData = line;
+        if (line.includes('id=') && line.includes('pos=')) {
+          const p = parsePlayerData(line);
+          if (p) players.push(p);
+        } else if (line.startsWith('Total of ')) {
+          totalLine = line;
           const match = line.match(/Total of (\d+) players/);
           if (match) trackPlayerCount(parseInt(match[1]));
         }
       });
-      if (playerData) {
-        const embed = {
-          color: 0x2ecc71,
-          title: "👥 Current Players Online",
-          description: playerData,
-          footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}` }
-        };
-        msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(playerData));
-      } else {
-        msg.channel.send("❌ No player data received.").catch(() => {});
-      }
+      const embed = buildPlayersEmbed(players, totalLine);
+      msg.channel.send({ embeds: [embed] }).catch(() => msg.channel.send(totalLine || 'No data'));
   });
   } catch (_) {}
 }
@@ -2309,9 +2523,38 @@ function parsePlayerData(line) {
     const pingMatch = line.match(/ping=(\d+)/);
     
     if (nameMatch && posMatch) {
+      const name = nameMatch[1].trim();
+      const posStr = posMatch[1];
+      // Distance tracking (planar x,z)
+      try {
+        const parts = posStr.split(',').map(s=>s.trim());
+        const x = parseFloat(parts[0]);
+        const y = parseFloat(parts[1]);
+        const z = parseFloat(parts[2]);
+        if (!isNaN(x) && !isNaN(z)) {
+          let travel = d7dtdState.playerTravel[name];
+          if (!travel) {
+            travel = { lastPos: {x,y,z}, sessionDistance: 0, totalDistance: 0 };
+            d7dtdState.playerTravel[name] = travel;
+          } else {
+            const dx = x - (travel.lastPos.x||x);
+            const dz = z - (travel.lastPos.z||z);
+            const dist = Math.sqrt(dx*dx + dz*dz);
+            // Teleport / large jump filter ( > 800m in one snapshot )
+            if (dist > 0.5 && dist < 8000) {
+              travel.sessionDistance += dist;
+              travel.totalDistance += dist;
+              travel.lastPos = {x,y,z};
+              scheduleAnalyticsSave(8000);
+            } else {
+              travel.lastPos = {x,y,z};
+            }
+          }
+        }
+      } catch(_) {}
       return {
-        name: nameMatch[1].trim(),
-        pos: posMatch[1],
+        name,
+        pos: posStr,
         health: healthMatch ? healthMatch[1] : null,
         level: levelMatch ? levelMatch[1] : null,
         zombiesKilled: zombiesMatch ? zombiesMatch[1] : null,
@@ -2359,15 +2602,67 @@ function calculateHordeStatus(timeStr) {
 // ---- Discord wiring (minimal to enable hidden command and channel binding) ----
 client.on('ready', async () => {
   try {
-    console.log(`Discord logged in as ${client.user.tag}`);
-  console.log(`Commands prefix: '${(typeof prefix==='string'&&prefix)||'7d!'}'`);
-  console.log('If the bot does not respond to text commands, enable "Message Content Intent" in the Discord Developer Portal for this bot.');
+  log.success('[DISCORD]', `Logged in as ${client.user.tag}`);
+  // Bind channel immediately on ready (no text command binding)
+  if (config.channel) {
+    try {
+      const ch = await client.channels.fetch(config.channel.toString());
+      if (ch && ch.isText()) {
+        channel = ch;
+        guild = ch.guild || guild;
+        bloodMoon.start();
+  log.info('[DISCORD]', `Bound to channel ${ch.id}`);
+      }
+    } catch (_) { /* ignore */ }
+  }
   } catch (_) {}
 });
 
 // Handle button interactions from the dashboard UI
 client.on('interactionCreate', async (interaction) => {
   try {
+    // Player select menu (discord.js v13) detection
+    if (typeof interaction.isSelectMenu === 'function' && interaction.isSelectMenu()) {
+      if (interaction.customId === 'player_select') {
+        log.debug('[UI]', `Select menu chosen values=${JSON.stringify(interaction.values||[])} by ${interaction.user.tag}`);
+        const chosen = interaction.values && interaction.values[0];
+        try {
+          await interaction.deferUpdate();
+        } catch(_) {}
+        // Re-query live data for freshness
+        telnetQueue.exec('lp', { timeout: 7000 }).then(({err, response}) => {
+          try {
+            const players = [];
+            if (!err && response) {
+              processTelnetResponse(response, (line) => {
+                if (line.includes('id=') && line.includes('pos=')) {
+                  const p = parsePlayerData(line);
+                  if (p) players.push(p);
+                }
+              });
+            }
+            let embed;
+            if (!chosen || chosen === '__ALL__') {
+              const totalLine = `Total of ${players.length} players online`;
+              embed = buildPlayersEmbed(players, totalLine);
+            } else {
+              const snapshot = players.find(p => p.name.toLowerCase() === chosen.toLowerCase()) || null;
+              if (snapshot) ensurePlayerSession(snapshot.name);
+              embed = buildSinglePlayerEmbed(chosen, snapshot);
+            }
+            const nav = createNavigationButtons('dashboard_players');
+            const select = createPlayerSelect(players, chosen || '__ALL__');
+            const components = [nav];
+            if (select) components.push(select);
+            interaction.editReply({ embeds: [embed], components }).catch(()=>{});
+          } catch(inner) {
+            log.warn('[UI]', 'Failed building select update', inner.message||inner);
+            interaction.followUp({ content: '❌ Failed to update player view', ephemeral: true }).catch(()=>{});
+          }
+        });
+      }
+      return;
+    }
     if (interaction.isButton()) {
       handleButtonInteraction(interaction);
       return;
@@ -2379,11 +2674,34 @@ client.on('interactionCreate', async (interaction) => {
         const buttons = createDashboardButtons();
         return interaction.reply({ embeds: [embed], components: [buttons] }).catch(console.error);
       }
+      if (name === 'activity') {
+        return handleActivityFromButton(interaction);
+      }
+      if (name === 'players') {
+        return handlePlayersFromButton(interaction);
+      }
+      if (name === 'player') {
+        // If name option provided, deep dive; else list players
+        try {
+          const opt = interaction.options.getString('name');
+          if (opt) return handlePlayerDeepDive(interaction);
+        } catch(_) {}
+        return handlePlayersFromButton(interaction);
+      }
+      if (name === 'time') {
+        return handleTimeFromButton(interaction);
+      }
       if (name === 'trends') {
         return handleTrendsFromButton({ deferReply: () => interaction.deferReply(), editReply: (p) => interaction.editReply(p), user: interaction.user });
       }
       if (name === 'info') {
         return handleInfoFromButton(interaction);
+      }
+      if (name === 'update') {
+        return handleUpdateFromSlash(interaction);
+      }
+      if (name === 'bloodmoon') {
+        return handleBloodMoonTest(interaction);
       }
     }
   } catch (err) {
@@ -2391,195 +2709,209 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-client.on('messageCreate', async (msg) => {
-  try {
-    if (msg.author.bot) return;
-    // Bind channel by ID if configured and not yet bound
-    if (!channel && config.channel) {
-      try {
-        const ch = await msg.client.channels.fetch(config.channel.toString());
-        if (ch && ch.isText()) {
-          channel = ch;
-          guild = msg.guild || guild;
-          // Start Blood Moon monitor when channel is available
-          bloodMoon.start();
-        }
-      } catch (_) {}
-    }
-
-  const content = msg.content || '';
-  // Only accept the configured prefix (default '7d!'), but compare case-insensitively
-  const primaryPrefix = (typeof prefix === 'string' && prefix.length) ? prefix : '7d!';
-  const acceptLegacyBang = !!config["accept-legacy-exclamation-prefix"]; // optional toggle
-  let usedPrefix = null;
-  if (content.toLowerCase().startsWith(primaryPrefix.toLowerCase())) {
-    usedPrefix = primaryPrefix;
-  } else if (acceptLegacyBang && content.startsWith('!')) {
-    usedPrefix = '!';
-  }
-  if (!usedPrefix) {
-    // Friendly hint if the user tries legacy '!' prefix with a known command
-    const lc = content.toLowerCase();
-    if (lc.startsWith('!')) {
-      const maybe = lc.slice(1).trim().split(/\s+/)[0];
-      const alias = { bloonmoon: 'bloodmoon' };
-      const normalized = alias[maybe] || maybe;
-      const known = ['dashboard','trends','activity','players','time','info','update','bloodmoon'];
-      if (known.includes(normalized)) {
-        try { msg.reply(`Use the '${primaryPrefix}' prefix. Example: ${primaryPrefix}${normalized}`); } catch (_) {}
-      }
-    }
-    return;
-  }
-  const args = content.slice(usedPrefix.length).trim().split(/\s+/);
-    const cmd = (args.shift() || '').toLowerCase();
-
-    // Public dashboard and info suite
-    if (cmd === 'dashboard') {
-      handleDashboard(msg);
-      return;
-    }
-    if (cmd === 'trends') {
-      try { handleTrends(msg); } catch (_) {}
-      return;
-    }
-    if (cmd === 'activity') {
-      try { handleActivity(msg); } catch (_) {}
-      return;
-    }
-    if (cmd === 'players') {
-      try { handlePlayers(msg); } catch (_) {}
-      return;
-    }
-    if (cmd === 'time') {
-      try { handleTime(msg); } catch (_) {}
-      return;
-    }
-
-    // Hidden admin command: 7d!bloodmoon test <imminent|start|end>
-    if (cmd === 'bloodmoon' && args[0] === 'test') {
-      // Restrict: require MANAGE_GUILD permission
-      if (!msg.member || !msg.member.permissions || !msg.member.permissions.has('MANAGE_GUILD')) {
-        return; // silent
-      }
-      const kindMap = { imminent: 'imminent', start: 'active', end: 'ended' };
-      const kind = kindMap[(args[1] || '').toLowerCase()];
-      if (!kind) return;
-      const embed = bloodMoon.makeTestEmbed(kind, 'Admin test');
-      if (embed) {
-        msg.channel.send({ embeds: [embed] }).catch(() => {});
-      }
-      // Also broadcast in-game if enabled (attempt telnet connect on-demand)
-      try {
-        const bmCfg = (config.bloodMoon || {});
-        const broadcastInGame = bmCfg.broadcastInGame !== false;
-        if (broadcastInGame) {
-          const textMap = {
-            imminent: 'Blood Moon imminent! Horde begins in less than an hour.',
-            active: 'The Blood Moon is active! Seek shelter immediately!',
-            ended: 'The Blood Moon has ended. Regroup and rebuild.'
-          };
-          const msgText = textMap[kind];
-          if (msgText) {
-            const ready = await ensureTelnetReady(8000);
-            if (!ready && !(config["dev-mode"])) {
-              msg.reply('In-game broadcast skipped: telnet not connected.').catch(() => {});
-              return;
-            }
-            const cleaned = msgText.replace(/\"/g, '');
-            telnet.exec(`say "${cleaned}"`, { timeout: 5000 }, (err, resp) => {
-              if (err && err.message !== 'response not received') {
-                msg.reply(`In-game broadcast failed: ${err.message || 'unknown error'}`).catch(() => {});
-              } else {
-                msg.reply('In-game broadcast sent.').catch(() => {});
-              }
-            });
-          }
-        }
-      } catch (_) { /* ignore */ }
-      return;
-    }
-
-    // Public info command: 7d!info
-    if (cmd === 'info') {
-      try {
-        const statusMsg = d7dtdState.connStatus === 1 ? ':green_circle: Online' :
-                         d7dtdState.connStatus === 0 ? ':white_circle: Connecting...' :
-                         ':red_circle: Error';
-  const modeMsg = config["dev-mode"] ? '🧪 Dev' : 'Live';
-
-        const changesReport = generateChangesReport();
-        let latestLine = '';
-        try {
-          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
-          if (info && info.tag && info.url) {
-            latestLine = `\n\n**Updates**\nLatest release: ${info.tag} • ${info.url}`;
-          }
-        } catch (_) { /* ignore */ }
-
-        const embed = {
-          color: 0x7289da,
-          title: '🎮 DeadLink Information & Features',
-          description: `Server connection: ${statusMsg}\nMode: ${modeMsg}\n\n${changesReport}${latestLine}`,
-          footer: { text: `DeadLink v${pjson.version}` }
-        };
-        await msg.channel.send({ embeds: [embed] }).catch(() => {});
-      } catch (_) { /* ignore */ }
-      return;
-    }
-
-    // Admin-only update helpers (private)
-    if (cmd === 'update') {
-      if (!msg.member || !msg.member.permissions || !msg.member.permissions.has('MANAGE_GUILD')) {
-        return; // silent for non-admins
-      }
-      const sub = (args.shift() || '').toLowerCase();
-      if (sub === 'check') {
-        try {
-          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
-          if (!info) return msg.reply('No release info.').catch(() => {});
-          const newer = updates.isNewer(info.version);
-          return msg.reply(newer ? `New version available: v${info.version}\n${info.url}` : `You are on the latest: v${pjson.version}`).catch(() => {});
-        } catch (e) {
-          return msg.reply('Update check failed.').catch(() => {});
-        }
-      }
-      if (sub === 'notes') {
-        try {
-          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
-          if (!info) return msg.reply('No release info.').catch(() => {});
-          const body = (info.body || '').slice(0, 1500) || '(no notes)';
-          return msg.reply(`Latest: ${info.name}\n${info.url}\n\n${body}`).catch(() => {});
-        } catch (_) { return msg.reply('Could not fetch notes.').catch(() => {}); }
-      }
-      if (sub === 'announce') {
-        try {
-          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
-          if (!info) return msg.reply('No release info.').catch(() => {});
-          const upToDate = !updates.isNewer(info.version);
-          const embed = buildUpdateEmbed(info, pjson.version, { upToDate });
-          return msg.channel.send({ embeds: [embed] }).catch(() => {});
-        } catch (_) { return msg.reply('Announce failed.').catch(() => {}); }
-      }
-      if (sub === 'guide') {
-        const osArg = (args.shift() || '').toLowerCase();
-        const os = osArg.includes('lin') ? 'linux' : 'windows';
-        try {
-          const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
-          const tag = info && info.tag ? info.tag : ('v' + pjson.version);
-          const guide = updates.getGuide(os, tag);
-          return msg.reply(`Upgrade guide (${os}) for ${tag}:\n\n${guide}`).catch(() => {});
-        } catch (_) {
-          const guide = updates.getGuide(os, 'v' + pjson.version);
-          return msg.reply(`Upgrade guide (${os}):\n\n${guide}`).catch(() => {});
-        }
-      }
-  return msg.reply('Usage: 7d!update check|notes|guide [windows|linux]|announce').catch(() => {});
-    }
-  } catch (err) {
-    // ignore
-  }
-});
+// Legacy message-based commands removed — use slash commands and dashboard
 
 // Ensure login uses token from config/env earlier
 try { client.login(token); } catch (_) {}
+
+// Slash: /update with options { action: check|notes|announce }
+async function handleUpdateFromSlash(interaction) {
+  try {
+    await interaction.deferReply({ ephemeral: false });
+    const action = (interaction.options && interaction.options.getString ? (interaction.options.getString('action') || 'check') : 'check').toLowerCase();
+    const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+    if (!info) {
+      return interaction.editReply('❌ Could not fetch release info.').catch(() => {});
+    }
+    const upToDate = !updates.isNewer(info.version);
+    const embed = buildUpdateEmbed(info, pjson.version, { upToDate });
+    if (action === 'check') {
+      return interaction.editReply({ embeds: [embed] }).catch(() => {});
+    }
+    if (action === 'notes') {
+      const body = info.body && info.body.trim() ? info.body.slice(0, 3900) : 'No release notes available.';
+      const content = `Release notes for ${info.tag}:\n\n${body}\n\n${info.url}`;
+      return interaction.editReply({ content }).catch(() => {});
+    }
+    if (action === 'announce') {
+      try { await interaction.editReply({ embeds: [embed] }); } catch (_) {}
+      return;
+    }
+    return interaction.editReply({ embeds: [embed] }).catch(() => {});
+  } catch (e) {
+    try { await interaction.editReply('❌ Update command failed.'); } catch(_) {}
+  }
+}
+
+// Slash: /bloodmoon state:(imminent|active|ended) — admin only
+async function handleBloodMoonTest(interaction) {
+  try {
+    const member = interaction.member;
+    const perms = member && member.permissions;
+    if (!perms || !perms.has || !perms.has('MANAGE_GUILD')) {
+      return interaction.reply({ content: '❌ Admin only', ephemeral: true }).catch(() => {});
+    }
+    const state = interaction.options.getString('state');
+    const embed = bloodMoon.makeTestEmbed(state, `Test at ${new Date().toLocaleString('en-US')}`);
+    return interaction.reply({ embeds: [embed] }).catch(() => {});
+  } catch (_) {
+    try { await interaction.reply({ content: '❌ Blood Moon test failed', ephemeral: true }); } catch {}
+  }
+}
+
+function ensurePlayerSession(name) {
+  const now = Date.now();
+  let s = d7dtdState.playerSessions[name];
+  if (!s) {
+    s = { start: now, lastSeen: now };
+    d7dtdState.playerSessions[name] = s;
+  } else {
+    s.lastSeen = now;
+  }
+  return s;
+}
+
+function formatDuration(ms) {
+  const mins = Math.floor(ms / 60000);
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+function healthStatus(health) {
+  const hp = parseInt(health || '0');
+  if (isNaN(hp)) return 'Unknown';
+  if (hp >= 80) return 'Excellent';
+  if (hp >= 60) return 'Good';
+  if (hp >= 40) return 'Wounded';
+  if (hp >= 20) return 'Critical';
+  return 'Near-Death';
+}
+
+function pingQuality(ping) {
+  const p = parseInt(ping || '0');
+  if (isNaN(p)) return '❓';
+  if (p < 60) return '🟢';
+  if (p < 120) return '🟡';
+  if (p < 200) return '🟠';
+  return '🔴';
+}
+
+function clusterPlayers(players, threshold = 150) {
+  // Simple union-find clustering on x,z distance
+  const coords = players.map(p => {
+    if (!p.pos) return { x: 0, z: 0 };
+    const parts = p.pos.split(',');
+    return { x: parseFloat(parts[0]) || 0, z: parseFloat(parts[2]) || 0 };
+  });
+  const parent = players.map((_, i) => i);
+  const find = (i) => parent[i] === i ? i : (parent[i] = find(parent[i]));
+  const unite = (a,b) => { a=find(a); b=find(b); if(a!==b) parent[b]=a; };
+  for (let i=0;i<players.length;i++) {
+    for (let j=i+1;j<players.length;j++) {
+      const dx = coords[i].x - coords[j].x;
+      const dz = coords[i].z - coords[j].z;
+      const dist = Math.sqrt(dx*dx + dz*dz);
+      if (dist <= threshold) unite(i,j);
+    }
+  }
+  const groups = {};
+  players.forEach((_, i) => {
+    const r = find(i);
+    groups[r] = groups[r] || [];
+    groups[r].push(players[i]);
+  });
+  return Object.values(groups).sort((a,b)=>b.length-a.length);
+}
+
+function buildPlayersEmbed(players, totalLine) {
+  const now = Date.now();
+  if (!players.length) {
+    return {
+      color: 0x2ecc71,
+      title: '👥 Current Players Online',
+      description: totalLine || 'No players online',
+      footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit' })}` }
+    };
+  }
+  // Sessions & per-player lines
+  const lines = [];
+  players.forEach(p => {
+    ensurePlayerSession(p.name);
+    const sess = d7dtdState.playerSessions[p.name];
+    const dur = formatDuration(now - sess.start);
+    const k = parseInt(p.zombiesKilled || '0');
+    const d = parseInt(p.deaths || '0');
+    const kd = d === 0 ? k : (k/d).toFixed(1);
+    // Baseline for KPM
+    if (!d7dtdState.playerBaselines[p.name]) {
+      d7dtdState.playerBaselines[p.name] = { killsAtStart: k, deathsAtStart: d };
+    }
+    const base = d7dtdState.playerBaselines[p.name];
+    const minsPlayed = Math.max(1, Math.floor((now - sess.start)/60000));
+    const kpm = ((k - base.killsAtStart)/minsPlayed).toFixed(2);
+    const hp = p.health ? `${p.health}%` : '—';
+    const hs = healthStatus(p.health);
+    const pq = pingQuality(p.ping);
+    let loc = getLocationDescription(p.pos);
+    if (loc.length > 50) loc = loc.slice(0,47) + '…';
+  const streakInfo = d7dtdState.playerStreaks[p.name] || { lastDeathAt: null, longestMinutes: 0 };
+  const currentStreakMins = streakInfo.lastDeathAt ? Math.floor((now - streakInfo.lastDeathAt)/60000) : 0;
+  const streakDisplay = streakInfo.longestMinutes > 0 ? `🔥 ${Math.max(currentStreakMins,0)}m (PB ${streakInfo.longestMinutes}m)` : `🔥 ${currentStreakMins}m`;
+  const travel = d7dtdState.playerTravel[p.name] || { sessionDistance: 0 };
+  const distDisplay = travel.sessionDistance ? `📏 ${Math.round(travel.sessionDistance)}m` : '📏 0m';
+  lines.push(`**${p.name}** L${p.level||'?'} | ❤️ ${hp} (${hs}) | K/D ${kd} | 🧟 ${k} | ⚔️ ${kpm}kpm | ☠️ ${d} | ${pq} ${p.ping||'?'}ms | ${distDisplay} | ⏱️ ${dur} | ${streakDisplay}\n↳ ${loc}`);
+  });
+  // MVP (highest kpm)
+  let mvp = null; let best = -1;
+  players.forEach(p => {
+    const k = parseInt(p.zombiesKilled||'0');
+    const base = d7dtdState.playerBaselines[p.name] || { killsAtStart: k };
+    const sess = d7dtdState.playerSessions[p.name];
+    const mins = Math.max(1, Math.floor((now - sess.start)/60000));
+    const rate = (k - base.killsAtStart)/mins;
+    if (rate > best) { best = rate; mvp = p.name; }
+  });
+  // Clusters
+  const clusters = clusterPlayers(players);
+  const largest = clusters[0] || [];
+  const isolated = clusters.filter(c=>c.length===1).length;
+  const clusterSummary = `Clusters: ${clusters.length} | Largest: ${largest.length} | Isolated: ${isolated}`;
+  const mvpLine = mvp ? `🏅 **MVP**: ${mvp} (top kill rate)` : '';
+  const description = `${totalLine}\n\n${lines.join('\n\n')}\n\n${clusterSummary}${mvpLine?`\n${mvpLine}`:''}`;
+  return {
+    color: 0x2ecc71,
+    title: '👥 Current Players Online',
+    description: description.slice(0, 4000),
+    footer: { text: `Data collected on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit' })}` }
+  };
+}
+
+async function handlePlayerDeepDive(interaction) {
+  try {
+    const target = interaction.options.getString('name');
+    if (!target) {
+      return interaction.reply({ content: '❌ Provide a player name', ephemeral: true }).catch(()=>{});
+    }
+    await interaction.deferReply();
+    // Query live list players
+    telnetQueue.exec('lp', { timeout: 7000 }).then(({err, response}) => {
+      if (err) return interaction.editReply('❌ Failed to query server.');
+      const players = [];
+      processTelnetResponse(response, (line) => {
+        if (line.includes('id=') && line.includes('pos=')) {
+          const p = parsePlayerData(line);
+          if (p) players.push(p);
+        }
+      });
+      const snapshot = players.find(p => p.name.toLowerCase() === target.toLowerCase());
+      if (snapshot) {
+        ensurePlayerSession(snapshot.name);
+      }
+      const embed = buildSinglePlayerEmbed(target, snapshot);
+      interaction.editReply({ embeds: [embed] }).catch(()=>{});
+    });
+  } catch (e) {
+    try { interaction.editReply('❌ Deep dive failed'); } catch(_) {}
+  }
+}

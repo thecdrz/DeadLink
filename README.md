@@ -7,10 +7,11 @@
 DeadLink is a modern 7 Days to Die Server Companion that integrates your server with Discord. It provides a clean dashboard, real‑time analytics, horde‑night context, and safe server actions—purpose‑built for running and showcasing your world. Docker‑friendly, secure by default, and tuned for smooth screenshot and admin workflows.
 
 ## Highlights
-### New in v2.10.0
+### Highlights
+- Slash commands + Dashboard UI for all interactions (legacy text commands removed)
 - Safer telnet commands via a queued executor with light rate limiting
 - Friendlier user errors when the server is loading/not connected/timeouts
-- Optional PNG trend charts in `7d!trends` (falls back to ASCII if deps missing)
+- Optional PNG trend charts in Trends (falls back to ASCII if deps missing)
 - Optional config validation (zod) with human-readable warnings
 - Test scaffolding (Jest) for quick smoke checks
 
@@ -19,12 +20,16 @@ Note: PNG charts and validation use optional deps; install them with npm if desi
 
 DeadLink runs as a completely separate application, so no mods are required. **Dedicated servers on PC only.**
 
-## Slash Commands (optional)
-DeadLink supports the following slash commands:
+## Slash Commands
+DeadLink now uses slash commands for everything. Use these:
 
 - `/dashboard` – Show the interactive dashboard with buttons
+- `/activity` – Show the latest narrative activity report
+- `/players` – Show current players online
+- `/time` – Show current in-game time
 - `/trends` – Show player analytics and trends
 - `/info` – Show DeadLink information and features
+ - `/update` – Check latest release, view notes, or announce (public)
 
 To register commands, set these environment variables:
 
@@ -44,20 +49,27 @@ $env:DISCORD_GUILD_ID = "<your_guild_id>"; npm run slash:guild
 
 Re-run the script any time to update commands (it replaces the set).
 
-## 🎮 Commands
+### Finding your Guild (Server) ID
+In Discord, enable Developer Mode (User Settings → Advanced → Developer Mode). Then right‑click your server name in the left sidebar and click “Copy Server ID.” That’s your `DISCORD_GUILD_ID`.
 
-- `7d!dashboard` - Interactive GUI with clickable buttons ⭐ **NEW!**
-- `7d!activity` - Dynamic narrative reports with humor and intelligent storytelling ⭐ **ENHANCED in v2.5.0!**
-- `7d!trends` - Player count analytics with enhanced insights and pattern analysis ⭐ **ENHANCED!**
-- `7d!players` - Current online players
-- `7d!time` - Current game time
-- `7d!info` - Complete feature overview and server information ⭐ **ENHANCED!**
+### Recommended .env entries
+Add these lines to your `.env` in the project root so both the bot and the registration script pick them up:
 
-Admin-only utilities (requires Manage Server permission):
-- `7d!bloodmoon test imminent|start|end` — Send a test Blood Moon alert (also broadcasts in-game if enabled)
-- `7d!update check|notes|guide [windows|linux]|announce` — Update helpers and on-demand announcement
+```
+DISCORD_TOKEN=your_bot_token
+DISCORD_CLIENT_ID=your_application_client_id
+DISCORD_GUILD_ID=your_server_id   # optional, for instant guild registration
+```
 
-💡 **Pro Tip**: Use `7d!dashboard` for the best experience - click buttons instead of typing commands!
+## 🎮 Dashboard + Slash Commands
+
+- `/dashboard` — Interactive GUI with clickable buttons for Activity, Players, Time, Info
+- `/trends` — Player count analytics with enhanced insights and pattern analysis
+- `/info` — Complete feature overview and server information
+
+Admin-only helpers (Manage Server permission) are available via UI/buttons or future admin slash commands.
+
+💡 Pro Tip: Use `/dashboard` for the best experience—click buttons instead of typing.
 
 ## 📸 Screenshots
 
@@ -85,17 +97,20 @@ Admin-only utilities (requires Manage Server permission):
 ### Version Update Announcement (Admin test)
 ![DeadLink Update Check](screenshots/HC_UpdateCheck.png)
 
-*Rich embed showing the latest release. Use `7d!update announce` to print this on demand; auto-posts can be enabled via the `updates` config.*
+*Rich embed showing the latest release. Auto-posts can be enabled via the `updates` config.*
 
-## Latest Release: v2.11.5
+## Latest Release: v2.12.0
 
-- Info: New “Mode” line on Info screen (shows Live or 🧪 Dev)
-- Info: Reordered sections (Core Commands above Update Helpers)
-- UX: Legacy `!` prefix toggle (enabled) and friendly hint for `!command` usage
-- UX: Typo helper for `!bloonmoon` → suggests `7d!bloodmoon`
-- Docs: Added alternate landing pages and updated screenshots (logo-L)
+Key additions:
+- Player Deep Dive select menu in Players dashboard
+- Distance tracking (session + lifetime) + avg speed
+- Offline deep dive enhancements (last seen, lifetime distance, PB streak)
+- Deathless streak persistence & PB tracking
+- Rotating file logs + startup summary, unified log levels
+- Deferred heartbeat until telnet + analytics loaded
+- Players list now shows distance metric
 
-Release notes: https://github.com/thecdrz/DeadLink/releases/tag/v2.11.5
+Full notes: `RELEASE_NOTES_v2.12.0.md`
 
 # How it Works
 DeadLink connects to your server’s telnet console to read game state (chat, players, time) and post summarized insights to Discord. It supports sending selected messages back to the server (optional), but its focus is a reliable companion experience: analytics, alerts, and an interactive control panel.
@@ -124,20 +139,20 @@ Original project: https://github.com/LakeYS/Dishorde
 
 # Configuration
 The bot can be configured by editing config.json. Here's a list of the preferences:
-- `allow-exec-command` - Enables a command called `7d!exec`. This allows anybody with the 'manage server' permission to execute commands on the server. The command works in any channel. **WARNING: Enabling this may pose a security risk for your server.**
+- `allow-exec-command` - Enables running telnet console commands from Discord (admin-only). **WARNING: This may pose a security risk for your server.**
 - `allow-multiple-instances` - By default, the bot will not start if there is another copy of it already running. Enabling this will allow multiple instances of the bot to run on one system.
 - `allow-links-from-game` - Allows players in-game to post links into Discord. When set to false, links will still show up, but will not be clickable. When enabled, links may include embeds in Discord unless you configure the bot's permissions otherwise.
-- `disable-commands` - Disable Discord commands such as 7d!time. Does not disable 7d!info.
+- `disable-commands` - Legacy; no effect in slash-only mode.
 - `disable-chatmsgs` - Disable chat messages to and from the server. Does not disable other in-game messages such as join/leave and deaths.
 - `disable-join-leave-gmsgs` - Disables player join/leave messages.
 - `disable-misc-gmsgs` - Disables all other global messages (player deaths, etc.)
 - `disable-non-player-chatmsgs` - Disables chat messages sent by non-players. (Including the "say" console command and mods)
 - `disable-status-updates` - Disable the bot's presence and online status display.
-- `hide-prefix` - Hides all chat messages that start with a forward slash. This may be useful if your server uses commands.
+- `hide-prefix` - Legacy; relates to in-game chat relay filtering.
 - `log-console` - Enables logging of the bot's console to a file, console.log.
 - `log-messages` - Chat messages will show up in the terminal.
 - `log-telnet` - All output from the connection will show up in the terminal.
-- `prefix` - The prefix for bot commands. ('7d!' by default)
+- `prefix` - Legacy; text commands removed.
 
 - `skip-discord-auth` - The bot will not log in to Discord.
 
@@ -221,7 +236,7 @@ Notes:
 ## Creating the bot account
 1. Log in to the [Discord Developer Portal](https://discord.com/developers) in a browser and click "Create an application". Name the bot anything you'd like. Write down the application ID as you'll need it for later.
 2. On the left hand side, click "Bot". Now click the "Add Bot" button to create your bot. Once created, you can set an avatar for your bot if desired.
-3. Under "Privileged Gateway Intents", locate the "Message Content Intent" switch and turn this on. ***Important**! If you do not turn this on, the bot will not be able to see your messages or commands.*
+3. Under "Privileged Gateway Intents", Message Content is NOT required for slash commands and the dashboard. You can leave it off.
 4. Under "Authorization Flow", locate the "Public Bot" switch and turn this off. ***Important!** If you do not turn this off, anyone can create a link to invite your server's bot to their own server.*
 5. Click "Save Changes" to confirm.
 6. Back towards the top, click the "Reset Token" button and reset the token. When done, the button will be replaced by a long set of letters and numbers. This is your bot's 'token'--like a password for your bot's account. You'll need both this and the Client ID number later. Copy them both somewhere safe or keep the tab open. ***Note!** Once you close the page, you will not be able to retrieve your bot's token without resetting it.*
@@ -242,7 +257,7 @@ Notes:
 Once you complete all of this, you will be able to run the bot by opening run.bat. If you've done all of this correctly, you will see the following in the terminal:
 `Connected to game. Connected to 1 Discord Servers.`
 
-To set the channel for your server's chat, open Discord and type `7d!setchannel #yourchannel` in your server. If the setchannel command doesn't work, try [setting it manually](https://github.com/LakeYS/Dishorde/wiki/Setting-up-the-channel-manually). Once complete, the bot should be all set!
+Bind your Discord channel by setting DISCORD_CHANNEL in config.json or as an environment variable. Once complete, the bot should be all set!
 
 
 Note that if you close this terminal the bot will be disconnected. The bot can be run in the background with no terminal by opening run_silent.vbs.
@@ -264,7 +279,7 @@ You may want to create a shortcut to run.bat or run_silent.vbs in your Startup f
 ## Creating the bot account
 1. Log in to the [Discord Developer Portal](https://discord.com/developers) in a browser and click "Create an application". Name the bot anything you'd like. Write down the application ID as you'll need it for later.
 2. On the left hand side, click "Bot". Now click the "Add Bot" button to create your bot. Once created, you can set an avatar for your bot if desired.
-3. Under "Privileged Gateway Intents", locate the "Message Content Intent" switch and turn this on. ***Important**! If you do not turn this on, the bot will not be able to see your messages or commands.*
+3. Under "Privileged Gateway Intents", Message Content is NOT required for slash commands and the dashboard. You can leave it off.
 4. Under "Authorization Flow", locate the "Public Bot" switch and turn this off. ***Important!** If you do not turn this off, anyone can create a link to invite your server's bot to their own server.*
 5. Click "Save Changes" to confirm.
 6. Back towards the top, click the "Reset Token" button and reset the token. When done, the button will be replaced by a long set of letters and numbers. This is your bot's 'token'--like a password for your bot's account. You'll need both this and the Client ID number later. Copy them both somewhere safe or keep the tab open. ***Note!** Once you close the page, you will not be able to retrieve your bot's token without resetting it.*
@@ -284,4 +299,4 @@ You may want to create a shortcut to run.bat or run_silent.vbs in your Startup f
 Once you complete all of this, you will be able to run the bot by executing run.sh (Navigate to the bot's directory and enter `./run.sh`). If you've done all of this correctly, you will see the following:
 `Connected to game. Connected to 1 Discord Servers.`
 
-To set the channel for your server's chat, open Discord and type `7d!setchannel #yourchannel` in your server. If the setchannel command doesn't work, try [setting it manually](https://github.com/LakeYS/Dishorde/wiki/Setting-up-the-channel-manually). Once complete, the bot should be all set!
+Bind your Discord channel by setting DISCORD_CHANNEL in config.json or as an environment variable. Once complete, the bot should be all set!

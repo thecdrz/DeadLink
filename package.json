@@ -1,13 +1,13 @@
 {
   "name": "deadlink",
-  "version": "2.11.5",
+  "version": "2.12.0",
   "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, dynamic narrative storytelling, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by CDRZ.",
   "main": "index.js",
   "scripts": {
   "start": "node index.js",
   "test": "jest --runInBand",
   "slash:global": "node scripts/register-commands.js --global",
-  "slash:guild": "node scripts/register-commands.js --guild %DISCORD_GUILD_ID%"
+  "slash:guild": "node scripts/register-commands.js --guild"
   },
   "author": "CDRZ (built on Dishorde by LakeYS)",
   "license": "MIT",

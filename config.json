@@ -27,8 +27,7 @@
   "log-console": false,
   "log-messages": false,
   "log-telnet": true,
-  "prefix": "7d!",
-  "accept-legacy-exclamation-prefix": true,
+  
   "dev-mode": false,
   "updates": {
     "enabled": true,

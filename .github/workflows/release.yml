@@ -38,8 +38,20 @@ jobs:
           FILE=".github/release-body-${TAG}.md"
           if [ -f "$FILE" ]; then
             echo "BODY=$FILE" >> $GITHUB_OUTPUT
+          elif [ -f "RELEASE_NOTES_${TAG}.md" ]; then
+            echo "BODY=RELEASE_NOTES_${TAG}.md" >> $GITHUB_OUTPUT
           else
             echo "BODY=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set flags
+        id: flags
+        shell: bash
+        run: |
+          if [ -n "${{ steps.body.outputs.BODY }}" ]; then
+            echo "GEN=false" >> $GITHUB_OUTPUT
+          else
+            echo "GEN=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Create GitHub Release
@@ -48,7 +60,7 @@ jobs:
           tag_name: ${{ steps.vars.outputs.TAG }}
           name: DeadLink ${{ steps.vars.outputs.TAG }}
           body_path: ${{ steps.body.outputs.BODY }}
-          generate_release_notes: true
+          generate_release_notes: ${{ steps.flags.outputs.GEN }}
           draft: false
           prerelease: false
           make_latest: true
