@@ -65,7 +65,22 @@ async function main() {
 
   const commands = [
     { name: 'dashboard', description: 'Show the 7 Days to Die server dashboard' },
-  { name: 'activity', description: 'Show the latest narrative activity report' },
+    {
+      name: 'activity',
+      description: 'Show the latest narrative activity report',
+      options: [
+        {
+          name: 'mode',
+          description: 'Choose brief (default) or full narrative view',
+          type: 3,
+          required: false,
+          choices: [
+            { name: 'brief', value: 'brief' },
+            { name: 'full', value: 'full' }
+          ]
+        }
+      ]
+    },
     { name: 'players', description: 'Show current players online' },
   { name: 'player', description: 'List players or deep dive one', options: [ { name: 'name', description: 'Player name for deep dive', type: 3, required: false } ] },
     { name: 'time', description: 'Show current in-game time' },

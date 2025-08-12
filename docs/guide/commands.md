@@ -2,7 +2,7 @@
 
 Slash commands (guild-scoped):
 - /dashboard — Opens the interactive dashboard
-- /activity — Narrative server activity
+- /activity [mode] — Narrative server activity (mode: brief|full)
 - /players — Current players list
 - /player [name] — Deep-dive on a player
 - /time — Current in-game time and horde ETA

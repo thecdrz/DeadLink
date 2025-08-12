@@ -1,6 +1,6 @@
 # DeadLink – 7 Days to Die Server Companion
 
-<img alt="DeadLink logo" src="docs/assets/deadlink-logo.png" width="140"/>
+<img alt="DeadLink logo" src="docs/assets/deadlink-logo.png" width="256"/>
 
 [![Latest release](https://img.shields.io/github/v/release/thecdrz/DeadLink?sort=semver)](https://github.com/thecdrz/DeadLink/releases/latest)
 
@@ -24,7 +24,8 @@ DeadLink runs as a separate companion via telnet—no game mods required. **Supp
 DeadLink now uses slash commands for everything. Use these:
 
 - `/dashboard` – Show the interactive dashboard with buttons
-- `/activity` – Show the latest narrative activity report
+- `/activity [mode]` – Show the latest activity (mode: `brief` default | `full`)
+	- Defaults to a compact summary; use the in-message “Details” button or `/activity full` for the full narrative.
 - `/players` – Show current players online
 - `/time` – Show current in-game time
 - `/trends` – Show player analytics and trends
@@ -77,18 +78,9 @@ Live gallery and docs site:
 - Website: https://thecdrz.github.io/DeadLink/
 - Gallery: https://thecdrz.github.io/DeadLink/gallery.html
 
-### Live Embed Previews (Generated)
-These previews are generated with our snapshot tool and reflect the current UI styling:
-
-![Dashboard Trends](screenshots/dashboard-trends.png)
-![Activity](screenshots/activity.png)
-![Players](screenshots/players.png)
-![Time](screenshots/time.png)
-![Player Deep Dive](screenshots/player-deep-dive.png)
-
 See the website for a quick tour: https://thecdrz.github.io/DeadLink/
 
-## Latest Release: v2.12.1
+## Latest Release: v2.12.2
 
 Key additions:
 - Player Deep Dive select menu in Players dashboard
@@ -99,7 +91,7 @@ Key additions:
 - Deferred heartbeat until telnet + analytics loaded
 - Players list now shows distance metric
 
-Full notes: `RELEASE_NOTES_v2.12.1.md`
+Full notes: `RELEASE_NOTES_v2.12.2.md`
 
 # How it Works
 DeadLink connects to your server’s telnet console to read game state (chat, players, time) and post summarized insights to Discord. It supports sending selected messages back to the server (optional), but its focus is a reliable companion experience: analytics, alerts, and an interactive control panel.

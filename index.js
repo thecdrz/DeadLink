@@ -113,7 +113,7 @@ const log = (() => {
 console.log(banner + "\n" + c.bold(`DeadLink v${pjson.version}`));
 log.warn('[SEC]', 'Remote connections to 7 Days to Die servers are not encrypted.');
 log.info('[SEC]', 'Use only on trusted networks with a unique telnet password.');
-log.info('[CREDITS]', 'Originally inspired by Dishorde (LakeYS) – thanks! DeadLink has since become a near full rewrite.');
+log.info('[CREDITS]', 'Originally inspired by Dishorde (LakeYS) - thanks! DeadLink has since become a near full rewrite.');
 // Summarize existing rotated logs
 try {
   const dir = './logs';
@@ -1762,7 +1762,7 @@ function generateChangesReport() {
   `📢 **Public announcements** — Auto-post to a configured channel (updates.notifyMode/channel)\n\n` +
     `**🎮 Core Actions**\n` +
   `🎮 \`/dashboard\` — Interactive control panel (buttons for Activity, Players, Time)\n` +
-  `🎯 \`/activity\` — Narrative activity with survival tips\n` +
+  `🎯 \`/activity [mode]\` — Narrative activity (mode: brief|full)\n` +
   `👥 \`/players\` — Show current players online\n` +
   `⏰ \`/time\` — Show current in-game time\n` +
     `📊 \`/trends\` — Player count analytics & trends\n` +
@@ -1793,7 +1793,7 @@ function createDashboardEmbed() {
                  `🎯 **Activity** - Get detailed player activity reports\n` +
                  `📊 **Trends** - View player count analytics and trends\n` +
                  `👥 **Players** - See current online players\n` +
-                 `⏰ **Time** - Check current game time\n` +
+                 `⏰ **Time** - Use /time to check current game time\n` +
                  `ℹ️ **Info** - Server version and details`,
     footer: {
   text: `DeadLink v${pjson.version}`,
@@ -1808,9 +1808,9 @@ function createDashboardButtons() {
     components: [
       { type: 2, style: 1, label: '🏠 Dashboard', custom_id: 'dashboard', disabled: false },
       { type: 2, style: 1, label: '🎯 Activity', custom_id: 'dashboard_activity', disabled: d7dtdState.connStatus !== 1 },
-      { type: 2, style: 3, label: '👥 Players', custom_id: 'dashboard_players', disabled: d7dtdState.connStatus !== 1 },
-      { type: 2, style: 1, label: '⏰ Time', custom_id: 'dashboard_time', disabled: d7dtdState.connStatus !== 1 },
-      { type: 2, style: 4, label: 'ℹ️ Info', custom_id: 'dashboard_info', disabled: false }
+  { type: 2, style: 1, label: '📊 Trends', custom_id: 'dashboard_trends', disabled: false },
+  { type: 2, style: 3, label: '👥 Players', custom_id: 'dashboard_players', disabled: d7dtdState.connStatus !== 1 },
+  { type: 2, style: 4, label: 'ℹ️ Info', custom_id: 'dashboard_info', disabled: false }
     ]
   };
 }
@@ -1887,6 +1887,12 @@ function handleButtonInteraction(interaction) {
   try { telemetry.send('ui_click', { target: 'activity' }); } catch(_) {}
       handleActivityFromButton(interaction);
       break;
+    case 'activity_details':
+      handleActivityDetailsFromButton(interaction);
+      break;
+    case 'activity_brief':
+      handleActivityBriefFromButton(interaction);
+      break;
       
     case 'dashboard_trends':
       console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Trends button`);
@@ -1962,19 +1968,16 @@ function handleActivityFromButton(interaction) {
                 const playerNames = d7dtdState.activityData.players.map(p => p.name);
                 trackPlayerCount(d7dtdState.activityData.players.length, playerNames);
                 
-                const activityMessage = generateActivityMessage(
+                // Build brief summary by default
+                const brief = buildActivityBrief(
                   d7dtdState.activityData.players,
                   d7dtdState.activityData.time,
                   d7dtdState.activityData.hordeTime
                 );
-                
-                const embed = activityEmbed({ description: activityMessage });
-                
+                const embed = activityEmbed({ description: brief });
                 const navigationButtons = createNavigationButtons();
-                interaction.editReply({ 
-                  embeds: [embed],
-                  components: [navigationButtons]
-                }).catch(console.error);
+                const toggleRow = createActivityToggleRow('brief');
+                interaction.editReply({ embeds: [embed], components: [navigationButtons, toggleRow] }).catch(console.error);
               }
             });
           } else {
@@ -1985,7 +1988,101 @@ function handleActivityFromButton(interaction) {
         interaction.editReply("❌ Failed to connect to server.").catch(console.error);
       }
     });
-  }).catch(console.error);
+  }).catch((e) => { /* Ignore Unknown interaction (double-clicks/expired) */ });
+}
+
+// Toggle: Show details (full narrative)
+function handleActivityDetailsFromButton(interaction) {
+  try { telemetry.send('ui_click', { target: 'activity_details' }); } catch(_) {}
+  interaction.deferReply().then(() => {
+    // Use fresh data for details
+    const activity = { players: [], time: null, hordeTime: null };
+    telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
+      if (!err) {
+        processTelnetResponse(response, (line) => {
+          if (line.includes("id=") && line.includes("pos=")) {
+            const playerData = parsePlayerData(line);
+            if (playerData) activity.players.push(playerData);
+          }
+        });
+        telnetQueue.exec("gettime", { timeout: 5000 }).then(({err: timeErr, response: timeResponse}) => {
+          if (!timeErr) {
+            processTelnetResponse(timeResponse, (timeLine) => {
+              if (timeLine.startsWith("Day")) {
+                activity.time = timeLine;
+                activity.hordeTime = calculateHordeStatus(timeLine);
+              }
+            });
+            const activityMessage = generateActivityMessage(activity.players, activity.time, activity.hordeTime);
+            const embed = activityEmbed({ description: activityMessage });
+            const navigationButtons = createNavigationButtons();
+            const toggleRow = createActivityToggleRow('details');
+            interaction.editReply({ embeds: [embed], components: [navigationButtons, toggleRow] }).catch(()=>{});
+          } else {
+            interaction.editReply("❌ Failed to get server time.").catch(()=>{});
+          }
+        });
+      } else {
+        interaction.editReply("❌ Failed to connect to server.").catch(()=>{});
+      }
+    });
+  }).catch(()=>{});
+}
+
+// Toggle: Back to brief
+function handleActivityBriefFromButton(interaction) {
+  try { telemetry.send('ui_click', { target: 'activity_brief' }); } catch(_) {}
+  return handleActivityFromButton(interaction);
+}
+
+// Build a compact Activity summary
+function buildActivityBrief(players, timeStr, hordeMsg) {
+  try {
+    const count = players.length;
+    const header = `👥 ${count} online${timeStr ? ` | ${timeStr}` : ''}`;
+    // Alerts
+    const lowHealth = players.filter(p => (parseInt(p.health||'0')||0) < 40).slice(0, 3).map(p => `${p.name} ${p.health}%`);
+    const highPing = players.filter(p => (parseInt(p.ping||'0')||0) > 150).slice(0, 2).map(p => `${p.name} ${p.ping}ms`);
+    const alerts = [];
+    if (lowHealth.length) alerts.push(`🩹 Low HP: ${lowHealth.join(', ')}`);
+    if (highPing.length) alerts.push(`📶 High ping: ${highPing.join(', ')}`);
+    // Clusters
+    let clusterLine = '';
+    try {
+      const clusters = clusterPlayers(players);
+      const largest = clusters[0] || [];
+      const isolated = clusters.filter(c=>c.length===1).length;
+      clusterLine = `🏘️ Clusters: ${clusters.length} | Largest: ${largest.length} | Isolated: ${isolated}`;
+    } catch(_) {}
+    // Player chips (max 6)
+    const chips = players.slice(0, 6).map(p => {
+      const hp = p.health ? `${p.health}%` : '—';
+      const pq = pingQuality(p.ping);
+      return `${p.name} L${p.level||'?'} ❤️${hp} ${pq}${p.ping||'?'}ms`;
+    });
+    const more = count > 6 ? ` +${count-6} more` : '';
+    const parts = [header];
+    if (hordeMsg) parts.push(hordeMsg.split('\n')[0]);
+    if (alerts.length) parts.push(...alerts);
+    if (clusterLine) parts.push(clusterLine);
+    if (chips.length) parts.push(`
+${chips.join(' · ')}${more}`);
+    return parts.filter(Boolean).join('\n');
+  } catch(_) { return 'Activity summary unavailable.'; }
+}
+
+// Row with Details/Brief toggle
+function createActivityToggleRow(mode) {
+  // mode: 'brief' => show Details button; 'details' => show Brief button
+  const showDetails = mode === 'brief';
+  return {
+    type: 1,
+    components: [
+      showDetails
+        ? { type: 2, style: 2, label: '🔎 Details', custom_id: 'activity_details', disabled: false }
+        : { type: 2, style: 2, label: '📝 Brief', custom_id: 'activity_brief', disabled: false }
+    ]
+  };
 }
 
 function handleTrendsFromButton(interaction) {
@@ -2410,6 +2507,13 @@ client.on('interactionCreate', async (interaction) => {
         return interaction.reply({ embeds: [embed], components: [buttons] }).catch(console.error);
       }
       if (name === 'activity') {
+        // Support optional mode: brief (default) | full
+        try {
+          const mode = interaction.options && interaction.options.getString ? (interaction.options.getString('mode') || 'brief') : 'brief';
+          if (mode.toLowerCase() === 'full') {
+            return handleActivityDetailsFromButton(interaction);
+          }
+        } catch (_) { /* fall through to brief */ }
         return handleActivityFromButton(interaction);
       }
       if (name === 'players') {
