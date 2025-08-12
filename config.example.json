@@ -5,12 +5,35 @@
   "port": 8081,
   "password": "YOUR_TELNET_PASSWORD",
   "dev-mode": false,
+
+  "allow-exec-command": false,
+  "allow-links-from-game": false,
+  "allow-multiple-instances": true,
+  "disable-commands": false,
+
+  "log-console": false,
+  "log-messages": false,
+  "log-telnet": true,
+
+  "show-private-chat": false,
+  "show-discord-bot-msgs": false,
+  "disable-status-updates": false,
+  "disable-version-check": false,
+  "hide-prefix": false,
+
+  "disable-chatmsgs": false,
+  "disable-join-leave-gmsgs": false,
+  "disable-misc-gmsgs": false,
+  "disable-non-player-chatmsgs": true,
+
+  "horde-frequency": 7,
+
   "updates": {
     "enabled": true,
     "intervalHours": 24,
     "prerelease": false,
-    "notifyMode": "channel",
-    "notifyChannel": "YOUR_UPDATES_CHANNEL_ID"
+    "notifyMode": "off",
+    "notifyChannel": ""
   },
   "bloodMoon": {
     "enabled": true,
