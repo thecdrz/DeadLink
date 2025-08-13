@@ -123,6 +123,31 @@ async function main() {
         }
       ]
     }
+    ,
+    {
+      name: 'dailyreport',
+      description: 'Admin: post a daily activity report now',
+      default_member_permissions: '8',
+      dm_permission: false,
+      options: [
+        {
+          name: 'mode',
+          description: 'Choose brief or full narrative',
+          type: 3,
+          required: false,
+          choices: [
+            { name: 'brief', value: 'brief' },
+            { name: 'full', value: 'full' }
+          ]
+        },
+        {
+          name: 'channel',
+          description: 'Channel ID to post into (optional override)',
+          type: 3,
+          required: false
+        }
+      ]
+    }
   ];
 
   const route = isGlobal

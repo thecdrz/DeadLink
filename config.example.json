@@ -28,6 +28,13 @@
 
   "horde-frequency": 7,
 
+  "dailyReports": {
+    "enabled": false,
+    "time": "09:00",          
+    "mode": "brief",         
+    "channel": ""            
+  },
+
   "analytics": {
     "enabled": true,
     "endpoint": "https://telemetry.deadlink.lol/v1/event",

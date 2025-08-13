@@ -24,8 +24,8 @@ const { validateConfig } = require("./lib/configSchema.js");
 const c = require("./lib/colors.js");
 
 const { Client, Intents } = Discord;
-// Only require guilds intent; legacy text command handling is removed
-const requestedIntents = [Intents.FLAGS.GUILDS];
+// Require guilds and messages intents to support chat bridging
+const requestedIntents = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
 
 // Fancy ASCII banner & unified logging helper
 // Startup banner (provided by user); colored at print time
@@ -111,6 +111,28 @@ const log = (() => {
   };
 })();
 
+// Suppress expected Discord interaction noise (AbortError / Unknown interaction)
+function shouldSuppressDiscordError(err) {
+  if (!err) return false;
+  const msg = String(err && (err.message || err)).toLowerCase();
+  if (err.name === 'AbortError' || msg.includes('abort')) return true; // user/client aborted
+  if (msg.includes('unknown interaction') || msg.includes('interaction has already been acknowledged')) return true; // double-click/expired
+  return false;
+}
+
+function logDiscordError(err, scope = '[DISCORD]') {
+  if (shouldSuppressDiscordError(err)) {
+    return log.debug(scope, 'suppressed expected interaction error');
+  }
+  const m = (err && err.message) ? err.message : String(err);
+  return log.warn(scope, m);
+}
+
+// Global unhandled promise rejection filter for Discord noise
+process.on('unhandledRejection', (reason) => {
+  try { logDiscordError(reason, '[UNHANDLED]'); } catch(_) {}
+});
+
 console.log(c.cyan(banner) + "\n" + c.bold(`DeadLink v${pjson.version}`));
 log.warn('[SEC]', 'Remote connections to 7 Days to Die servers are not encrypted.');
 log.info('[SEC]', 'Use only on trusted networks with a unique telnet password.');
@@ -148,7 +170,7 @@ function startHeartbeat() {
       const history = d7dtdState.playerTrends.history;
       const last = history[history.length-1];
       const count = last ? last.count : 0;
-      log.info('[HB]', `Heartbeat: players=${count} dataPoints=${history.length}`);
+  log.debug('[HB]', `Heartbeat: players=${count} dataPoints=${history.length}`);
     } catch(e){ log.warn('[HB]', 'Heartbeat error'); }
   }
   beat();
@@ -203,6 +225,53 @@ d7dtdState.playerBaselines = {}; // name -> { killsAtStart: number, deathsAtStar
 d7dtdState.playerStreaks = {}; // name -> { lastDeathAt: ts|null, longestMinutes: number }
 d7dtdState.playerTravel = {}; // name -> { lastPos: {x,y,z}, sessionDistance: number, totalDistance: number }
 d7dtdState.playerCraft = {}; // name -> { // future: track crafted counts by category or total }
+// Robust telnet stream splitter: handles CRLF and glued lines without newlines by timestamp boundaries
+function flushTelnetAppend(chunkStr) {
+  try {
+    const s = (chunkStr && chunkStr.toString) ? chunkStr.toString() : String(chunkStr || '');
+    if (!s) return;
+    d7dtdState._telnetBuf = (d7dtdState._telnetBuf || '') + s;
+    let buf = d7dtdState._telnetBuf;
+
+    const tsBoundary = /(?!^)(?=\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\s)/g; // split before ISO-like timestamp
+    const hasNewline = /\r|\n/.test(buf);
+    let parts = [];
+    if (hasNewline) {
+      const segs = buf.split(/\r?\n/);
+      const hasTerminalNewline = /\r?\n$/.test(buf);
+      d7dtdState._telnetBuf = hasTerminalNewline ? '' : (segs.pop() || '');
+      for (const seg of segs) {
+        if (!seg) continue;
+        const splitByTs = seg.split(tsBoundary).filter(Boolean);
+        parts.push(...splitByTs);
+      }
+    } else {
+      // No newline yet; attempt to flush any complete lines glued together
+      const tokens = buf.split(tsBoundary).filter(Boolean);
+      if (tokens.length > 1) {
+        parts = tokens.slice(0, -1);
+        d7dtdState._telnetBuf = tokens[tokens.length - 1] || '';
+      } else {
+        return; // wait for more data
+      }
+    }
+    for (const raw of parts) {
+      const line = (raw || '').trim();
+      if (!line) continue;
+      if (config["log-telnet"]) {
+        if ((d7dtdState._telnetLineCount||0) < 10) log.info('[TELNET\u2190]', line);
+        else log.debug('[TELNET\u2190]', line);
+      }
+      d7dtdState._telnetLineCount = (d7dtdState._telnetLineCount||0) + 1;
+      if (!d7dtdState._telnetAuthed) {
+        d7dtdState._telnetAuthed = true;
+        log.info('[TELNET]', 'Console stream active (auth likely succeeded)');
+      }
+      d7dtdState.lastTelnetLineTs = Date.now();
+      try { handleMsgFromGame(line); } catch (_) {}
+    }
+  } catch (_) { /* swallow */ }
+}
 ////// # Arguments # //////
 // We have to treat the channel ID as a string or the number will parse incorrectly.
 var argv = minimist(process.argv.slice(2), {string: ["channel","port"]});
@@ -406,23 +475,60 @@ function startTelnet() {
     };
     if (!d7dtdState.telnetListenersAttached) {
       d7dtdState.telnetListenersAttached = 1;
-  try { telnet.on && telnet.on('close', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) log.warn('[TELNET]', 'Closed'); scheduleReconnect(); }); } catch(_) {}
-  try { telnet.on && telnet.on('end', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) log.warn('[TELNET]', 'End'); scheduleReconnect(); }); } catch(_) {}
-  try { telnet.on && telnet.on('timeout', () => { d7dtdState.connStatus = -1; if (config["log-telnet"]) log.warn('[TELNET]', 'Timeout'); scheduleReconnect(); }); } catch(_) {}
-  try { telnet.on && telnet.on('error', (e) => { d7dtdState.connStatus = -1; log.error('[TELNET]', `Error: ${e && e.message}`); }); } catch(_) {}
+  const resetStreamState = (label) => {
+    d7dtdState._socketDataAttached = 0;
+    d7dtdState.telnetListenersAttached = 0;
+    if (config["log-telnet"]) log.warn('[TELNET]', `${label} -> will reattach listeners`);
+  };
+  try { telnet.on && telnet.on('close', () => { d7dtdState.connStatus = -1; resetStreamState('Closed'); scheduleReconnect(); }); } catch(_) {}
+  try { telnet.on && telnet.on('end', () => { d7dtdState.connStatus = -1; resetStreamState('End'); scheduleReconnect(); }); } catch(_) {}
+  try { telnet.on && telnet.on('timeout', () => { d7dtdState.connStatus = -1; resetStreamState('Timeout'); scheduleReconnect(); }); } catch(_) {}
+  try { telnet.on && telnet.on('error', (e) => { d7dtdState.connStatus = -1; resetStreamState('Error'); log.error('[TELNET]', `Error: ${e && e.message}`); }); } catch(_) {}
+
+      // Stream incoming telnet console output and parse GMSG/Chat lines
+      try {
+        const attachData = (emitter) => {
+          if (!emitter || typeof emitter.on !== 'function') return;
+          emitter.on('data', (buf) => flushTelnetAppend(buf));
+        };
+        // Attach to telnet client and underlying socket if present
+        attachData(telnet);
+        if (telnet && telnet.socket) attachData(telnet.socket);
+        if (typeof telnet.getSocket === 'function') {
+          try { const sock = telnet.getSocket(); if (sock) attachData(sock); } catch (_) {}
+        }
+      } catch (_) { /* ignore */ }
     }
     if (typeof telnet.connect === 'function') {
       telnet.connect(params).then(() => {
         d7dtdState.connStatus = 1;
   if (config["log-telnet"]) log.success('[TELNET]', 'Connected');
-        // Best-effort authentication for 7DTD telnet
+  d7dtdState.lastTelnetLineTs = Date.now();
+  d7dtdState._telnetLineCount = 0;
+  d7dtdState._telnetAuthed = false;
+        // After connect, ensure we attach to live socket 'data' events once
+        try {
+          const sock = telnet && telnet.socket;
+          if (sock && !d7dtdState._socketDataAttached) {
+            d7dtdState._socketDataAttached = 1;
+            sock.on('data', (buf) => flushTelnetAppend(buf));
+          }
+        } catch(_) {}
+        // Authentication & warm-up
         try {
           if (pass) {
-            // 7DTD usually accepts the raw password once after connect
-            telnet.exec(pass, { timeout: 4000 }, () => {});
+            try { if (typeof telnet.send === 'function') telnet.send(pass + '\n'); } catch(_) {}
+            try { telnet.exec(pass, { timeout: 4000 }, () => {}); } catch(_) {}
+            if (config["log-telnet"]) log.info('[TELNET]', 'Password dispatched (raw+exec)');
           }
-          // quick health check to warm the session (non-fatal)
-          telnet.exec('version', { timeout: 3000 }, () => {});
+          try { telnet.exec('version', { timeout: 3000 }, () => {}); } catch(_) {}
+          // Re-auth retry if still silent after 8s
+          setTimeout(() => {
+            if (d7dtdState.connStatus === 1 && !d7dtdState._telnetAuthed && (d7dtdState._telnetLineCount||0) === 0) {
+              log.warn('[TELNET]', 'No console output post-auth, retrying password');
+              try { if (pass && typeof telnet.send === 'function') telnet.send(pass + '\n'); } catch(_) {}
+            }
+          }, 8000);
         } catch(_) {}
       }).catch((e) => {
         d7dtdState.connStatus = -1;
@@ -437,12 +543,30 @@ function startTelnet() {
   }
 }
 
+// Inactivity watchdog: if no telnet line for X minutes but status=1, prod server with 'lp'
+let telnetWatchdogTimer = null;
+function startTelnetWatchdog() {
+  if (telnetWatchdogTimer) clearInterval(telnetWatchdogTimer);
+  const intervalMs = 30000; // 30s check
+  telnetWatchdogTimer = setInterval(async () => {
+    try {
+      if (d7dtdState.connStatus !== 1) return;
+      const last = d7dtdState.lastTelnetLineTs || 0;
+      if (Date.now() - last > 120000) { // >2 minutes silence
+        if (config["log-telnet"]) log.warn('[TELNET]', 'No console lines for 2m, sending lp to prod stream');
+        try { await telnetQueue.exec('lp', { timeout: 5000 }); } catch(_) {}
+      }
+    } catch(_) {}
+  }, intervalMs);
+}
+
 // Start telnet connection on boot
 startTelnet();
 // Delay heartbeat until after analytics load & telnet connection established
 setTimeout(() => {
   if (d7dtdState.connStatus === 1) startHeartbeat();
   else ensureTelnetReady(10000).then(()=> startHeartbeat());
+  startTelnetWatchdog();
 }, 2500);
 
 async function ensureTelnetReady(timeoutMs = 8000) {
@@ -600,6 +724,24 @@ function sanitizeMsgToGame(msg) {
   return msg;
 }
 
+// Safe Discord send that waits briefly for the channel to bind
+function safeChannelSend(payload, fallbackText, attempt = 0) {
+  try {
+    const ch = (typeof channel !== 'undefined') ? channel : null;
+    if (ch && typeof ch.send === 'function') {
+      return ch.send(payload).catch((e) => {
+        log.debug('[DISCORD]', `send attempt failed (attempt ${attempt}): ${e && e.message}`);
+        if (fallbackText != null) {
+          try { return ch.send(fallbackText).catch(()=>{}); } catch(_) {}
+        }
+      });
+    }
+  } catch(_) {}
+  if (attempt < 6) {
+    setTimeout(() => safeChannelSend(payload, fallbackText, attempt + 1), 700);
+  }
+}
+
 function handleMsgFromGame(line) {
   // Nothing to do with empty lines.
   if(line === "") {
@@ -621,6 +763,7 @@ function handleMsgFromGame(line) {
   // Ex 1: 2021-09-14T18:14:40 433.266 INF Chat (from '-non-player-', entity id '-1', to 'Global'): 'Server': test
   // Ex 2: 2021-09-14T18:49:39 2532.719 INF GMSG: Player 'Lake' left the game
   // Ex 3: 2021-09-15T20:42:00 1103.462 INF Chat (from '12345678901234567', entity id '171', to 'Global'): 'Lake': the quick brown fox jumps over the lazy dog
+  // Ex 4: 2025-08-13T01:53:40 356964.813 INF GMSG: Player 'CDRZ' joined the game
   var dataRaw = line.match(/(.+)T(.+) (.+) INF (Chat|GMSG)(.*): (.*)/);
   var content = { name: null, text: null, from: null, to: null, entityId: null };
 
@@ -643,6 +786,7 @@ function handleMsgFromGame(line) {
     content.to = sourceInfoRaw[3];
     content.entityId = sourceInfoRaw[2];
   }
+  d7dtdState.lastTelnetLineTs = Date.now();
 
   var data = {
     date: dataRaw[1],
@@ -716,11 +860,16 @@ function handleMsgFromGame(line) {
 }
 
 function sendEnhancedGameMessage(message) {
+  // Suppress obvious partial fragments from telnet chunking
+  if (/Player '([^']+)' (joined|left) th\b/.test(message)) {
+    return; // wait for the complete line which will produce an embed
+  }
   // Check if this is a special game event that should get rich embed treatment
   if (message.includes("joined the game")) {
     const playerMatch = message.match(/Player '([^']+)' joined the game/);
     if (playerMatch) {
       const playerName = playerMatch[1];
+      log.debug({ playerName, message }, 'Player join detected');
       const embed = {
         color: 0x2ecc71, // Green for joins
         title: "🚪 Player Joined",
@@ -730,11 +879,7 @@ function sendEnhancedGameMessage(message) {
         }
       };
       
-      channel.send({ embeds: [embed] })
-        .catch(() => {
-          // Fallback to plain text if embed fails
-          channel.send(message);
-        });
+  safeChannelSend({ embeds: [embed] }, message);
       return;
     }
   }
@@ -743,6 +888,7 @@ function sendEnhancedGameMessage(message) {
     const playerMatch = message.match(/Player '([^']+)' left the game/);
     if (playerMatch) {
       const playerName = playerMatch[1];
+      log.debug({ playerName, message }, 'Player leave detected');
       const embed = {
         color: 0xe67e22, // Orange for leaves
         title: "🚪 Player Left",
@@ -752,11 +898,7 @@ function sendEnhancedGameMessage(message) {
         }
       };
       
-      channel.send({ embeds: [embed] })
-        .catch(() => {
-          // Fallback to plain text if embed fails
-          channel.send(message);
-        });
+  safeChannelSend({ embeds: [embed] }, message);
       return;
     }
   }
@@ -765,6 +907,7 @@ function sendEnhancedGameMessage(message) {
     const deathMatch = message.match(/Player '([^']+)' died/);
     if (deathMatch) {
       const playerName = deathMatch[1];
+      log.debug({ playerName, message }, 'Player death detected');
   // Update deathless streak tracking
   try { recordPlayerDeath(playerName); } catch(_) {}
       
@@ -788,17 +931,13 @@ function sendEnhancedGameMessage(message) {
         }
       };
       
-      channel.send({ embeds: [embed] })
-        .catch(() => {
-          // Fallback to plain text if embed fails
-          channel.send(message);
-        });
+  safeChannelSend({ embeds: [embed] }, message);
       return;
     }
   }
   
   // For all other messages (chat, etc.), send as plain text
-  channel.send(message);
+  safeChannelSend(message);
 }
 
 function handleMsgToGame(line) {
@@ -1508,7 +1647,7 @@ function announceNewVersion(version) {
       timestamp: new Date().toISOString()
     };
     
-    channel.send({ embeds: [embed] }).catch(console.error);
+  channel.send({ embeds: [embed] }).catch((e)=>logDiscordError(e));
     return;
   }
   
@@ -1974,12 +2113,12 @@ function handleButtonInteraction(interaction) {
   
   switch(customId) {
     case 'dashboard':
-      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Dashboard button`);
+      log.debug('[UI]', `Dashboard click by ${interaction.user.tag} (${interaction.user.id})`);
   try { telemetry.send('ui_click', { target: 'dashboard' }); } catch(_) {}
       handleBackToDashboard(interaction);
       break;
     case 'dashboard_activity':
-      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Activity button`);
+      log.debug('[UI]', `Activity click by ${interaction.user.tag} (${interaction.user.id})`);
   try { telemetry.send('ui_click', { target: 'activity' }); } catch(_) {}
       handleActivityFromButton(interaction);
       break;
@@ -1991,25 +2130,25 @@ function handleButtonInteraction(interaction) {
       break;
       
     case 'dashboard_trends':
-      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Trends button`);
+      log.debug('[UI]', `Trends click by ${interaction.user.tag} (${interaction.user.id})`);
   try { telemetry.send('ui_click', { target: 'trends' }); } catch(_) {}
       handleTrendsFromButton(interaction);
       break;
       
     case 'dashboard_players':
-      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Players button`);
+      log.debug('[UI]', `Players click by ${interaction.user.tag} (${interaction.user.id})`);
   try { telemetry.send('ui_click', { target: 'players' }); } catch(_) {}
       handlePlayersFromButton(interaction);
       break;
       
     case 'dashboard_time':
-      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Time button`);
+      log.debug('[UI]', `Time click by ${interaction.user.tag} (${interaction.user.id})`);
   try { telemetry.send('ui_click', { target: 'time' }); } catch(_) {}
       handleTimeFromButton(interaction);
       break;
       
     case 'dashboard_info':
-      console.log(`User ${interaction.user.tag} (${interaction.user.id}) clicked Info button`);
+      log.debug('[UI]', `Info click by ${interaction.user.tag} (${interaction.user.id})`);
   try { telemetry.send('ui_click', { target: 'info' }); } catch(_) {}
       handleInfoFromButton(interaction);
       break;
@@ -2017,7 +2156,7 @@ function handleButtonInteraction(interaction) {
   // deprecated: back_to_dashboard replaced with persistent Dashboard button
       
     default:
-      interaction.reply("❌ Unknown button interaction.").catch(console.error);
+  interaction.reply("❌ Unknown button interaction.").catch((e)=>logDiscordError(e));
   }
 }
 
@@ -2028,7 +2167,7 @@ function handleBackToDashboard(interaction) {
   interaction.update({
     embeds: [embed],
     components: [buttons]
-  }).catch(console.error);
+  }).catch((e)=>logDiscordError(e));
 }
 
 function handleActivityFromButton(interaction) {
@@ -2073,18 +2212,18 @@ function handleActivityFromButton(interaction) {
                 const embed = activityEmbed({ description: brief });
                 const navigationButtons = createNavigationButtons();
                 const toggleRow = createActivityToggleRow('brief');
-                interaction.editReply({ embeds: [embed], components: [navigationButtons, toggleRow] }).catch(console.error);
+                interaction.editReply({ embeds: [embed], components: [navigationButtons, toggleRow] }).catch((e)=>logDiscordError(e));
               }
             });
           } else {
-            interaction.editReply("❌ Failed to get server time.").catch(console.error);
+            interaction.editReply("❌ Failed to get server time.").catch((e)=>logDiscordError(e));
           }
         });
       } else {
-        interaction.editReply("❌ Failed to connect to server.").catch(console.error);
+  interaction.editReply("❌ Failed to connect to server.").catch((e)=>logDiscordError(e));
       }
     });
-  }).catch((e) => { /* Ignore Unknown interaction (double-clicks/expired) */ });
+  }).catch((e) => { if(!shouldSuppressDiscordError(e)) logDiscordError(e); });
 }
 
 // Toggle: Show details (full narrative)
@@ -2200,11 +2339,11 @@ function handleTrendsFromButton(interaction) {
             text: `Report generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}`,
           }
         };
-        const navigationButtons = createNavigationButtons();
-        interaction.editReply({ embeds: [embed], components: [navigationButtons] }).catch(console.error);
+  const navigationButtons = createNavigationButtons();
+  interaction.editReply({ embeds: [embed], components: [navigationButtons] }).catch((e)=>logDiscordError(e));
       }
     })();
-  }).catch(console.error);
+  }).catch((e)=>logDiscordError(e));
 }
 
 function handlePlayersFromButton(interaction) {
@@ -2229,9 +2368,9 @@ function handlePlayersFromButton(interaction) {
   const select = createPlayerSelect(players);
   const components = [navigationButtons];
   if (select) components.push(select);
-  interaction.editReply({ embeds: [embed], components }).catch(console.error);
+  interaction.editReply({ embeds: [embed], components }).catch((e)=>logDiscordError(e));
   });
-  }).catch(console.error);
+  }).catch((e)=>logDiscordError(e));
 }
 
 function handleTimeFromButton(interaction) {
@@ -2247,12 +2386,12 @@ function handleTimeFromButton(interaction) {
         interaction.editReply({ 
           embeds: [embed],
           components: [navigationButtons]
-        }).catch(console.error);
+  }).catch((e)=>logDiscordError(e));
       } else {
-        interaction.editReply("❌ No time data received.").catch(console.error);
+  interaction.editReply("❌ No time data received.").catch((e)=>logDiscordError(e));
       }
     });
-  }).catch(console.error);
+  }).catch((e)=>logDiscordError(e));
 }
 
 function handleInfoFromButton(interaction) {
@@ -2281,8 +2420,8 @@ function handleInfoFromButton(interaction) {
     interaction.editReply({ 
       embeds: [embed],
       components: [navigationButtons]
-    }).catch(console.error);
-  }).catch(console.error);
+  }).catch((e)=>logDiscordError(e));
+  }).catch((e)=>logDiscordError(e));
 }
 
 // Slash: /update with options { action: check|notes|announce }
@@ -2604,7 +2743,7 @@ client.on('interactionCreate', async (interaction) => {
       if (name === 'dashboard') {
         const embed = createDashboardEmbed();
         const buttons = createDashboardButtons();
-        return interaction.reply({ embeds: [embed], components: [buttons] }).catch(console.error);
+  return interaction.reply({ embeds: [embed], components: [buttons] }).catch((e)=>logDiscordError(e));
       }
       if (name === 'activity') {
         // Support optional mode: brief (default) | full
@@ -2655,6 +2794,26 @@ client.on('interactionCreate', async (interaction) => {
 
 // Ensure login uses token from config/env earlier
 try { client.login(token); } catch (_) {}
+
+// Discord -> Game chat bridge
+client.on('messageCreate', async (msg) => {
+  try {
+    // Ignore bots and DMs
+    if (msg.author && msg.author.bot) return;
+    if (!msg.guild) return;
+    // Only relay messages from the bound channel (if configured)
+    if (config.channel && msg.channel && msg.channel.id !== config.channel.toString()) return;
+    // Respect disable-chatmsgs (if disabled, skip relaying to game)
+    if (config["disable-chatmsgs"]) return;
+    // Basic command prefix guard: do not relay slash or administrative commands
+    if (msg.content && msg.content.trim().startsWith('/')) return;
+    // Format and send to game
+    const name = (msg.member && msg.member.displayName) || msg.author.username || 'Discord';
+    const content = (msg.content || '').trim();
+    if (!content) return;
+    handleMsgToGame(`${name}: ${content}`);
+  } catch (_) { /* ignore */ }
+});
 
 // Slash: /update with options { action: check|notes|announce }
 async function handleUpdateFromSlash(interaction) {
