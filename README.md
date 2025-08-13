@@ -87,14 +87,34 @@ Admin-only helpers (Manage Server permission) are available via UI/buttons or fu
 💡 Pro Tip: Use `/dashboard` for the best experience—click buttons instead of typing.
 
 ## 📸 Screenshots
-Live gallery and docs site:
+Fresh visual examples (v2.13 series):
+
+| Activity (Brief) | Activity (Details) | Blood Moon Imminent |
+|------------------|--------------------|---------------------|
+| ![](screenshots/deadbot-activity-report-basic.png) | ![](screenshots/deadbot-activity-report-details.png) | ![](screenshots/deadbot-blood-moon-imminent.png) |
+
+| Blood Moon Active | Blood Moon Ended | Update Announcement |
+|-------------------|------------------|---------------------|
+| ![](screenshots/deadbot-blood-moon-active.png) | ![](screenshots/deadbot-blood-moon-ended.png) | ![](screenshots/deadbot-update-announce.png) |
+
+| Player Joined | Player Death | Players List |
+|---------------|--------------|-------------|
+| ![](screenshots/deadbot-joined.png) | ![](screenshots/deadbot-died.png) | ![](screenshots/deadbot-players.png) |
+
+| Player Deep Dive | Trends | Time |
+|------------------|--------|------|
+| ![](screenshots/deadbot-players-deep-dive.png) | ![](screenshots/deadbot-trends.png) | ![](screenshots/deadbot-time.png) |
+
+| Terminal Startup | Terminal Dashboard | Info Panel |
+|------------------|--------------------|-----------|
+| ![](screenshots/deadbot-terminal-start.png) | ![](screenshots/deadbot-terminal-dashboard.png) | ![](screenshots/deadbot-info.png) |
+
+Full gallery & docs site:
 
 - Website: https://DeadLink.lol/
 - Gallery: https://DeadLink.lol/gallery.html
 
-See the website for a quick tour: https://DeadLink.lol/
-
-## Latest Release: v2.12.3
+## Latest Release: v2.13.0
 
 Key additions:
 - Player Deep Dive select menu in Players dashboard
@@ -105,7 +125,7 @@ Key additions:
 - Deferred heartbeat until telnet + analytics loaded
 - Players list now shows distance metric
 
-Full notes: `RELEASE_NOTES_v2.12.3.md`
+Full notes: `RELEASE_NOTES_v2.13.0.md`
 
 # How it Works
 DeadLink connects to your server’s telnet console to read game state (chat, players, time) and post summarized insights to Discord. It supports sending selected messages back to the server (optional), but its focus is a reliable companion experience: analytics, alerts, and an interactive control panel.
