@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Docs — DeadLink</title>
+  <meta name="description" content="Setup, configuration, and feature documentation for DeadLink (7 Days to Die)." />
+  <link rel="icon" href="assets/deadlink-logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site-typebot.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="container row">
+      <a class="brand" href="./index-typebot.html">
+        <img src="assets/deadlink-logo.png" alt="DeadLink" />
+        DeadLink
+      </a>
+      <nav class="nav-links">
+        <a href="./index-typebot.html">Home</a>
+        <a href="./docs-typebot.html" class="active">Docs</a>
+        <a href="./telemetry-report.html">Analytics</a>
+        <a class="btn btn-primary" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container grid-2" style="align-items:start">
+      <aside class="card" style="position:sticky;top:96px">
+        <h3 style="margin-top:0">Docs</h3>
+        <nav class="muted">
+          <div class="row" style="justify-content:space-between"><strong>Getting started</strong></div>
+          <a href="#overview">Overview</a><br />
+          <a href="#install">Install</a><br />
+          <a href="#config">Config</a>
+          <div class="row" style="justify-content:space-between;margin-top:16px"><strong>Features</strong></div>
+          <a href="#ai">AI Reports</a><br />
+          <a href="#analytics">Analytics</a><br />
+          <a href="#blood">Blood Moon</a><br />
+          <a href="#security">Security</a>
+        </nav>
+      </aside>
+
+      <article>
+        <header class="section-header" style="text-align:left">
+          <h1 style="margin:0 0 4px" class="gradient-title">Documentation</h1>
+          <p class="muted" style="margin:0">Everything you need to set up DeadLink and make the most of it.</p>
+        </header>
+
+        <section id="overview" class="card">
+          <h2>Overview</h2>
+          <p>DeadLink is a Discord-first companion for 7 Days to Die. It provides narrative AI reports, analytics, and Blood Moon intelligence while keeping operations safe.</p>
+        </section>
+
+        <section id="install" class="card">
+          <h2>Install</h2>
+          <div class="table mono">
+            <table>
+              <tbody>
+                <tr><td>Clone</td><td>git clone https://github.com/thecdrz/DeadLink.git</td></tr>
+                <tr><td>Install</td><td>npm install</td></tr>
+                <tr><td>Configure</td><td>copy config.example.json to config.json and edit</td></tr>
+                <tr><td>Run</td><td>npm start</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="config" class="card">
+          <h2>Configuration</h2>
+          <div class="table mono">
+            <table>
+              <thead><tr><th>Key</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td>DISCORD_TOKEN</td><td>Your bot token</td></tr>
+                <tr><td>DISCORD_CHANNEL</td><td>Channel ID for messages</td></tr>
+                <tr><td>TELNET_IP</td><td>Server IP</td></tr>
+                <tr><td>TELNET_PORT</td><td>Telnet port</td></tr>
+                <tr><td>TELNET_PASSWORD</td><td>Password from serverconfig.xml</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="ai" class="card">
+          <h2>AI Reports</h2>
+          <p>Context-aware activity summaries with location, time, health, and Blood Moon cues.</p>
+        </section>
+
+        <section id="analytics" class="card">
+          <h2>Analytics</h2>
+          <p>Trends, sessions, MVP, distance metrics, and optional image charts.</p>
+        </section>
+
+        <section id="blood" class="card">
+          <h2>Blood Moon</h2>
+          <p>Predictive alerts with cooldowns, Discord notices, and in-game broadcast.</p>
+        </section>
+
+        <section id="security" class="card">
+          <h2>Security</h2>
+          <p>Scoped telnet queue with timeouts, retries, reconnects, and admin-only controls.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <a class="brand" href="./index-typebot.html">
+          <img src="assets/deadlink-logo.png" alt="DeadLink" width="24" height="24" />
+          DeadLink
+        </a>
+        <div class="row" style="gap:16px;flex-wrap:wrap">
+          <a href="./docs-typebot.html">Docs</a>
+          <a href="./telemetry-report.html">Analytics</a>
+          <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

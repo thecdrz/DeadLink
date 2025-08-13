@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>DeadLink – DevOps & Automation</title>
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="./index-new.html" class="brand">
+        <img src="assets/deadlink-logo.png" alt="DeadLink">
+        DeadLink
+      </a>
+      <div class="nav-links">
+        <a href="./devops-new.html" aria-current="page">DevOps</a>
+        <a href="./docs-new.html">Docs</a>
+        <a href="./telemetry-report.html">Analytics</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" class="btn-primary" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+  <div class="nav-spacer"></div>
+
+  <header class="hero">
+    <div class="hero-content">
+      <img class="accent-logo" src="assets/deadlink-logo.png" alt="DeadLink">
+      <h1 class="hero-title">DevOps & Automation</h1>
+      <p class="hero-subtitle">CI/CD pipelines, Docker images, website publishing, automated snapshots, and release management</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Delivery Pipeline</h2>
+        <p class="section-subtitle">A reliable, repeatable release process ensures DeadLink stays stable and easy to deploy</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="icon">⚙️</div>
+          <h3>CI Checks</h3>
+          <p>Jest tests and smoke tests on every push and PR. Optional linting. Fast feedback loops keep quality high.</p>
+          <p><strong>Workflow</strong>: <code>.github/workflows/ci.yml</code></p>
+        </article>
+        <article class="card">
+          <div class="icon">🏷️</div>
+          <h3>Releases</h3>
+          <p>Tagging <code>vX.Y.Z</code> creates a GitHub Release with automated notes. Publish stable, traceable builds quickly.</p>
+          <p><strong>Workflow</strong>: <code>.github/workflows/release.yml</code></p>
+        </article>
+        <article class="card">
+          <div class="icon">🐳</div>
+          <h3>Docker Images</h3>
+          <p>Multi-arch (amd64/arm64) builds pushed to GHCR. Use version tags or <code>latest</code> for deployments.</p>
+          <p><strong>Workflow</strong>: <code>.github/workflows/docker.yml</code> → <code>ghcr.io/thecdrz/deadlink</code></p>
+        </article>
+        <article class="card">
+          <div class="icon">📰</div>
+          <h3>Website Publishing</h3>
+          <p>GitHub Pages builds the <code>docs/</code> site on every change. Keep docs fresh without manual steps.</p>
+          <p><strong>Workflow</strong>: <code>.github/workflows/pages.yml</code></p>
+        </article>
+        <article class="card">
+          <div class="icon">📸</div>
+          <h3>UI Snapshots</h3>
+          <p>Puppeteer renders sample embeds and saves PNGs to <code>screenshots/</code> and <code>docs/assets/snapshots/</code>.</p>
+          <p><strong>Script</strong>: <code>scripts/snapshot-embeds.js</code> — <strong>Run:</strong> <code>npm run snapshots</code></p>
+        </article>
+        <article class="card">
+          <div class="icon">🚀</div>
+          <h3>Docker Run</h3>
+          <p>Run DeadLink with env vars (Discord, telnet). <code>DEV_MODE=true</code> enables simulated telnet for demos.</p>
+          <p><strong>Docs</strong>: See README → Docker</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Operational Confidence</h2>
+        <p class="section-subtitle">Battle-tested workflows and reproducible builds</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item"><span class="stat-number">Multi-arch</span><span class="stat-label">Images</span></div>
+        <div class="stat-item"><span class="stat-number">Automated</span><span class="stat-label">Releases</span></div>
+        <div class="stat-item"><span class="stat-number">Snapshots</span><span class="stat-label">On Demand</span></div>
+        <div class="stat-item"><span class="stat-number">Docs</span><span class="stat-label">Auto-Publish</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div><img class="footer-logo" src="assets/deadlink-logo.png" alt=""> © DeadLink</div>
+      <div class="links">
+        <a href="./index-new.html">Home</a>
+        <a href="./docs-new.html">Docs</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

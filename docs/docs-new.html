@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>DeadLink – Documentation</title>
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="./index-new.html" class="brand">
+        <img src="assets/deadlink-logo.png" alt="DeadLink">
+        DeadLink
+      </a>
+      <div class="nav-links">
+        <a href="./devops-new.html">DevOps</a>
+        <a href="./docs-new.html" aria-current="page">Docs</a>
+        <a href="./telemetry-report.html">Analytics</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" class="btn-primary" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+  <div class="nav-spacer"></div>
+
+  <header class="hero">
+    <div class="hero-content">
+      <img class="accent-logo" src="assets/deadlink-logo.png" alt="DeadLink">
+      <h1 class="hero-title">Documentation</h1>
+      <p class="hero-subtitle">Everything you need to install, configure, and master DeadLink</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="docs">
+        <aside class="sidebar" aria-label="Sections">
+          <div class="search" role="search">
+            <label for="doc-search" class="visually-hidden">Search docs</label>
+            <input id="doc-search" type="search" placeholder="Search sections…" aria-label="Search sections">
+          </div>
+          <nav>
+            <a data-doc="features">Features</a>
+            <a data-doc="getting-started">Getting Started</a>
+            <a data-doc="installation">Installation</a>
+            <a data-doc="configuration">Configuration</a>
+            <a data-doc="commands">Commands</a>
+            <a data-doc="analytics-and-telemetry">Analytics & Telemetry</a>
+            <a data-doc="security">Security</a>
+            <a data-doc="troubleshooting">Troubleshooting</a>
+            <a data-doc="changelog">Changelog</a>
+          </nav>
+        </aside>
+        <main class="content" id="docs-content" aria-live="polite">
+          <div class="loading">Loading…</div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div><img class="footer-logo" src="assets/deadlink-logo.png" alt=""> © DeadLink</div>
+      <div class="links">
+        <a href="./index-new.html">Home</a>
+        <a href="./devops-new.html">DevOps</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const DEFAULT_DOC = 'getting-started';
+    const routes = new Set(['features','getting-started','installation','configuration','commands','analytics-and-telemetry','security','troubleshooting','changelog']);
+    const contentEl = document.getElementById('docs-content');
+
+    function setActive(linkName){
+      document.querySelectorAll('.sidebar a').forEach(a => {
+        const isActive = a.dataset.doc === linkName;
+        a.classList.toggle('active', isActive);
+        if (isActive) { a.setAttribute('aria-current', 'page'); } else { a.removeAttribute('aria-current'); }
+      });
+    }
+
+    async function loadDoc(name){
+      if (!routes.has(name)) name = DEFAULT_DOC;
+      setActive(name);
+      contentEl.innerHTML = '<div class="loading">Loading…</div>';
+      try{
+        if (name === 'changelog'){
+          await loadChangelog();
+        } else {
+          const res = await fetch(`./guide/${name}.md`);
+          const md = await res.text();
+          const html = marked.parse(md);
+          contentEl.innerHTML = html;
+          contentEl.querySelectorAll('table').forEach(t => t.classList.add('doc-table'));
+        }
+      }catch(err){
+        contentEl.innerHTML = '<p>Failed to load document.</p>';
+      }
+    }
+
+    function navigate(hash){
+      const name = (hash || location.hash || '').replace(/^#\/?/, '') || DEFAULT_DOC;
+      loadDoc(name);
+    }
+
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('.sidebar a[data-doc]');
+      if (!a) return;
+      e.preventDefault();
+      const name = a.dataset.doc;
+      history.pushState({}, '', `#/${name}`);
+      navigate(`#/${name}`);
+    });
+
+    window.addEventListener('popstate', () => navigate());
+    navigate();
+
+    const searchInput = document.getElementById('doc-search');
+    if (searchInput){
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        document.querySelectorAll('.sidebar a').forEach(a => {
+          const text = (a?.textContent || '').toLowerCase();
+          a.style.display = !q || text.includes(q) ? '' : 'none';
+        });
+      });
+    }
+
+    async function loadChangelog(){
+      try{
+        const versionRes = await fetch('https://raw.githubusercontent.com/thecdrz/DeadLink/master/version.json', { cache: 'no-store' });
+        const versionData = versionRes.ok ? await versionRes.json() : null;
+        const v = versionData?.lastAnnouncedVersion;
+        const fileName = v ? `RELEASE_NOTES_v${v}.md` : null;
+        contentEl.innerHTML = '<div class="loading">Loading changelog…</div>';
+
+        const tryUrls = [];
+        if (fileName){ tryUrls.push(`https://raw.githubusercontent.com/thecdrz/DeadLink/master/${fileName}`); }
+        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/master/RELEASE_NOTES_v2.12.1.md');
+        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/master/RELEASE_NOTES_v2.12.0.md');
+
+        let md = null;
+        for (const url of tryUrls){
+          try{
+            const r = await fetch(url, { cache: 'no-store' });
+            if (r.ok){ md = await r.text(); break; }
+          }catch(_){ }
+        }
+        if (!md){
+          try{
+            const local = await fetch('./guide/changelog.md');
+            if (local.ok){ md = await local.text(); }
+          }catch(_){ }
+          if (!md){
+            contentEl.innerHTML = '<p>Could not load latest release notes. See <a href="https://github.com/thecdrz/DeadLink/releases" target="_blank" rel="noopener">GitHub Releases</a>.</p>';
+            return;
+          }
+        }
+        const html = marked.parse(md);
+        contentEl.innerHTML = `<article class="doc-changelog">${html}</article>`;
+      }catch(err){
+        contentEl.innerHTML = '<p>Failed to load changelog. See <a href="https://github.com/thecdrz/DeadLink/releases" target="_blank" rel="noopener">GitHub Releases</a>.</p>';
+      }
+    }
+  </script>
+</body>
+</html>

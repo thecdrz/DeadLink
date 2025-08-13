@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>DeadLink – Advanced 7 Days to Die Server Companion</title>
+  <meta name="description" content="DeadLink revolutionizes 7 Days to Die server management with AI-driven narrative reports, sophisticated analytics, blood moon intelligence, and comprehensive DevOps automation." />
+
+  <!-- Brand / sharing -->
+  <meta name="theme-color" content="#121112">
+  <meta property="og:title" content="DeadLink – Advanced 7 Days to Die Server Companion">
+  <meta property="og:description" content="Revolutionary server companion with narrative intelligence, sophisticated analytics, and comprehensive automation.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/deadlink-logo.png">
+  <link rel="canonical" href="https://thecdrz.github.io/DeadLink/">
+
+  <!-- Icon / logo -->
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
+  <link rel="preload" href="assets/deadlink-logo.png" as="image" />
+
+  <!-- Modern fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css" />
+
+  <style>
+    /* Modern CSS Custom Properties */
+    :root {
+      /* Colors */
+      --bg-primary: #080a0e;
+      --bg-secondary: #121419;
+      --bg-tertiary: #1a1f26;
+      --glass: rgba(18, 20, 25, 0.6);
+      --glass-light: rgba(26, 31, 38, 0.4);
+      --border: rgba(51, 65, 85, 0.3);
+      --border-light: rgba(71, 85, 105, 0.2);
+      
+      /* Text */
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --text-accent: #e2e8f0;
+      
+      /* Accent colors */
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --gradient-accent: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+      
+      /* Spacing */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+      
+      /* Radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      
+      /* Typography */
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+  body { overflow-x: hidden; }
+
+    /* COMPACT NAVIGATION */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(8, 10, 14, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: var(--space-sm) 0;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--text-accent);
+      text-decoration: none;
+    }
+
+    .brand img {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+      background: var(--glass-light);
+    }
+
+    .nav-links .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+      padding: var(--space-xs) var(--space-md);
+      font-weight: 600;
+    }
+
+    .nav-links .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      padding: var(--space-2xl) var(--space-lg);
+      background: 
+        radial-gradient(ellipse at center, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    }
+
+    .hero-content {
+      max-width: 800px;
+      z-index: 10;
+    }
+
+    .hero-logo {
+      width: min(60vw, 280px);
+      margin-bottom: var(--space-xl);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      margin-bottom: var(--space-md);
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.125rem, 3vw, 1.5rem);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-xl);
+      font-weight: 500;
+    }
+
+    .hero-features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+
+    .hero-feature {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-sm) var(--space-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-accent);
+      backdrop-filter: blur(10px);
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-xl);
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .btn-secondary {
+      background: var(--glass);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: var(--glass-light);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    /* FEATURES GRID */
+    .features {
+      padding: var(--space-2xl) var(--space-lg);
+      background: var(--bg-secondary);
+    }
+
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      margin-bottom: var(--space-md);
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: var(--space-xl);
+    }
+
+    .feature-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      backdrop-filter: blur(20px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-md);
+      display: block;
+    }
+
+    .feature-title {
+      font-size: 1.375rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+      color: var(--text-accent);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      margin-bottom: var(--space-lg);
+      line-height: 1.7;
+    }
+
+    .feature-highlights {
+      list-style: none;
+      margin-bottom: var(--space-lg);
+    }
+
+    .feature-highlights li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-sm);
+      font-size: 0.875rem;
+    }
+
+    .feature-highlights li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    /* STATS SECTION */
+    .stats {
+      padding: var(--space-2xl) var(--space-lg);
+      background: var(--bg-tertiary);
+      text-align: center;
+    }
+
+    .stats-grid {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-xl);
+    }
+
+    .stat-item {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      display: block;
+      margin-bottom: var(--space-sm);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0 var(--space-md);
+      }
+      
+      .nav-links {
+        gap: var(--space-sm);
+      }
+      
+      .nav-links a {
+        font-size: 0.8rem;
+        padding: var(--space-xs);
+      }
+      
+      .hero {
+        padding: var(--space-xl) var(--space-md);
+        min-height: 90vh;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+      }
+      
+      .feature-card {
+        padding: var(--space-lg);
+      }
+      
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- COMPACT NAVIGATION -->
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="./index.html" class="brand">
+        <img src="assets/deadlink-logo.png" alt="DeadLink">
+        DeadLink
+      </a>
+      <div class="nav-links">
+        <a href="./devops.html">DevOps</a>
+        <a href="./guide.html">Docs</a>
+        <a href="./telemetry-report.html">Analytics</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" class="btn-primary">GitHub</a>
+      </div>
+    </div>
+  </nav>
+  <div class="nav-spacer"></div>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-grid">
+        <div>
+          <h1 class="hero-title">DeadLink — 7 Days to Die Server Companion</h1>
+          <p class="hero-subtitle">Immediate, above-the-fold insight. Narrative AI, deep analytics, and Blood Moon intelligence—no scrolling required.</p>
+          <div class="hero-features">
+            <span class="hero-feature">🤖 AI Narrative Reports</span>
+            <span class="hero-feature">📊 Analytics</span>
+            <span class="hero-feature">🌑 Blood Moon</span>
+            <span class="hero-feature">🛡️ Secure Ops</span>
+          </div>
+          <div class="cta-buttons">
+            <a href="#features" class="btn btn-primary"><span>Explore Features</span></a>
+            <a href="./guide.html" class="btn btn-secondary"><span>Get Started</span></a>
+          </div>
+        </div>
+  <div>
+          <div class="tabs" id="spotlight">
+            <div class="tab-buttons" role="tablist" aria-label="Feature spotlight">
+              <button role="tab" aria-selected="true" aria-controls="tab-ai" id="btn-ai" class="active">AI Reports</button>
+              <button role="tab" aria-selected="false" aria-controls="tab-analytics" id="btn-analytics">Analytics</button>
+              <button role="tab" aria-selected="false" aria-controls="tab-blood" id="btn-blood">Blood Moon</button>
+              <button role="tab" aria-selected="false" aria-controls="tab-secure" id="btn-secure">Secure Ops</button>
+            </div>
+            <div class="tab-panels">
+              <div id="tab-ai" class="tab-panel active" role="tabpanel" aria-labelledby="btn-ai">
+                <div class="panel-head"><span class="panel-icon">🎭</span><span class="panel-title">Narrative Intelligence</span></div>
+                <div class="panel-body">Context-aware activity reports that factor in player location, time of day, health, and Blood Moon cycles—storytelling with signal.</div>
+                <ul class="panel-list">
+                  <li>Biome and time-of-day context</li>
+                  <li>Group dynamics and health-aware narratives</li>
+                  <li>Blood Moon integration and guidance</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./guide.html#/%2Ffeatures">Docs</a>
+                </div>
+              </div>
+              <div id="tab-analytics" class="tab-panel" role="tabpanel" aria-labelledby="btn-analytics">
+                <div class="panel-head"><span class="panel-icon">📈</span><span class="panel-title">Deep Analytics</span></div>
+                <div class="panel-body">Player trends, proximity clusters, MVP calls, and performance insights—optionally with rendered PNG charts.</div>
+                <ul class="panel-list">
+                  <li>Session and distance metrics</li>
+                  <li>Deathless streak tracking</li>
+                  <li>Ping quality and patterns</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./telemetry-report.html">Telemetry</a>
+                  <a class="btn btn-secondary" href="./guide.html#/%2Fanalytics-and-telemetry">Docs</a>
+                </div>
+              </div>
+              <div id="tab-blood" class="tab-panel" role="tabpanel" aria-labelledby="btn-blood">
+                <div class="panel-head"><span class="panel-icon">🌑</span><span class="panel-title">Blood Moon Intelligence</span></div>
+                <div class="panel-body">Predictive alerts with cooldowns and in-game broadcasts. No spam—just the survival info you need.</div>
+                <ul class="panel-list">
+                  <li>Imminent/active/ended cycle detection</li>
+                  <li>In-game broadcast option</li>
+                  <li>Rate-limited Discord alerts</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./guide.html#/%2Ffeatures">Features</a>
+                </div>
+              </div>
+              <div id="tab-secure" class="tab-panel" role="tabpanel" aria-labelledby="btn-secure">
+                <div class="panel-head"><span class="panel-icon">🛡️</span><span class="panel-title">Secure Operations</span></div>
+                <div class="panel-body">Scoped telnet actions with a queued pipeline, admin-only controls, and safe restarts. No raw spam.</div>
+                <ul class="panel-list">
+                  <li>Scoped commands</li>
+                  <li>Queue + timeouts + reconnects</li>
+                  <li>Admin permission gates</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./guide.html#/%2Fcommands">Commands</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="note" aria-label="Maintainer note" style="margin-top:12px">
+            <strong>Maintainers:</strong> CI/CD and releases are public — peek at our <a href="./devops-new.html">DevOps workflow</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADVANCED FEATURES -->
+  <section id="features" class="features">
+    <div class="features-container">
+      <div class="section-header">
+  <h2 class="section-title">Key Capabilities</h2>
+  <p class="section-subtitle">Narrative AI, comprehensive analytics, smart Blood Moon alerts, and secure server controls.</p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Narrative Intelligence -->
+        <div class="feature-card">
+          <span class="feature-icon">🎭</span>
+          <h3 class="feature-title">Narrative Intelligence</h3>
+          <p class="feature-description">Context-aware AI that generates immersive activity reports considering player location, time of day, health status, and blood moon cycles.</p>
+          <ul class="feature-highlights">
+            <li>Location-based storytelling (biome awareness)</li>
+            <li>Time-of-day contextual narratives</li>
+            <li>Blood moon integration and warnings</li>
+            <li>Health-status driven scenarios</li>
+            <li>Group dynamics analysis</li>
+          </ul>
+        </div>
+
+        <!-- Advanced Analytics -->
+        <div class="feature-card">
+          <span class="feature-icon">📈</span>
+          <h3 class="feature-title">Deep Analytics Platform</h3>
+          <p class="feature-description">Comprehensive player and server analytics with trend analysis, MVP detection, proximity clustering, and performance insights.</p>
+          <ul class="feature-highlights">
+            <li>Player trend analysis & patterns</li>
+            <li>Session tracking & distance metrics</li>
+            <li>Deathless streak monitoring</li>
+            <li>Ping quality assessment</li>
+            <li>Cluster detection & MVP rankings</li>
+          </ul>
+        </div>
+
+        <!-- Blood Moon System -->
+        <div class="feature-card">
+          <span class="feature-icon">🌑</span>
+          <h3 class="feature-title">Blood Moon Intelligence</h3>
+          <p class="feature-description">Smart horde night monitoring with predictive alerts, rate-limiting, and contextual warnings that enhance survival strategy.</p>
+          <ul class="feature-highlights">
+            <li>Predictive blood moon alerts</li>
+            <li>Rate-limited, non-spammy warnings</li>
+            <li>In-game broadcast integration</li>
+            <li>Context-aware survival tips</li>
+            <li>Cycle tracking & preparation</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Dashboard -->
+        <div class="feature-card">
+          <span class="feature-icon">🎮</span>
+          <h3 class="feature-title">Interactive Dashboard</h3>
+          <p class="feature-description">Modern Discord interface with button-driven navigation, player deep-dive selectors, and real-time server insights.</p>
+          <ul class="feature-highlights">
+            <li>Slash command integration</li>
+            <li>Button-driven UI navigation</li>
+            <li>Player deep-dive selector</li>
+            <li>Real-time activity feeds</li>
+            <li>Brief/detailed toggle modes</li>
+          </ul>
+        </div>
+
+
+        <!-- Secure Operations -->
+        <div class="feature-card">
+          <span class="feature-icon">🛡️</span>
+          <h3 class="feature-title">Secure Operations</h3>
+          <p class="feature-description">Safe server controls with scoped telnet actions, queued command pipeline, and admin-only operations for secure management.</p>
+          <ul class="feature-highlights">
+            <li>Scoped telnet commands</li>
+            <li>Queued pipeline system</li>
+            <li>Admin permission controls</li>
+            <li>Safe restart mechanisms</li>
+            <li>No raw telnet exposure</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="section-header">
+      <h2 class="section-title">Proven Performance</h2>
+      <p class="section-subtitle">Trusted by 7 Days to Die communities worldwide</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number">50+</span>
+        <span class="stat-label">Features</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">99%</span>
+        <span class="stat-label">Uptime</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">24/7</span>
+        <span class="stat-label">Monitoring</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">Docker</span>
+        <span class="stat-label">Ready</span>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="container">
+      <div><img class="footer-logo" src="assets/deadlink-logo.png" alt=""> © DeadLink</div>
+      <div class="links">
+        <a href="./index-new.html">Home</a>
+        <a href="./docs-new.html">Docs</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add scroll effect to nav
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('.nav');
+      if (window.scrollY > 100) {
+        nav.style.background = 'rgba(8, 10, 14, 0.98)';
+      } else {
+        nav.style.background = 'rgba(8, 10, 14, 0.95)';
+      }
+    });
+
+    // Tabs
+    const tabButtons = document.querySelectorAll('#spotlight .tab-buttons button');
+    const panels = document.querySelectorAll('#spotlight .tab-panel');
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('aria-controls');
+        tabButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected','true');
+        document.getElementById(id)?.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

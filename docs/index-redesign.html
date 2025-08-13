@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>DeadLink — 7 Days to Die Server Companion</title>
+  <meta name="description" content="Advanced server companion for 7 Days to Die with narrative AI reports, deep analytics, Blood Moon intelligence, and secure server controls." />
+  
+  <!-- Brand / sharing -->
+  <meta name="theme-color" content="#0a0c12">
+  <meta property="og:title" content="DeadLink — 7 Days to Die Server Companion">
+  <meta property="og:description" content="Advanced server companion with narrative AI reports, deep analytics, and Blood Moon intelligence.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/deadlink-logo.png">
+  <link rel="canonical" href="https://thecdrz.github.io/DeadLink/">
+
+  <!-- Icon / logo -->
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
+  <link rel="preload" href="assets/deadlink-logo.png" as="image" />
+
+  <!-- Modern fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site-new.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="./index-redesign.html" class="brand">
+        <img src="assets/deadlink-logo.png" alt="DeadLink">
+        DeadLink
+      </a>
+      <div class="nav-links">
+        <a href="./docs-new.html">Docs</a>
+        <a href="./telemetry-report.html">Analytics</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" class="btn-primary" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </nav>
+  <div class="nav-spacer"></div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-grid">
+        <div>
+          <h1 class="hero-title">DeadLink — 7 Days to Die Server Companion</h1>
+          <p class="hero-subtitle">Elevate your server with narrative AI reports, deep analytics, and smart Blood Moon alerts—no scrolling required.</p>
+          <div class="hero-features">
+            <span class="hero-feature">🤖 AI Reports</span>
+            <span class="hero-feature">📊 Analytics</span>
+            <span class="hero-feature">🌑 Blood Moon</span>
+            <span class="hero-feature">🛡️ Secure Ops</span>
+          </div>
+          <div class="cta-buttons">
+            <a href="#features" class="btn btn-primary">Explore Features</a>
+            <a href="./docs-new.html" class="btn btn-secondary">Get Started</a>
+          </div>
+        </div>
+        <div>
+          <div class="tabs" id="spotlight">
+            <div class="tab-buttons" role="tablist" aria-label="Feature spotlight">
+              <button role="tab" aria-selected="true" aria-controls="tab-ai" id="btn-ai" class="active">AI Reports</button>
+              <button role="tab" aria-selected="false" aria-controls="tab-analytics" id="btn-analytics">Analytics</button>
+              <button role="tab" aria-selected="false" aria-controls="tab-blood" id="btn-blood">Blood Moon</button>
+              <button role="tab" aria-selected="false" aria-controls="tab-secure" id="btn-secure">Secure Ops</button>
+            </div>
+            <div class="tab-panels">
+              <div id="tab-ai" class="tab-panel active" role="tabpanel" aria-labelledby="btn-ai">
+                <div class="panel-head">
+                  <span class="panel-icon">🎭</span>
+                  <span class="panel-title">Narrative Intelligence</span>
+                </div>
+                <div class="panel-body">Context-aware activity reports that factor in player location, time of day, health, and Blood Moon cycles—storytelling with signal.</div>
+                <ul class="panel-list">
+                  <li>Biome and time-of-day context</li>
+                  <li>Group dynamics and health-aware narratives</li>
+                  <li>Blood Moon integration and guidance</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./docs-new.html#/features">Learn More</a>
+                </div>
+              </div>
+              <div id="tab-analytics" class="tab-panel" role="tabpanel" aria-labelledby="btn-analytics">
+                <div class="panel-head">
+                  <span class="panel-icon">📈</span>
+                  <span class="panel-title">Deep Analytics</span>
+                </div>
+                <div class="panel-body">Player trends, proximity clusters, MVP calls, and performance insights—optionally with rendered PNG charts.</div>
+                <ul class="panel-list">
+                  <li>Session and distance metrics</li>
+                  <li>Deathless streak tracking</li>
+                  <li>Ping quality and patterns</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./telemetry-report.html">View Dashboard</a>
+                  <a class="btn btn-secondary" href="./docs-new.html#/analytics">Learn More</a>
+                </div>
+              </div>
+              <div id="tab-blood" class="tab-panel" role="tabpanel" aria-labelledby="btn-blood">
+                <div class="panel-head">
+                  <span class="panel-icon">🌑</span>
+                  <span class="panel-title">Blood Moon Intelligence</span>
+                </div>
+                <div class="panel-body">Predictive alerts with cooldowns and in-game broadcasts. No spam—just the survival info you need.</div>
+                <ul class="panel-list">
+                  <li>Imminent/active/ended cycle detection</li>
+                  <li>In-game broadcast option</li>
+                  <li>Rate-limited Discord alerts</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./docs-new.html#/blood-moon">Learn More</a>
+                </div>
+              </div>
+              <div id="tab-secure" class="tab-panel" role="tabpanel" aria-labelledby="btn-secure">
+                <div class="panel-head">
+                  <span class="panel-icon">🛡️</span>
+                  <span class="panel-title">Secure Operations</span>
+                </div>
+                <div class="panel-body">Scoped telnet actions with a queued pipeline, admin-only controls, and safe restarts. No raw spam.</div>
+                <ul class="panel-list">
+                  <li>Scoped commands</li>
+                  <li>Queue + timeouts + reconnects</li>
+                  <li>Admin permission gates</li>
+                </ul>
+                <div class="panel-foot">
+                  <a class="btn btn-secondary" href="./docs-new.html#/security">Learn More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="note" aria-label="Maintainer note">
+            <strong>Maintainers:</strong> CI/CD and releases are public — peek at our <a href="./devops-new.html">DevOps workflow</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Key Capabilities</h2>
+        <p class="section-subtitle">Narrative AI, comprehensive analytics, smart Blood Moon alerts, and secure server controls.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="icon">🎭</div>
+          <h3>Narrative Intelligence</h3>
+          <p>Context-aware activity reports with location, time, health, and Blood Moon cues.</p>
+        </article>
+        <article class="card">
+          <div class="icon">📈</div>
+          <h3>Deep Analytics</h3>
+          <p>Trends, clusters, MVP, sessions, distance, streaks, and performance insights.</p>
+        </article>
+        <article class="card">
+          <div class="icon">🌑</div>
+          <h3>Blood Moon</h3>
+          <p>Predictive alerts, cooldowns, and optional in-game broadcast.</p>
+        </article>
+        <article class="card">
+          <div class="icon">🎮</div>
+          <h3>Dashboard</h3>
+          <p>Slash-first, button-driven Discord UI with player deep dive.</p>
+        </article>
+        <article class="card">
+          <div class="icon">🛡️</div>
+          <h3>Secure Ops</h3>
+          <p>Scoped controls, queue pipeline, permissions, safe restarts.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Server Intelligence</h2>
+        <p class="section-subtitle">Running 24/7 for 7 Days to Die communities worldwide</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number">50+</span>
+          <span class="stat-label">Features</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">99%</span>
+          <span class="stat-label">Uptime</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">24/7</span>
+          <span class="stat-label">Monitoring</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">Fast</span>
+          <span class="stat-label">Setup</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div><img class="footer-logo" src="assets/deadlink-logo.png" alt=""> © DeadLink</div>
+      <div class="links">
+        <a href="./docs-new.html">Docs</a>
+        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Tab system
+    const tabButtons = document.querySelectorAll('#spotlight .tab-buttons button');
+    const panels = document.querySelectorAll('#spotlight .tab-panel');
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('aria-controls');
+        tabButtons.forEach(b => { 
+          b.classList.remove('active'); 
+          b.setAttribute('aria-selected','false'); 
+        });
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected','true');
+        document.getElementById(id)?.classList.add('active');
+      });
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Nav background on scroll
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('.nav');
+      nav.style.background = window.scrollY > 100 
+        ? 'rgba(10, 12, 18, 0.98)' 
+        : 'rgba(10, 12, 18, 0.95)';
+    });
+  </script>
+</body>
+</html>
