@@ -53,23 +53,23 @@
     <section class="showcase" aria-label="Live UI Preview">
       <div class="grid showcase-grid">
         <figure class="card">
-          <img loading="lazy" src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-activity-report-basic.png" alt="Activity brief embed" />
+          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-activity-report-basic.png" alt="Activity brief embed" />
           <figcaption>Activity (Brief) — fast narrative snapshot with survival context.</figcaption>
         </figure>
         <figure class="card">
-          <img loading="lazy" src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-activity-report-details.png" alt="Activity detailed embed" />
+          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-activity-report-details.png" alt="Activity detailed embed" />
           <figcaption>Activity (Details) — expanded guidance & blood moon awareness.</figcaption>
         </figure>
         <figure class="card">
-          <img loading="lazy" src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-info.png" alt="Info panel embed" />
+          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-info.png" alt="Info panel embed" />
           <figcaption>Info Panel — feature overview & quick command help.</figcaption>
         </figure>
         <figure class="card">
-          <img loading="lazy" src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-trends.png" alt="Trends analytics embed" />
+          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-trends.png" alt="Trends analytics embed" />
           <figcaption>Trends — player peaks, retention signals & pattern analysis.</figcaption>
         </figure>
         <figure class="card">
-          <img loading="lazy" src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-blood-moon-imminent.png" alt="Blood moon imminent alert" />
+          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-blood-moon-imminent.png" alt="Blood moon imminent alert" />
           <figcaption>Blood Moon Imminent — countdown alert (rate‑limited).</figcaption>
         </figure>
       </div>
@@ -187,7 +187,7 @@ $ docker run --name deadlink \
   <!-- Scripts: copy-to-clipboard -->
   <script>
 
-    // Copy-to-clipboard for the Docker command
+  // Copy-to-clipboard for the Docker command
     document.addEventListener('click', e => {
       if (!e.target.closest('.copybtn')) return;
       const btn = e.target.closest('.copybtn');
@@ -201,6 +201,25 @@ $ docker run --name deadlink \
         span.textContent = 'Copied!';
         setTimeout(() => span.textContent = old, 1200);
       });
+    });
+
+    // Lightweight lightbox reuse (same as gallery) for showcase images
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img[data-lightbox]');
+      if (!img) return;
+      const overlay = document.createElement('div');
+      overlay.className = 'lightbox-overlay fade-in';
+      overlay.setAttribute('role','dialog');
+      overlay.setAttribute('aria-modal','true');
+      overlay.innerHTML = `<img class="lightbox-img" src="${img.src}" alt="${img.alt}">`;
+      overlay.addEventListener('click', () => overlay.remove());
+      document.body.appendChild(overlay);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const lb = document.querySelector('.lightbox-overlay');
+        if (lb) lb.remove();
+      }
     });
   </script>
 </body>

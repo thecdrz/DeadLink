@@ -851,23 +851,36 @@ figcaption {
 }
 .showcase-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-  gap: var(--space-xl);
+  grid-template-columns: repeat(auto-fit,minmax(340px,1fr));
+  gap: var(--space-2xl);
 }
 .showcase .card {
-  padding: var(--space-md) var(--space-md) var(--space-lg);
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
   min-height: auto;
 }
 .showcase .card img {
   display: block;
   border-radius: var(--radius-lg);
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  box-shadow: var(--shadow-lg),0 0 0 1px rgba(255,255,255,0.08) inset;
+  width: 100%;
+  height: auto;
+  background: var(--bg-tertiary);
+  object-fit: contain;
+  box-shadow: var(--shadow-xl),0 0 0 1px rgba(255,255,255,0.12) inset;
+  cursor: zoom-in;
 }
 .showcase figcaption {
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--text-muted);
-  margin-top: var(--space-sm);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-top: var(--space-md);
+  max-width: 50ch;
+}
+
+@media (min-width: 1400px) {
+  .showcase-grid { grid-template-columns: repeat(auto-fit,minmax(400px,1fr)); }
+}
+
+@media (max-width: 640px) {
+  .showcase .card { padding: var(--space-md); }
+  .showcase figcaption { font-size: 0.8rem; }
 }
