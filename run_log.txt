@@ -1,0 +1,779 @@
+﻿test (18.x)	Set up job	∩╗┐2025-08-15T23:01:08.9853112Z Current runner version: '2.327.1'
+test (18.x)	Set up job	2025-08-15T23:01:08.9876188Z ##[group]Runner Image Provisioner
+test (18.x)	Set up job	2025-08-15T23:01:08.9876909Z Hosted Compute Agent
+test (18.x)	Set up job	2025-08-15T23:01:08.9877595Z Version: 20250812.370
+test (18.x)	Set up job	2025-08-15T23:01:08.9878208Z Commit: 4a2b2bf7520004e3e907c2150c8cabe342a3da32
+test (18.x)	Set up job	2025-08-15T23:01:08.9878914Z Build Date: 2025-08-12T16:08:14Z
+test (18.x)	Set up job	2025-08-15T23:01:08.9879575Z ##[endgroup]
+test (18.x)	Set up job	2025-08-15T23:01:08.9880234Z ##[group]Operating System
+test (18.x)	Set up job	2025-08-15T23:01:08.9880788Z Ubuntu
+test (18.x)	Set up job	2025-08-15T23:01:08.9881301Z 24.04.2
+test (18.x)	Set up job	2025-08-15T23:01:08.9881762Z LTS
+test (18.x)	Set up job	2025-08-15T23:01:08.9882213Z ##[endgroup]
+test (18.x)	Set up job	2025-08-15T23:01:08.9882740Z ##[group]Runner Image
+test (18.x)	Set up job	2025-08-15T23:01:08.9883239Z Image: ubuntu-24.04
+test (18.x)	Set up job	2025-08-15T23:01:08.9883741Z Version: 20250810.1.0
+test (18.x)	Set up job	2025-08-15T23:01:08.9884770Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250810.1/images/ubuntu/Ubuntu2404-Readme.md
+test (18.x)	Set up job	2025-08-15T23:01:08.9886118Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250810.1
+test (18.x)	Set up job	2025-08-15T23:01:08.9887320Z ##[endgroup]
+test (18.x)	Set up job	2025-08-15T23:01:08.9889643Z ##[group]GITHUB_TOKEN Permissions
+test (18.x)	Set up job	2025-08-15T23:01:08.9891897Z Actions: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9892468Z Attestations: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9892969Z Checks: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9893563Z Contents: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9894029Z Deployments: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9894530Z Discussions: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9895146Z Issues: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9895593Z Metadata: read
+test (18.x)	Set up job	2025-08-15T23:01:08.9896099Z Models: read
+test (18.x)	Set up job	2025-08-15T23:01:08.9896628Z Packages: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9897118Z Pages: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9897567Z PullRequests: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9898134Z RepositoryProjects: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9898656Z SecurityEvents: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9899286Z Statuses: write
+test (18.x)	Set up job	2025-08-15T23:01:08.9899833Z ##[endgroup]
+test (18.x)	Set up job	2025-08-15T23:01:08.9902446Z Secret source: Actions
+test (18.x)	Set up job	2025-08-15T23:01:08.9903150Z Prepare workflow directory
+test (18.x)	Set up job	2025-08-15T23:01:09.0219373Z Prepare all required actions
+test (18.x)	Set up job	2025-08-15T23:01:09.0257029Z Getting action download info
+test (18.x)	Set up job	2025-08-15T23:01:09.3187508Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+test (18.x)	Set up job	2025-08-15T23:01:09.5592604Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+test (18.x)	Set up job	2025-08-15T23:01:09.7225897Z Complete job name: test (18.x)
+test (18.x)	Checkout	∩╗┐2025-08-15T23:01:09.7867606Z ##[group]Run actions/checkout@v4
+test (18.x)	Checkout	2025-08-15T23:01:09.7868493Z with:
+test (18.x)	Checkout	2025-08-15T23:01:09.7868883Z   repository: thecdrz/DeadLink
+test (18.x)	Checkout	2025-08-15T23:01:09.7869500Z   token: ***
+test (18.x)	Checkout	2025-08-15T23:01:09.7869870Z   ssh-strict: true
+test (18.x)	Checkout	2025-08-15T23:01:09.7870423Z   ssh-user: git
+test (18.x)	Checkout	2025-08-15T23:01:09.7870819Z   persist-credentials: true
+test (18.x)	Checkout	2025-08-15T23:01:09.7871248Z   clean: true
+test (18.x)	Checkout	2025-08-15T23:01:09.7871634Z   sparse-checkout-cone-mode: true
+test (18.x)	Checkout	2025-08-15T23:01:09.7872099Z   fetch-depth: 1
+test (18.x)	Checkout	2025-08-15T23:01:09.7872476Z   fetch-tags: false
+test (18.x)	Checkout	2025-08-15T23:01:09.7872857Z   show-progress: true
+test (18.x)	Checkout	2025-08-15T23:01:09.7873263Z   lfs: false
+test (18.x)	Checkout	2025-08-15T23:01:09.7873626Z   submodules: false
+test (18.x)	Checkout	2025-08-15T23:01:09.7874029Z   set-safe-directory: true
+test (18.x)	Checkout	2025-08-15T23:01:09.7875018Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:09.8928475Z Syncing repository: thecdrz/DeadLink
+test (18.x)	Checkout	2025-08-15T23:01:09.8930719Z ##[group]Getting Git version info
+test (18.x)	Checkout	2025-08-15T23:01:09.8931446Z Working directory is '/home/runner/work/DeadLink/DeadLink'
+test (18.x)	Checkout	2025-08-15T23:01:09.8932407Z [command]/usr/bin/git version
+test (18.x)	Checkout	2025-08-15T23:01:09.8985146Z git version 2.50.1
+test (18.x)	Checkout	2025-08-15T23:01:09.9011623Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:09.9034292Z Temporarily overriding HOME='/home/runner/work/_temp/d33d258e-bc44-4057-aae1-0199203b9f18' before making global git config changes
+test (18.x)	Checkout	2025-08-15T23:01:09.9036671Z Adding repository directory to the temporary git global config as a safe directory
+test (18.x)	Checkout	2025-08-15T23:01:09.9040600Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DeadLink/DeadLink
+test (18.x)	Checkout	2025-08-15T23:01:09.9073748Z Deleting the contents of '/home/runner/work/DeadLink/DeadLink'
+test (18.x)	Checkout	2025-08-15T23:01:09.9077314Z ##[group]Initializing the repository
+test (18.x)	Checkout	2025-08-15T23:01:09.9081383Z [command]/usr/bin/git init /home/runner/work/DeadLink/DeadLink
+test (18.x)	Checkout	2025-08-15T23:01:09.9142216Z hint: Using 'master' as the name for the initial branch. This default branch name
+test (18.x)	Checkout	2025-08-15T23:01:09.9143372Z hint: is subject to change. To configure the initial branch name to use in all
+test (18.x)	Checkout	2025-08-15T23:01:09.9144304Z hint: of your new repositories, which will suppress this warning, call:
+test (18.x)	Checkout	2025-08-15T23:01:09.9145032Z hint:
+test (18.x)	Checkout	2025-08-15T23:01:09.9145510Z hint: 	git config --global init.defaultBranch <name>
+test (18.x)	Checkout	2025-08-15T23:01:09.9146287Z hint:
+test (18.x)	Checkout	2025-08-15T23:01:09.9147058Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test (18.x)	Checkout	2025-08-15T23:01:09.9147987Z hint: 'development'. The just-created branch can be renamed via this command:
+test (18.x)	Checkout	2025-08-15T23:01:09.9148707Z hint:
+test (18.x)	Checkout	2025-08-15T23:01:09.9149094Z hint: 	git branch -m <name>
+test (18.x)	Checkout	2025-08-15T23:01:09.9149543Z hint:
+test (18.x)	Checkout	2025-08-15T23:01:09.9150530Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test (18.x)	Checkout	2025-08-15T23:01:09.9151776Z Initialized empty Git repository in /home/runner/work/DeadLink/DeadLink/.git/
+test (18.x)	Checkout	2025-08-15T23:01:09.9156964Z [command]/usr/bin/git remote add origin https://github.com/thecdrz/DeadLink
+test (18.x)	Checkout	2025-08-15T23:01:09.9186290Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:09.9187033Z ##[group]Disabling automatic garbage collection
+test (18.x)	Checkout	2025-08-15T23:01:09.9190023Z [command]/usr/bin/git config --local gc.auto 0
+test (18.x)	Checkout	2025-08-15T23:01:09.9217225Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:09.9217901Z ##[group]Setting up auth
+test (18.x)	Checkout	2025-08-15T23:01:09.9223628Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (18.x)	Checkout	2025-08-15T23:01:09.9252237Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (18.x)	Checkout	2025-08-15T23:01:09.9528620Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (18.x)	Checkout	2025-08-15T23:01:09.9564976Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (18.x)	Checkout	2025-08-15T23:01:09.9804201Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test (18.x)	Checkout	2025-08-15T23:01:09.9848893Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:09.9861290Z ##[group]Fetching the repository
+test (18.x)	Checkout	2025-08-15T23:01:09.9862713Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +016ead5199ec099481ade2bee3be38e9b1ab3112:refs/remotes/origin/master
+test (18.x)	Checkout	2025-08-15T23:01:10.5536727Z From https://github.com/thecdrz/DeadLink
+test (18.x)	Checkout	2025-08-15T23:01:10.5538517Z  * [new ref]         016ead5199ec099481ade2bee3be38e9b1ab3112 -> origin/master
+test (18.x)	Checkout	2025-08-15T23:01:10.5565036Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:10.5566465Z ##[group]Determining the checkout info
+test (18.x)	Checkout	2025-08-15T23:01:10.5568079Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:10.5573305Z [command]/usr/bin/git sparse-checkout disable
+test (18.x)	Checkout	2025-08-15T23:01:10.5613271Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test (18.x)	Checkout	2025-08-15T23:01:10.5644565Z ##[group]Checking out the ref
+test (18.x)	Checkout	2025-08-15T23:01:10.5646201Z [command]/usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+test (18.x)	Checkout	2025-08-15T23:01:10.6561823Z Reset branch 'master'
+test (18.x)	Checkout	2025-08-15T23:01:10.6563659Z branch 'master' set up to track 'origin/master'.
+test (18.x)	Checkout	2025-08-15T23:01:10.6576818Z ##[endgroup]
+test (18.x)	Checkout	2025-08-15T23:01:10.6615793Z [command]/usr/bin/git log -1 --format=%H
+test (18.x)	Checkout	2025-08-15T23:01:10.6638096Z 016ead5199ec099481ade2bee3be38e9b1ab3112
+test (18.x)	Setup Node.js	∩╗┐2025-08-15T23:01:10.6937942Z ##[group]Run actions/setup-node@v4
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.6939084Z with:
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.6940071Z   node-version: 18.x
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.6941038Z   cache: npm
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.6941848Z   always-auth: false
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.6942740Z   check-latest: false
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.6943884Z   token: ***
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.6944709Z ##[endgroup]
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.8677496Z Found in cache @ /opt/hostedtoolcache/node/18.20.8/x64
+test (18.x)	Setup Node.js	2025-08-15T23:01:10.8684517Z ##[group]Environment details
+test (18.x)	Setup Node.js	2025-08-15T23:01:12.7559697Z node: v18.20.8
+test (18.x)	Setup Node.js	2025-08-15T23:01:12.7560476Z npm: 10.8.2
+test (18.x)	Setup Node.js	2025-08-15T23:01:12.7560672Z yarn: 1.22.22
+test (18.x)	Setup Node.js	2025-08-15T23:01:12.7563382Z ##[endgroup]
+test (18.x)	Setup Node.js	2025-08-15T23:01:12.7589850Z [command]/opt/hostedtoolcache/node/18.20.8/x64/bin/npm config get cache
+test (18.x)	Setup Node.js	2025-08-15T23:01:13.0244577Z /home/runner/.npm
+test (18.x)	Setup Node.js	2025-08-15T23:01:13.1132949Z Cache hit for: node-cache-Linux-x64-npm-8d50eb20d7337f0276d5834a27b62acaed25396b171e2d2821badf8a4e45b1cf
+test (18.x)	Setup Node.js	2025-08-15T23:01:13.4178780Z Received 15466158 of 15466158 (100.0%), 60.2 MBs/sec
+test (18.x)	Setup Node.js	2025-08-15T23:01:13.4179707Z Cache Size: ~15 MB (15466158 B)
+test (18.x)	Setup Node.js	2025-08-15T23:01:13.4207753Z [command]/usr/bin/tar -xf /home/runner/work/_temp/0066dd20-b1d8-4957-91ee-2e0a7e703dab/cache.tzst -P -C /home/runner/work/DeadLink/DeadLink --use-compress-program unzstd
+test (18.x)	Setup Node.js	2025-08-15T23:01:13.5263207Z Cache restored successfully
+test (18.x)	Setup Node.js	2025-08-15T23:01:13.5297110Z Cache restored from key: node-cache-Linux-x64-npm-8d50eb20d7337f0276d5834a27b62acaed25396b171e2d2821badf8a4e45b1cf
+test (18.x)	Install dependencies	∩╗┐2025-08-15T23:01:13.5434689Z ##[group]Run npm ci
+test (18.x)	Install dependencies	2025-08-15T23:01:13.5434996Z [36;1mnpm ci[0m
+test (18.x)	Install dependencies	2025-08-15T23:01:13.5505922Z shell: /usr/bin/bash -e {0}
+test (18.x)	Install dependencies	2025-08-15T23:01:13.5506245Z ##[endgroup]
+test (18.x)	Install dependencies	2025-08-15T23:01:16.6954396Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+test (18.x)	Install dependencies	2025-08-15T23:01:16.7166697Z npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+test (18.x)	Install dependencies	2025-08-15T23:01:16.7776996Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+test (18.x)	Install dependencies	2025-08-15T23:01:16.8225049Z npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+test (18.x)	Install dependencies	2025-08-15T23:01:16.8338525Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+test (18.x)	Install dependencies	2025-08-15T23:01:16.9353259Z npm warn deprecated @discordjs/collection@0.7.0: no longer supported
+test (18.x)	Install dependencies	2025-08-15T23:01:16.9516985Z npm warn deprecated gauge@3.0.2: This package is no longer supported.
+test (18.x)	Install dependencies	2025-08-15T23:01:17.0629230Z npm warn deprecated @discordjs/builders@0.16.0: no longer supported
+test (18.x)	Install dependencies	2025-08-15T23:01:25.0093476Z 
+test (18.x)	Install dependencies	2025-08-15T23:01:25.0094289Z added 451 packages, and audited 452 packages in 11s
+test (18.x)	Install dependencies	2025-08-15T23:01:25.0098733Z 
+test (18.x)	Install dependencies	2025-08-15T23:01:25.0099175Z 51 packages are looking for funding
+test (18.x)	Install dependencies	2025-08-15T23:01:25.0099750Z   run `npm fund` for details
+test (18.x)	Install dependencies	2025-08-15T23:01:25.0112393Z 
+test (18.x)	Install dependencies	2025-08-15T23:01:25.0112825Z found 0 vulnerabilities
+test (18.x)	Run tests	∩╗┐2025-08-15T23:01:25.0383332Z ##[group]Run npm test
+test (18.x)	Run tests	2025-08-15T23:01:25.0383603Z [36;1mnpm test[0m
+test (18.x)	Run tests	2025-08-15T23:01:25.0426953Z shell: /usr/bin/bash -e {0}
+test (18.x)	Run tests	2025-08-15T23:01:25.0427300Z ##[endgroup]
+test (18.x)	Run tests	2025-08-15T23:01:25.1773778Z 
+test (18.x)	Run tests	2025-08-15T23:01:25.1774344Z > deadlink@2.13.1 test
+test (18.x)	Run tests	2025-08-15T23:01:25.1774756Z > jest --runInBand
+test (18.x)	Run tests	2025-08-15T23:01:25.1774895Z 
+test (18.x)	Run tests	2025-08-15T23:01:26.0356759Z PASS __tests__/telemetry-buffer.test.js
+test (18.x)	Run tests	2025-08-15T23:01:26.3841267Z FAIL __tests__/demo.integration.test.js
+test (18.x)	Run tests	2025-08-15T23:01:26.3842357Z   ΓùÅ demo-mode integration emits telnet startup lines
+test (18.x)	Run tests	2025-08-15T23:01:26.3842630Z 
+test (18.x)	Run tests	2025-08-15T23:01:26.3842783Z     Child exited early (code=1). Output:
+test (18.x)	Run tests	2025-08-15T23:01:26.3843003Z 
+test (18.x)	Run tests	2025-08-15T23:01:26.3843137Z     ____                 _ _     _       _    
+test (18.x)	Run tests	2025-08-15T23:01:26.3843474Z     |  _ \  ___  __ _  __| | |   (_)_ __ | | __
+test (18.x)	Run tests	2025-08-15T23:01:26.3843820Z     | | | |/ _ \/ _\` |/ _\` | |   | | '_ \| |/ /
+test (18.x)	Run tests	2025-08-15T23:01:26.3844148Z     | |_| |  __/ (_| | (_| | |___| | | | |   < 
+test (18.x)	Run tests	2025-08-15T23:01:26.3844504Z     |____/ \___|\__,_|\__,_|_____|_|_| |_|_|\_\`
+test (18.x)	Run tests	2025-08-15T23:01:26.3844778Z 
+test (18.x)	Run tests	2025-08-15T23:01:26.3844881Z     DeadLink v2.13.1
+test (18.x)	Run tests	2025-08-15T23:01:26.3845321Z     23:01:26.334 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+test (18.x)	Run tests	2025-08-15T23:01:26.3845939Z     23:01:26.335 [SEC] Use only on trusted networks with a unique telnet password.
+test (18.x)	Run tests	2025-08-15T23:01:26.3846789Z     23:01:26.335 [CREDITS] Originally inspired by Dishorde (LakeYS) - thanks! DeadLink has since become a near full rewrite.
+test (18.x)	Run tests	2025-08-15T23:01:26.3847840Z     23:01:26.335 [LOG] Existing log files: deadlink.log(34KB)
+test (18.x)	Run tests	2025-08-15T23:01:26.3848335Z     23:01:26.335 [CHARTS] PNG charts not available (using ASCII fallback)
+test (18.x)	Run tests	2025-08-15T23:01:26.3849221Z     Mode: ≡ƒº¬ Dev (simulated telnet)
+test (18.x)	Run tests	2025-08-15T23:01:26.3850190Z     ERROR: Discord token not configured. Set DISCORD_TOKEN environment variable or update config.json
+test (18.x)	Run tests	2025-08-15T23:01:26.3850630Z 
+test (18.x)	Run tests	2025-08-15T23:01:26.3851350Z     [0m [90m 54 |[39m         [36mif[39m (hasConnected [33m&&[39m (hasConsoleActive [33m||[39m hasDevReady [33m||[39m hasDay)) [36mreturn[39m[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:26.3852141Z      [90m 55 |[39m         clearTimeout(timeout)[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:26.3853016Z     [31m[1m>[22m[39m[90m 56 |[39m         reject([36mnew[39m [33mError[39m([32m'Child exited early (code='[39m [33m+[39m code [33m+[39m [32m'). Output:\n'[39m [33m+[39m out))[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:26.3853738Z      [90m    |[39m                [31m[1m^[22m[39m
+test (18.x)	Run tests	2025-08-15T23:01:26.3854112Z      [90m 57 |[39m       }[33m,[39m [35m20[39m)[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:26.3854454Z      [90m 58 |[39m     })[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:26.3854751Z      [90m 59 |[39m   })[33m;[39m[0m
+test (18.x)	Run tests	2025-08-15T23:01:26.3854908Z 
+test (18.x)	Run tests	2025-08-15T23:01:26.3855118Z       at Timeout._onTimeout (__tests__/demo.integration.test.js:56:16)
+test (18.x)	Run tests	2025-08-15T23:01:26.3855364Z 
+test (18.x)	Run tests	2025-08-15T23:01:26.4319178Z PASS __tests__/gmsgParsing.test.js
+test (18.x)	Run tests	2025-08-15T23:01:26.7406243Z PASS __tests__/bloodmoon.test.js
+test (18.x)	Run tests	2025-08-15T23:01:26.7911190Z PASS __tests__/telemetry.test.js
+test (18.x)	Run tests	2025-08-15T23:01:26.8715997Z PASS __tests__/enhancedAnalytics.test.js
+test (18.x)	Run tests	2025-08-15T23:01:26.9123090Z PASS __tests__/telnetBuffer.test.js
+test (18.x)	Run tests	2025-08-15T23:01:26.9958561Z PASS __tests__/updates.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.0301468Z PASS __tests__/activityPattern.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.0813821Z FAIL __tests__/log-utils.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.0814872Z   ΓùÅ log-utils ΓÇ║ rotates files when exceeding size
+test (18.x)	Run tests	2025-08-15T23:01:27.0815285Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.0815601Z     expect(received).toBe(expected) // Object.is equality
+test (18.x)	Run tests	2025-08-15T23:01:27.0815987Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.0816144Z     Expected: true
+test (18.x)	Run tests	2025-08-15T23:01:27.0816495Z     Received: false
+test (18.x)	Run tests	2025-08-15T23:01:27.0816707Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.0817635Z     [0m [90m 27 |[39m     rotateIfNeeded(tmp[33m,[39m [35m10[39m[33m,[39m [35m3[39m)[33m;[39m [90m// tiny maxSize to trigger rotation[39m
+test (18.x)	Run tests	2025-08-15T23:01:27.0818967Z      [90m 28 |[39m     [90m// after rotateIfNeeded, active file should exist (possibly empty)[39m
+test (18.x)	Run tests	2025-08-15T23:01:27.0820941Z     [31m[1m>[22m[39m[90m 29 |[39m     expect(fs[33m.[39mexistsSync(f))[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:27.0821871Z      [90m    |[39m                              [31m[1m^[22m[39m
+test (18.x)	Run tests	2025-08-15T23:01:27.0822447Z      [90m 30 |[39m   })[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:27.0822944Z      [90m 31 |[39m })[33m;[39m
+test (18.x)	Run tests	2025-08-15T23:01:27.0823392Z      [90m 32 |[39m[0m
+test (18.x)	Run tests	2025-08-15T23:01:27.0823614Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.0823901Z       at Object.toBe (__tests__/log-utils.test.js:29:30)
+test (18.x)	Run tests	2025-08-15T23:01:27.0824260Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.1378993Z PASS __tests__/telnetQueue.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.1480633Z   ΓùÅ Console
+test (18.x)	Run tests	2025-08-15T23:01:27.1480822Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.1480933Z     console.log
+test (18.x)	Run tests	2025-08-15T23:01:27.1481263Z       [TELNET-QUEUE] exec -> cmd1
+test (18.x)	Run tests	2025-08-15T23:01:27.1481488Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.1481751Z       at TelnetQueue.log [as _drain] (lib/telnetQueue.js:34:19)
+test (18.x)	Run tests	2025-08-15T23:01:27.1482058Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.1482197Z     console.log
+test (18.x)	Run tests	2025-08-15T23:01:27.1482478Z       [TELNET-QUEUE] exec -> cmd2
+test (18.x)	Run tests	2025-08-15T23:01:27.1482692Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.1482927Z       at TelnetQueue.log [as _drain] (lib/telnetQueue.js:34:19)
+test (18.x)	Run tests	2025-08-15T23:01:27.1483233Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.2031938Z PASS __tests__/lifecycle.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.2349833Z PASS __tests__/analyticsUtils.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.2903149Z PASS __tests__/trendsHarness.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.3195615Z PASS __tests__/charts.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.3693696Z PASS __tests__/configSchema.extended.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.4034256Z PASS __tests__/configSchema.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.4314155Z PASS __tests__/smoke.test.js
+test (18.x)	Run tests	2025-08-15T23:01:27.4325188Z 
+test (18.x)	Run tests	2025-08-15T23:01:27.4333362Z Test Suites: 2 failed, 16 passed, 18 total
+test (18.x)	Run tests	2025-08-15T23:01:27.4333787Z Tests:       2 failed, 34 passed, 36 total
+test (18.x)	Run tests	2025-08-15T23:01:27.4334098Z Snapshots:   0 total
+test (18.x)	Run tests	2025-08-15T23:01:27.4334344Z Time:        1.91 s
+test (18.x)	Run tests	2025-08-15T23:01:27.4334581Z Ran all test suites.
+test (18.x)	Run tests	2025-08-15T23:01:28.4350932Z Jest did not exit one second after the test run has completed.
+test (18.x)	Run tests	2025-08-15T23:01:28.4351466Z 
+test (18.x)	Run tests	2025-08-15T23:01:28.4352618Z 'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+test (18.x)	Run tests	2025-08-15T23:01:35.0103603Z ##[error]Process completed with exit code 1.
+test (18.x)	Post Checkout	∩╗┐2025-08-15T23:01:35.0208861Z Post job cleanup.
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1134938Z [command]/usr/bin/git version
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1170908Z git version 2.50.1
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1212698Z Temporarily overriding HOME='/home/runner/work/_temp/245258df-0fa0-4009-b46b-c9f1c8618ce7' before making global git config changes
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1213756Z Adding repository directory to the temporary git global config as a safe directory
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1224324Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DeadLink/DeadLink
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1256707Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1287657Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1511592Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1532106Z http.https://github.com/.extraheader
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1544571Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test (18.x)	Post Checkout	2025-08-15T23:01:35.1574948Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (18.x)	Complete job	∩╗┐2025-08-15T23:01:35.1897851Z Cleaning up orphan processes
+test (22.x)	Set up job	∩╗┐2025-08-15T23:01:10.4427529Z Current runner version: '2.327.1'
+test (22.x)	Set up job	2025-08-15T23:01:10.4451224Z ##[group]Runner Image Provisioner
+test (22.x)	Set up job	2025-08-15T23:01:10.4452071Z Hosted Compute Agent
+test (22.x)	Set up job	2025-08-15T23:01:10.4452651Z Version: 20250812.370
+test (22.x)	Set up job	2025-08-15T23:01:10.4453271Z Commit: 4a2b2bf7520004e3e907c2150c8cabe342a3da32
+test (22.x)	Set up job	2025-08-15T23:01:10.4453925Z Build Date: 2025-08-12T16:08:14Z
+test (22.x)	Set up job	2025-08-15T23:01:10.4454556Z ##[endgroup]
+test (22.x)	Set up job	2025-08-15T23:01:10.4455105Z ##[group]Operating System
+test (22.x)	Set up job	2025-08-15T23:01:10.4455664Z Ubuntu
+test (22.x)	Set up job	2025-08-15T23:01:10.4456091Z 24.04.2
+test (22.x)	Set up job	2025-08-15T23:01:10.4456624Z LTS
+test (22.x)	Set up job	2025-08-15T23:01:10.4457040Z ##[endgroup]
+test (22.x)	Set up job	2025-08-15T23:01:10.4457702Z ##[group]Runner Image
+test (22.x)	Set up job	2025-08-15T23:01:10.4458347Z Image: ubuntu-24.04
+test (22.x)	Set up job	2025-08-15T23:01:10.4458811Z Version: 20250810.1.0
+test (22.x)	Set up job	2025-08-15T23:01:10.4459782Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250810.1/images/ubuntu/Ubuntu2404-Readme.md
+test (22.x)	Set up job	2025-08-15T23:01:10.4461147Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250810.1
+test (22.x)	Set up job	2025-08-15T23:01:10.4462321Z ##[endgroup]
+test (22.x)	Set up job	2025-08-15T23:01:10.4464668Z ##[group]GITHUB_TOKEN Permissions
+test (22.x)	Set up job	2025-08-15T23:01:10.4466508Z Actions: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4467162Z Attestations: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4467856Z Checks: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4468305Z Contents: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4468890Z Deployments: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4469370Z Discussions: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4469864Z Issues: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4470335Z Metadata: read
+test (22.x)	Set up job	2025-08-15T23:01:10.4470828Z Models: read
+test (22.x)	Set up job	2025-08-15T23:01:10.4471276Z Packages: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4471832Z Pages: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4472332Z PullRequests: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4472819Z RepositoryProjects: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4473412Z SecurityEvents: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4473991Z Statuses: write
+test (22.x)	Set up job	2025-08-15T23:01:10.4474486Z ##[endgroup]
+test (22.x)	Set up job	2025-08-15T23:01:10.4476413Z Secret source: Actions
+test (22.x)	Set up job	2025-08-15T23:01:10.4477542Z Prepare workflow directory
+test (22.x)	Set up job	2025-08-15T23:01:10.4794754Z Prepare all required actions
+test (22.x)	Set up job	2025-08-15T23:01:10.4832460Z Getting action download info
+test (22.x)	Set up job	2025-08-15T23:01:10.8533666Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+test (22.x)	Set up job	2025-08-15T23:01:11.6228254Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+test (22.x)	Set up job	2025-08-15T23:01:11.7868207Z Complete job name: test (22.x)
+test (22.x)	Checkout	∩╗┐2025-08-15T23:01:11.8549364Z ##[group]Run actions/checkout@v4
+test (22.x)	Checkout	2025-08-15T23:01:11.8550241Z with:
+test (22.x)	Checkout	2025-08-15T23:01:11.8550669Z   repository: thecdrz/DeadLink
+test (22.x)	Checkout	2025-08-15T23:01:11.8551326Z   token: ***
+test (22.x)	Checkout	2025-08-15T23:01:11.8551728Z   ssh-strict: true
+test (22.x)	Checkout	2025-08-15T23:01:11.8552142Z   ssh-user: git
+test (22.x)	Checkout	2025-08-15T23:01:11.8552568Z   persist-credentials: true
+test (22.x)	Checkout	2025-08-15T23:01:11.8553029Z   clean: true
+test (22.x)	Checkout	2025-08-15T23:01:11.8553445Z   sparse-checkout-cone-mode: true
+test (22.x)	Checkout	2025-08-15T23:01:11.8553936Z   fetch-depth: 1
+test (22.x)	Checkout	2025-08-15T23:01:11.8554339Z   fetch-tags: false
+test (22.x)	Checkout	2025-08-15T23:01:11.8554753Z   show-progress: true
+test (22.x)	Checkout	2025-08-15T23:01:11.8555199Z   lfs: false
+test (22.x)	Checkout	2025-08-15T23:01:11.8555616Z   submodules: false
+test (22.x)	Checkout	2025-08-15T23:01:11.8556058Z   set-safe-directory: true
+test (22.x)	Checkout	2025-08-15T23:01:11.8556739Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:11.9615131Z Syncing repository: thecdrz/DeadLink
+test (22.x)	Checkout	2025-08-15T23:01:11.9616916Z ##[group]Getting Git version info
+test (22.x)	Checkout	2025-08-15T23:01:11.9617920Z Working directory is '/home/runner/work/DeadLink/DeadLink'
+test (22.x)	Checkout	2025-08-15T23:01:11.9618962Z [command]/usr/bin/git version
+test (22.x)	Checkout	2025-08-15T23:01:11.9655980Z git version 2.50.1
+test (22.x)	Checkout	2025-08-15T23:01:11.9683347Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:11.9705065Z Temporarily overriding HOME='/home/runner/work/_temp/41547b75-0173-4432-bf97-62abad0c88e5' before making global git config changes
+test (22.x)	Checkout	2025-08-15T23:01:11.9707989Z Adding repository directory to the temporary git global config as a safe directory
+test (22.x)	Checkout	2025-08-15T23:01:11.9711708Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DeadLink/DeadLink
+test (22.x)	Checkout	2025-08-15T23:01:11.9748902Z Deleting the contents of '/home/runner/work/DeadLink/DeadLink'
+test (22.x)	Checkout	2025-08-15T23:01:11.9752338Z ##[group]Initializing the repository
+test (22.x)	Checkout	2025-08-15T23:01:11.9756106Z [command]/usr/bin/git init /home/runner/work/DeadLink/DeadLink
+test (22.x)	Checkout	2025-08-15T23:01:11.9822724Z hint: Using 'master' as the name for the initial branch. This default branch name
+test (22.x)	Checkout	2025-08-15T23:01:11.9824219Z hint: is subject to change. To configure the initial branch name to use in all
+test (22.x)	Checkout	2025-08-15T23:01:11.9826037Z hint: of your new repositories, which will suppress this warning, call:
+test (22.x)	Checkout	2025-08-15T23:01:11.9826870Z hint:
+test (22.x)	Checkout	2025-08-15T23:01:11.9827973Z hint: 	git config --global init.defaultBranch <name>
+test (22.x)	Checkout	2025-08-15T23:01:11.9829191Z hint:
+test (22.x)	Checkout	2025-08-15T23:01:11.9830343Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test (22.x)	Checkout	2025-08-15T23:01:11.9832208Z hint: 'development'. The just-created branch can be renamed via this command:
+test (22.x)	Checkout	2025-08-15T23:01:11.9833730Z hint:
+test (22.x)	Checkout	2025-08-15T23:01:11.9834476Z hint: 	git branch -m <name>
+test (22.x)	Checkout	2025-08-15T23:01:11.9835333Z hint:
+test (22.x)	Checkout	2025-08-15T23:01:11.9836476Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test (22.x)	Checkout	2025-08-15T23:01:11.9838703Z Initialized empty Git repository in /home/runner/work/DeadLink/DeadLink/.git/
+test (22.x)	Checkout	2025-08-15T23:01:11.9841849Z [command]/usr/bin/git remote add origin https://github.com/thecdrz/DeadLink
+test (22.x)	Checkout	2025-08-15T23:01:11.9872066Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:11.9873414Z ##[group]Disabling automatic garbage collection
+test (22.x)	Checkout	2025-08-15T23:01:11.9876860Z [command]/usr/bin/git config --local gc.auto 0
+test (22.x)	Checkout	2025-08-15T23:01:11.9905307Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:11.9906724Z ##[group]Setting up auth
+test (22.x)	Checkout	2025-08-15T23:01:11.9912956Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (22.x)	Checkout	2025-08-15T23:01:11.9943096Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (22.x)	Checkout	2025-08-15T23:01:12.0243195Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (22.x)	Checkout	2025-08-15T23:01:12.0273076Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (22.x)	Checkout	2025-08-15T23:01:12.0490083Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test (22.x)	Checkout	2025-08-15T23:01:12.0530607Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:12.0532476Z ##[group]Fetching the repository
+test (22.x)	Checkout	2025-08-15T23:01:12.0541392Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +016ead5199ec099481ade2bee3be38e9b1ab3112:refs/remotes/origin/master
+test (22.x)	Checkout	2025-08-15T23:01:13.2351621Z From https://github.com/thecdrz/DeadLink
+test (22.x)	Checkout	2025-08-15T23:01:13.2354444Z  * [new ref]         016ead5199ec099481ade2bee3be38e9b1ab3112 -> origin/master
+test (22.x)	Checkout	2025-08-15T23:01:13.2378627Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:13.2380517Z ##[group]Determining the checkout info
+test (22.x)	Checkout	2025-08-15T23:01:13.2382693Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:13.2386586Z [command]/usr/bin/git sparse-checkout disable
+test (22.x)	Checkout	2025-08-15T23:01:13.2427128Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test (22.x)	Checkout	2025-08-15T23:01:13.2456259Z ##[group]Checking out the ref
+test (22.x)	Checkout	2025-08-15T23:01:13.2459890Z [command]/usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+test (22.x)	Checkout	2025-08-15T23:01:13.3362325Z Reset branch 'master'
+test (22.x)	Checkout	2025-08-15T23:01:13.3363886Z branch 'master' set up to track 'origin/master'.
+test (22.x)	Checkout	2025-08-15T23:01:13.3379066Z ##[endgroup]
+test (22.x)	Checkout	2025-08-15T23:01:13.3416067Z [command]/usr/bin/git log -1 --format=%H
+test (22.x)	Checkout	2025-08-15T23:01:13.3438257Z 016ead5199ec099481ade2bee3be38e9b1ab3112
+test (22.x)	Setup Node.js	∩╗┐2025-08-15T23:01:13.3748663Z ##[group]Run actions/setup-node@v4
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.3749776Z with:
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.3750559Z   node-version: 22.x
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.3751431Z   cache: npm
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.3752228Z   always-auth: false
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.3753120Z   check-latest: false
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.3754235Z   token: ***
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.3755032Z ##[endgroup]
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.5502352Z Found in cache @ /opt/hostedtoolcache/node/22.18.0/x64
+test (22.x)	Setup Node.js	2025-08-15T23:01:13.5509201Z ##[group]Environment details
+test (22.x)	Setup Node.js	2025-08-15T23:01:15.3517065Z node: v22.18.0
+test (22.x)	Setup Node.js	2025-08-15T23:01:15.3517808Z npm: 10.9.3
+test (22.x)	Setup Node.js	2025-08-15T23:01:15.3518101Z yarn: 1.22.22
+test (22.x)	Setup Node.js	2025-08-15T23:01:15.3519177Z ##[endgroup]
+test (22.x)	Setup Node.js	2025-08-15T23:01:15.3542737Z [command]/opt/hostedtoolcache/node/22.18.0/x64/bin/npm config get cache
+test (22.x)	Setup Node.js	2025-08-15T23:01:15.5870527Z /home/runner/.npm
+test (22.x)	Setup Node.js	2025-08-15T23:01:15.8345088Z Cache hit for: node-cache-Linux-x64-npm-8d50eb20d7337f0276d5834a27b62acaed25396b171e2d2821badf8a4e45b1cf
+test (22.x)	Setup Node.js	2025-08-15T23:01:17.1052595Z Received 11271854 of 15466158 (72.9%), 10.7 MBs/sec
+test (22.x)	Setup Node.js	2025-08-15T23:01:17.1301246Z Received 15466158 of 15466158 (100.0%), 14.4 MBs/sec
+test (22.x)	Setup Node.js	2025-08-15T23:01:17.1301968Z Cache Size: ~15 MB (15466158 B)
+test (22.x)	Setup Node.js	2025-08-15T23:01:17.1328327Z [command]/usr/bin/tar -xf /home/runner/work/_temp/d33753df-82da-4d5b-8499-2dc5bae2d39a/cache.tzst -P -C /home/runner/work/DeadLink/DeadLink --use-compress-program unzstd
+test (22.x)	Setup Node.js	2025-08-15T23:01:17.2304617Z Cache restored successfully
+test (22.x)	Setup Node.js	2025-08-15T23:01:17.2338351Z Cache restored from key: node-cache-Linux-x64-npm-8d50eb20d7337f0276d5834a27b62acaed25396b171e2d2821badf8a4e45b1cf
+test (22.x)	Install dependencies	∩╗┐2025-08-15T23:01:17.2474643Z ##[group]Run npm ci
+test (22.x)	Install dependencies	2025-08-15T23:01:17.2474929Z [36;1mnpm ci[0m
+test (22.x)	Install dependencies	2025-08-15T23:01:17.2553678Z shell: /usr/bin/bash -e {0}
+test (22.x)	Install dependencies	2025-08-15T23:01:17.2553945Z ##[endgroup]
+test (22.x)	Install dependencies	2025-08-15T23:01:19.7579337Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+test (22.x)	Install dependencies	2025-08-15T23:01:19.7812012Z npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+test (22.x)	Install dependencies	2025-08-15T23:01:19.8382180Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+test (22.x)	Install dependencies	2025-08-15T23:01:19.8802280Z npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+test (22.x)	Install dependencies	2025-08-15T23:01:19.8906495Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+test (22.x)	Install dependencies	2025-08-15T23:01:19.9981347Z npm warn deprecated @discordjs/collection@0.7.0: no longer supported
+test (22.x)	Install dependencies	2025-08-15T23:01:20.0085336Z npm warn deprecated gauge@3.0.2: This package is no longer supported.
+test (22.x)	Install dependencies	2025-08-15T23:01:20.1043093Z npm warn deprecated @discordjs/builders@0.16.0: no longer supported
+test (22.x)	Install dependencies	2025-08-15T23:01:28.6888945Z 
+test (22.x)	Install dependencies	2025-08-15T23:01:28.6889773Z added 416 packages, and audited 417 packages in 11s
+test (22.x)	Install dependencies	2025-08-15T23:01:28.6890241Z 
+test (22.x)	Install dependencies	2025-08-15T23:01:28.6890507Z 47 packages are looking for funding
+test (22.x)	Install dependencies	2025-08-15T23:01:28.6890969Z   run `npm fund` for details
+test (22.x)	Install dependencies	2025-08-15T23:01:28.6900885Z 
+test (22.x)	Install dependencies	2025-08-15T23:01:28.6901510Z found 0 vulnerabilities
+test (22.x)	Run tests	∩╗┐2025-08-15T23:01:28.7521010Z ##[group]Run npm test
+test (22.x)	Run tests	2025-08-15T23:01:28.7521299Z [36;1mnpm test[0m
+test (22.x)	Run tests	2025-08-15T23:01:28.7560255Z shell: /usr/bin/bash -e {0}
+test (22.x)	Run tests	2025-08-15T23:01:28.7560495Z ##[endgroup]
+test (22.x)	Run tests	2025-08-15T23:01:28.8837054Z 
+test (22.x)	Run tests	2025-08-15T23:01:28.8838212Z > deadlink@2.13.1 test
+test (22.x)	Run tests	2025-08-15T23:01:28.8838781Z > jest --runInBand
+test (22.x)	Run tests	2025-08-15T23:01:28.8839031Z 
+test (22.x)	Run tests	2025-08-15T23:01:29.6760057Z PASS __tests__/telemetry-buffer.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.0132048Z FAIL __tests__/demo.integration.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.0133258Z   ΓùÅ demo-mode integration emits telnet startup lines
+test (22.x)	Run tests	2025-08-15T23:01:30.0133709Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.0134000Z     Child exited early (code=1). Output:
+test (22.x)	Run tests	2025-08-15T23:01:30.0134408Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.0134677Z     ____                 _ _     _       _    
+test (22.x)	Run tests	2025-08-15T23:01:30.0135329Z     |  _ \  ___  __ _  __| | |   (_)_ __ | | __
+test (22.x)	Run tests	2025-08-15T23:01:30.0136015Z     | | | |/ _ \/ _\` |/ _\` | |   | | '_ \| |/ /
+test (22.x)	Run tests	2025-08-15T23:01:30.0136602Z     | |_| |  __/ (_| | (_| | |___| | | | |   < 
+test (22.x)	Run tests	2025-08-15T23:01:30.0137194Z     |____/ \___|\__,_|\__,_|_____|_|_| |_|_|\_\`
+test (22.x)	Run tests	2025-08-15T23:01:30.0137898Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.0138095Z     DeadLink v2.13.1
+test (22.x)	Run tests	2025-08-15T23:01:30.0138838Z     23:01:29.966 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+test (22.x)	Run tests	2025-08-15T23:01:30.0139952Z     23:01:29.966 [SEC] Use only on trusted networks with a unique telnet password.
+test (22.x)	Run tests	2025-08-15T23:01:30.0141708Z     23:01:29.967 [CREDITS] Originally inspired by Dishorde (LakeYS) - thanks! DeadLink has since become a near full rewrite.
+test (22.x)	Run tests	2025-08-15T23:01:30.0142885Z     23:01:29.967 [LOG] Existing log files: deadlink.log(34KB)
+test (22.x)	Run tests	2025-08-15T23:01:30.0143655Z     23:01:29.967 [CHARTS] PNG charts not available (using ASCII fallback)
+test (22.x)	Run tests	2025-08-15T23:01:30.0144541Z     Mode: ≡ƒº¬ Dev (simulated telnet)
+test (22.x)	Run tests	2025-08-15T23:01:30.0145464Z     ERROR: Discord token not configured. Set DISCORD_TOKEN environment variable or update config.json
+test (22.x)	Run tests	2025-08-15T23:01:30.0146229Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.0147596Z     [0m [90m 54 |[39m         [36mif[39m (hasConnected [33m&&[39m (hasConsoleActive [33m||[39m hasDevReady [33m||[39m hasDay)) [36mreturn[39m[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.0148905Z      [90m 55 |[39m         clearTimeout(timeout)[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.0150543Z     [31m[1m>[22m[39m[90m 56 |[39m         reject([36mnew[39m [33mError[39m([32m'Child exited early (code='[39m [33m+[39m code [33m+[39m [32m'). Output:\n'[39m [33m+[39m out))[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.0151965Z      [90m    |[39m                [31m[1m^[22m[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.0152759Z      [90m 57 |[39m       }[33m,[39m [35m20[39m)[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.0153442Z      [90m 58 |[39m     })[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.0154037Z      [90m 59 |[39m   })[33m;[39m[0m
+test (22.x)	Run tests	2025-08-15T23:01:30.0154347Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.0154761Z       at Timeout._onTimeout (__tests__/demo.integration.test.js:56:16)
+test (22.x)	Run tests	2025-08-15T23:01:30.0155210Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.0562090Z PASS __tests__/gmsgParsing.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.1308770Z PASS __tests__/bloodmoon.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.1785781Z PASS __tests__/telemetry.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.2294260Z PASS __tests__/enhancedAnalytics.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.2689643Z PASS __tests__/telnetBuffer.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.3347841Z PASS __tests__/updates.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.3706646Z PASS __tests__/activityPattern.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.4113322Z FAIL __tests__/log-utils.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.4114292Z   ΓùÅ log-utils ΓÇ║ rotates files when exceeding size
+test (22.x)	Run tests	2025-08-15T23:01:30.4114667Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4114999Z     expect(received).toBe(expected) // Object.is equality
+test (22.x)	Run tests	2025-08-15T23:01:30.4115408Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4115580Z     Expected: true
+test (22.x)	Run tests	2025-08-15T23:01:30.4115962Z     Received: false
+test (22.x)	Run tests	2025-08-15T23:01:30.4116181Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4117122Z     [0m [90m 27 |[39m     rotateIfNeeded(tmp[33m,[39m [35m10[39m[33m,[39m [35m3[39m)[33m;[39m [90m// tiny maxSize to trigger rotation[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.4118757Z      [90m 28 |[39m     [90m// after rotateIfNeeded, active file should exist (possibly empty)[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.4120353Z     [31m[1m>[22m[39m[90m 29 |[39m     expect(fs[33m.[39mexistsSync(f))[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.4121264Z      [90m    |[39m                              [31m[1m^[22m[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.4121836Z      [90m 30 |[39m   })[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.4122381Z      [90m 31 |[39m })[33m;[39m
+test (22.x)	Run tests	2025-08-15T23:01:30.4122835Z      [90m 32 |[39m[0m
+test (22.x)	Run tests	2025-08-15T23:01:30.4123060Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4123376Z       at Object.toBe (__tests__/log-utils.test.js:29:30)
+test (22.x)	Run tests	2025-08-15T23:01:30.4123764Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4612549Z PASS __tests__/telnetQueue.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.4634528Z   ΓùÅ Console
+test (22.x)	Run tests	2025-08-15T23:01:30.4634773Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4634927Z     console.log
+test (22.x)	Run tests	2025-08-15T23:01:30.4635350Z       [TELNET-QUEUE] exec -> cmd1
+test (22.x)	Run tests	2025-08-15T23:01:30.4635646Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4636006Z       at TelnetQueue.log [as _drain] (lib/telnetQueue.js:34:19)
+test (22.x)	Run tests	2025-08-15T23:01:30.4636430Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4636625Z     console.log
+test (22.x)	Run tests	2025-08-15T23:01:30.4637043Z       [TELNET-QUEUE] exec -> cmd2
+test (22.x)	Run tests	2025-08-15T23:01:30.4637605Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.4637968Z       at TelnetQueue.log [as _drain] (lib/telnetQueue.js:34:19)
+test (22.x)	Run tests	2025-08-15T23:01:30.4638406Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.5148109Z PASS __tests__/lifecycle.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.5451361Z PASS __tests__/analyticsUtils.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.6045047Z PASS __tests__/trendsHarness.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.6372892Z PASS __tests__/charts.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.6801897Z PASS __tests__/configSchema.extended.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.7072350Z PASS __tests__/configSchema.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.7353053Z PASS __tests__/smoke.test.js
+test (22.x)	Run tests	2025-08-15T23:01:30.7362797Z 
+test (22.x)	Run tests	2025-08-15T23:01:30.7371399Z Test Suites: 2 failed, 16 passed, 18 total
+test (22.x)	Run tests	2025-08-15T23:01:30.7372037Z Tests:       2 failed, 34 passed, 36 total
+test (22.x)	Run tests	2025-08-15T23:01:30.7372539Z Snapshots:   0 total
+test (22.x)	Run tests	2025-08-15T23:01:30.7372911Z Time:        1.539 s
+test (22.x)	Run tests	2025-08-15T23:01:30.7373285Z Ran all test suites.
+test (22.x)	Run tests	2025-08-15T23:01:31.7388846Z Jest did not exit one second after the test run has completed.
+test (22.x)	Run tests	2025-08-15T23:01:31.7389509Z 
+test (22.x)	Run tests	2025-08-15T23:01:31.7390657Z 'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+test (22.x)	Run tests	2025-08-15T23:01:38.3755280Z ##[error]The operation was canceled.
+test (22.x)	Post Checkout	∩╗┐2025-08-15T23:01:38.3852565Z Post job cleanup.
+test (22.x)	Post Checkout	2025-08-15T23:01:38.4793653Z [command]/usr/bin/git version
+test (22.x)	Post Checkout	2025-08-15T23:01:38.4847590Z git version 2.50.1
+test (22.x)	Post Checkout	2025-08-15T23:01:38.4902630Z Temporarily overriding HOME='/home/runner/work/_temp/9111a4f2-26ea-4790-8c42-6e1c91f51c84' before making global git config changes
+test (22.x)	Post Checkout	2025-08-15T23:01:38.4904117Z Adding repository directory to the temporary git global config as a safe directory
+test (22.x)	Post Checkout	2025-08-15T23:01:38.4909647Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DeadLink/DeadLink
+test (22.x)	Post Checkout	2025-08-15T23:01:38.4947100Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (22.x)	Post Checkout	2025-08-15T23:01:38.4980148Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (22.x)	Post Checkout	2025-08-15T23:01:38.5202640Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (22.x)	Post Checkout	2025-08-15T23:01:38.5225245Z http.https://github.com/.extraheader
+test (22.x)	Post Checkout	2025-08-15T23:01:38.5238338Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test (22.x)	Post Checkout	2025-08-15T23:01:38.5268855Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (22.x)	Complete job	∩╗┐2025-08-15T23:01:38.5595519Z Cleaning up orphan processes
+test (20.x)	Set up job	∩╗┐2025-08-15T23:01:09.9118470Z Current runner version: '2.327.1'
+test (20.x)	Set up job	2025-08-15T23:01:09.9143619Z ##[group]Runner Image Provisioner
+test (20.x)	Set up job	2025-08-15T23:01:09.9144432Z Hosted Compute Agent
+test (20.x)	Set up job	2025-08-15T23:01:09.9145004Z Version: 20250812.370
+test (20.x)	Set up job	2025-08-15T23:01:09.9145610Z Commit: 4a2b2bf7520004e3e907c2150c8cabe342a3da32
+test (20.x)	Set up job	2025-08-15T23:01:09.9146258Z Build Date: 2025-08-12T16:08:14Z
+test (20.x)	Set up job	2025-08-15T23:01:09.9146885Z ##[endgroup]
+test (20.x)	Set up job	2025-08-15T23:01:09.9147414Z ##[group]Operating System
+test (20.x)	Set up job	2025-08-15T23:01:09.9147966Z Ubuntu
+test (20.x)	Set up job	2025-08-15T23:01:09.9148467Z 24.04.2
+test (20.x)	Set up job	2025-08-15T23:01:09.9148900Z LTS
+test (20.x)	Set up job	2025-08-15T23:01:09.9149348Z ##[endgroup]
+test (20.x)	Set up job	2025-08-15T23:01:09.9149771Z ##[group]Runner Image
+test (20.x)	Set up job	2025-08-15T23:01:09.9150393Z Image: ubuntu-24.04
+test (20.x)	Set up job	2025-08-15T23:01:09.9150855Z Version: 20250810.1.0
+test (20.x)	Set up job	2025-08-15T23:01:09.9151811Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250810.1/images/ubuntu/Ubuntu2404-Readme.md
+test (20.x)	Set up job	2025-08-15T23:01:09.9153348Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250810.1
+test (20.x)	Set up job	2025-08-15T23:01:09.9154499Z ##[endgroup]
+test (20.x)	Set up job	2025-08-15T23:01:09.9156854Z ##[group]GITHUB_TOKEN Permissions
+test (20.x)	Set up job	2025-08-15T23:01:09.9158797Z Actions: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9159419Z Attestations: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9160034Z Checks: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9160481Z Contents: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9161063Z Deployments: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9161527Z Discussions: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9162019Z Issues: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9162537Z Metadata: read
+test (20.x)	Set up job	2025-08-15T23:01:09.9163278Z Models: read
+test (20.x)	Set up job	2025-08-15T23:01:09.9163771Z Packages: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9164304Z Pages: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9164800Z PullRequests: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9165286Z RepositoryProjects: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9165882Z SecurityEvents: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9166477Z Statuses: write
+test (20.x)	Set up job	2025-08-15T23:01:09.9166964Z ##[endgroup]
+test (20.x)	Set up job	2025-08-15T23:01:09.9169216Z Secret source: Actions
+test (20.x)	Set up job	2025-08-15T23:01:09.9169900Z Prepare workflow directory
+test (20.x)	Set up job	2025-08-15T23:01:09.9520838Z Prepare all required actions
+test (20.x)	Set up job	2025-08-15T23:01:09.9561726Z Getting action download info
+test (20.x)	Set up job	2025-08-15T23:01:10.3291066Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+test (20.x)	Set up job	2025-08-15T23:01:11.1534166Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+test (20.x)	Set up job	2025-08-15T23:01:11.3325468Z Complete job name: test (20.x)
+test (20.x)	Checkout	∩╗┐2025-08-15T23:01:11.4037869Z ##[group]Run actions/checkout@v4
+test (20.x)	Checkout	2025-08-15T23:01:11.4038813Z with:
+test (20.x)	Checkout	2025-08-15T23:01:11.4039250Z   repository: thecdrz/DeadLink
+test (20.x)	Checkout	2025-08-15T23:01:11.4039973Z   token: ***
+test (20.x)	Checkout	2025-08-15T23:01:11.4040386Z   ssh-strict: true
+test (20.x)	Checkout	2025-08-15T23:01:11.4040803Z   ssh-user: git
+test (20.x)	Checkout	2025-08-15T23:01:11.4041234Z   persist-credentials: true
+test (20.x)	Checkout	2025-08-15T23:01:11.4041696Z   clean: true
+test (20.x)	Checkout	2025-08-15T23:01:11.4042118Z   sparse-checkout-cone-mode: true
+test (20.x)	Checkout	2025-08-15T23:01:11.4042630Z   fetch-depth: 1
+test (20.x)	Checkout	2025-08-15T23:01:11.4043280Z   fetch-tags: false
+test (20.x)	Checkout	2025-08-15T23:01:11.4043701Z   show-progress: true
+test (20.x)	Checkout	2025-08-15T23:01:11.4044135Z   lfs: false
+test (20.x)	Checkout	2025-08-15T23:01:11.4044548Z   submodules: false
+test (20.x)	Checkout	2025-08-15T23:01:11.4045008Z   set-safe-directory: true
+test (20.x)	Checkout	2025-08-15T23:01:11.4045827Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:11.5150688Z Syncing repository: thecdrz/DeadLink
+test (20.x)	Checkout	2025-08-15T23:01:11.5153199Z ##[group]Getting Git version info
+test (20.x)	Checkout	2025-08-15T23:01:11.5154043Z Working directory is '/home/runner/work/DeadLink/DeadLink'
+test (20.x)	Checkout	2025-08-15T23:01:11.5155089Z [command]/usr/bin/git version
+test (20.x)	Checkout	2025-08-15T23:01:11.5341793Z git version 2.50.1
+test (20.x)	Checkout	2025-08-15T23:01:11.5368997Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:11.5384869Z Temporarily overriding HOME='/home/runner/work/_temp/c6a0d063-6646-4a7e-abfc-ae2501a04ee1' before making global git config changes
+test (20.x)	Checkout	2025-08-15T23:01:11.5387263Z Adding repository directory to the temporary git global config as a safe directory
+test (20.x)	Checkout	2025-08-15T23:01:11.5398402Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DeadLink/DeadLink
+test (20.x)	Checkout	2025-08-15T23:01:11.5439561Z Deleting the contents of '/home/runner/work/DeadLink/DeadLink'
+test (20.x)	Checkout	2025-08-15T23:01:11.5443435Z ##[group]Initializing the repository
+test (20.x)	Checkout	2025-08-15T23:01:11.5447381Z [command]/usr/bin/git init /home/runner/work/DeadLink/DeadLink
+test (20.x)	Checkout	2025-08-15T23:01:11.5587037Z hint: Using 'master' as the name for the initial branch. This default branch name
+test (20.x)	Checkout	2025-08-15T23:01:11.5588825Z hint: is subject to change. To configure the initial branch name to use in all
+test (20.x)	Checkout	2025-08-15T23:01:11.5590121Z hint: of your new repositories, which will suppress this warning, call:
+test (20.x)	Checkout	2025-08-15T23:01:11.5591058Z hint:
+test (20.x)	Checkout	2025-08-15T23:01:11.5591961Z hint: 	git config --global init.defaultBranch <name>
+test (20.x)	Checkout	2025-08-15T23:01:11.5592975Z hint:
+test (20.x)	Checkout	2025-08-15T23:01:11.5593626Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test (20.x)	Checkout	2025-08-15T23:01:11.5594594Z hint: 'development'. The just-created branch can be renamed via this command:
+test (20.x)	Checkout	2025-08-15T23:01:11.5595344Z hint:
+test (20.x)	Checkout	2025-08-15T23:01:11.5595742Z hint: 	git branch -m <name>
+test (20.x)	Checkout	2025-08-15T23:01:11.5596206Z hint:
+test (20.x)	Checkout	2025-08-15T23:01:11.5596814Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test (20.x)	Checkout	2025-08-15T23:01:11.5598288Z Initialized empty Git repository in /home/runner/work/DeadLink/DeadLink/.git/
+test (20.x)	Checkout	2025-08-15T23:01:11.5603822Z [command]/usr/bin/git remote add origin https://github.com/thecdrz/DeadLink
+test (20.x)	Checkout	2025-08-15T23:01:11.5643258Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:11.5644077Z ##[group]Disabling automatic garbage collection
+test (20.x)	Checkout	2025-08-15T23:01:11.5647194Z [command]/usr/bin/git config --local gc.auto 0
+test (20.x)	Checkout	2025-08-15T23:01:11.5676777Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:11.5677970Z ##[group]Setting up auth
+test (20.x)	Checkout	2025-08-15T23:01:11.5686526Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (20.x)	Checkout	2025-08-15T23:01:11.5721235Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (20.x)	Checkout	2025-08-15T23:01:11.6169404Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (20.x)	Checkout	2025-08-15T23:01:11.6204058Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (20.x)	Checkout	2025-08-15T23:01:11.6432202Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test (20.x)	Checkout	2025-08-15T23:01:11.6468650Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:11.6470602Z ##[group]Fetching the repository
+test (20.x)	Checkout	2025-08-15T23:01:11.6487536Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +016ead5199ec099481ade2bee3be38e9b1ab3112:refs/remotes/origin/master
+test (20.x)	Checkout	2025-08-15T23:01:12.7789125Z From https://github.com/thecdrz/DeadLink
+test (20.x)	Checkout	2025-08-15T23:01:12.7793086Z  * [new ref]         016ead5199ec099481ade2bee3be38e9b1ab3112 -> origin/master
+test (20.x)	Checkout	2025-08-15T23:01:12.7820198Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:12.7821780Z ##[group]Determining the checkout info
+test (20.x)	Checkout	2025-08-15T23:01:12.7823703Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:12.7827939Z [command]/usr/bin/git sparse-checkout disable
+test (20.x)	Checkout	2025-08-15T23:01:12.7873865Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test (20.x)	Checkout	2025-08-15T23:01:12.7902223Z ##[group]Checking out the ref
+test (20.x)	Checkout	2025-08-15T23:01:12.7907411Z [command]/usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+test (20.x)	Checkout	2025-08-15T23:01:12.8817412Z Reset branch 'master'
+test (20.x)	Checkout	2025-08-15T23:01:12.8819006Z branch 'master' set up to track 'origin/master'.
+test (20.x)	Checkout	2025-08-15T23:01:12.8835305Z ##[endgroup]
+test (20.x)	Checkout	2025-08-15T23:01:12.8875773Z [command]/usr/bin/git log -1 --format=%H
+test (20.x)	Checkout	2025-08-15T23:01:12.8919398Z 016ead5199ec099481ade2bee3be38e9b1ab3112
+test (20.x)	Setup Node.js	∩╗┐2025-08-15T23:01:12.9251819Z ##[group]Run actions/setup-node@v4
+test (20.x)	Setup Node.js	2025-08-15T23:01:12.9253242Z with:
+test (20.x)	Setup Node.js	2025-08-15T23:01:12.9254067Z   node-version: 20.x
+test (20.x)	Setup Node.js	2025-08-15T23:01:12.9254981Z   cache: npm
+test (20.x)	Setup Node.js	2025-08-15T23:01:12.9255802Z   always-auth: false
+test (20.x)	Setup Node.js	2025-08-15T23:01:12.9256701Z   check-latest: false
+test (20.x)	Setup Node.js	2025-08-15T23:01:12.9257904Z   token: ***
+test (20.x)	Setup Node.js	2025-08-15T23:01:12.9258702Z ##[endgroup]
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.1084891Z Found in cache @ /opt/hostedtoolcache/node/20.19.4/x64
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.1090938Z ##[group]Environment details
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.5163462Z node: v20.19.4
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.5164815Z npm: 10.8.2
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.5165914Z yarn: 1.22.22
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.5167683Z ##[endgroup]
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.5187531Z [command]/opt/hostedtoolcache/node/20.19.4/x64/bin/npm config get cache
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.6439823Z /home/runner/.npm
+test (20.x)	Setup Node.js	2025-08-15T23:01:13.9052332Z Cache hit for: node-cache-Linux-x64-npm-8d50eb20d7337f0276d5834a27b62acaed25396b171e2d2821badf8a4e45b1cf
+test (20.x)	Setup Node.js	2025-08-15T23:01:15.2502299Z Received 2883246 of 15466158 (18.6%), 2.7 MBs/sec
+test (20.x)	Setup Node.js	2025-08-15T23:01:15.4819425Z Received 15466158 of 15466158 (100.0%), 12.0 MBs/sec
+test (20.x)	Setup Node.js	2025-08-15T23:01:15.4820179Z Cache Size: ~15 MB (15466158 B)
+test (20.x)	Setup Node.js	2025-08-15T23:01:15.4849216Z [command]/usr/bin/tar -xf /home/runner/work/_temp/dd6e4ecb-1643-4c44-b984-143040350f78/cache.tzst -P -C /home/runner/work/DeadLink/DeadLink --use-compress-program unzstd
+test (20.x)	Setup Node.js	2025-08-15T23:01:15.5815663Z Cache restored successfully
+test (20.x)	Setup Node.js	2025-08-15T23:01:15.5849840Z Cache restored from key: node-cache-Linux-x64-npm-8d50eb20d7337f0276d5834a27b62acaed25396b171e2d2821badf8a4e45b1cf
+test (20.x)	Install dependencies	∩╗┐2025-08-15T23:01:15.5996717Z ##[group]Run npm ci
+test (20.x)	Install dependencies	2025-08-15T23:01:15.5997020Z [36;1mnpm ci[0m
+test (20.x)	Install dependencies	2025-08-15T23:01:15.6092091Z shell: /usr/bin/bash -e {0}
+test (20.x)	Install dependencies	2025-08-15T23:01:15.6092429Z ##[endgroup]
+test (20.x)	Install dependencies	2025-08-15T23:01:17.9938146Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+test (20.x)	Install dependencies	2025-08-15T23:01:18.0165390Z npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+test (20.x)	Install dependencies	2025-08-15T23:01:18.0813133Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+test (20.x)	Install dependencies	2025-08-15T23:01:18.1224597Z npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+test (20.x)	Install dependencies	2025-08-15T23:01:18.1342323Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+test (20.x)	Install dependencies	2025-08-15T23:01:18.2283216Z npm warn deprecated @discordjs/collection@0.7.0: no longer supported
+test (20.x)	Install dependencies	2025-08-15T23:01:18.2385625Z npm warn deprecated gauge@3.0.2: This package is no longer supported.
+test (20.x)	Install dependencies	2025-08-15T23:01:18.3341930Z npm warn deprecated @discordjs/builders@0.16.0: no longer supported
+test (20.x)	Install dependencies	2025-08-15T23:01:26.0996980Z 
+test (20.x)	Install dependencies	2025-08-15T23:01:26.0997785Z added 451 packages, and audited 452 packages in 10s
+test (20.x)	Install dependencies	2025-08-15T23:01:26.1014560Z 
+test (20.x)	Install dependencies	2025-08-15T23:01:26.1015131Z 51 packages are looking for funding
+test (20.x)	Install dependencies	2025-08-15T23:01:26.1015805Z   run `npm fund` for details
+test (20.x)	Install dependencies	2025-08-15T23:01:26.1016172Z 
+test (20.x)	Install dependencies	2025-08-15T23:01:26.1016554Z found 0 vulnerabilities
+test (20.x)	Run tests	∩╗┐2025-08-15T23:01:26.1315751Z ##[group]Run npm test
+test (20.x)	Run tests	2025-08-15T23:01:26.1316050Z [36;1mnpm test[0m
+test (20.x)	Run tests	2025-08-15T23:01:26.1359609Z shell: /usr/bin/bash -e {0}
+test (20.x)	Run tests	2025-08-15T23:01:26.1359905Z ##[endgroup]
+test (20.x)	Run tests	2025-08-15T23:01:26.2520514Z 
+test (20.x)	Run tests	2025-08-15T23:01:26.2521496Z > deadlink@2.13.1 test
+test (20.x)	Run tests	2025-08-15T23:01:26.2522179Z > jest --runInBand
+test (20.x)	Run tests	2025-08-15T23:01:26.2522578Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.1256283Z PASS __tests__/telemetry-buffer.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.4626595Z FAIL __tests__/demo.integration.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.4627669Z   ΓùÅ demo-mode integration emits telnet startup lines
+test (20.x)	Run tests	2025-08-15T23:01:27.4628074Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.4628283Z     Child exited early (code=1). Output:
+test (20.x)	Run tests	2025-08-15T23:01:27.4628583Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.4628776Z     ____                 _ _     _       _    
+test (20.x)	Run tests	2025-08-15T23:01:27.4629269Z     |  _ \  ___  __ _  __| | |   (_)_ __ | | __
+test (20.x)	Run tests	2025-08-15T23:01:27.4629734Z     | | | |/ _ \/ _\` |/ _\` | |   | | '_ \| |/ /
+test (20.x)	Run tests	2025-08-15T23:01:27.4630204Z     | |_| |  __/ (_| | (_| | |___| | | | |   < 
+test (20.x)	Run tests	2025-08-15T23:01:27.4630663Z     |____/ \___|\__,_|\__,_|_____|_|_| |_|_|\_\`
+test (20.x)	Run tests	2025-08-15T23:01:27.4631073Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.4631220Z     DeadLink v2.13.1
+test (20.x)	Run tests	2025-08-15T23:01:27.4631843Z     23:01:27.415 [SEC] Remote connections to 7 Days to Die servers are not encrypted.
+test (20.x)	Run tests	2025-08-15T23:01:27.4632942Z     23:01:27.416 [SEC] Use only on trusted networks with a unique telnet password.
+test (20.x)	Run tests	2025-08-15T23:01:27.4634611Z     23:01:27.416 [CREDITS] Originally inspired by Dishorde (LakeYS) - thanks! DeadLink has since become a near full rewrite.
+test (20.x)	Run tests	2025-08-15T23:01:27.4635605Z     23:01:27.416 [LOG] Existing log files: deadlink.log(34KB)
+test (20.x)	Run tests	2025-08-15T23:01:27.4636318Z     23:01:27.416 [CHARTS] PNG charts not available (using ASCII fallback)
+test (20.x)	Run tests	2025-08-15T23:01:27.4637063Z     Mode: ≡ƒº¬ Dev (simulated telnet)
+test (20.x)	Run tests	2025-08-15T23:01:27.4637960Z     ERROR: Discord token not configured. Set DISCORD_TOKEN environment variable or update config.json
+test (20.x)	Run tests	2025-08-15T23:01:27.4638579Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.4639608Z     [0m [90m 54 |[39m         [36mif[39m (hasConnected [33m&&[39m (hasConsoleActive [33m||[39m hasDevReady [33m||[39m hasDay)) [36mreturn[39m[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.4640825Z      [90m 55 |[39m         clearTimeout(timeout)[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.4642356Z     [31m[1m>[22m[39m[90m 56 |[39m         reject([36mnew[39m [33mError[39m([32m'Child exited early (code='[39m [33m+[39m code [33m+[39m [32m'). Output:\n'[39m [33m+[39m out))[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.4643827Z      [90m    |[39m                [31m[1m^[22m[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.4644488Z      [90m 57 |[39m       }[33m,[39m [35m20[39m)[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.4645061Z      [90m 58 |[39m     })[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.4645579Z      [90m 59 |[39m   })[33m;[39m[0m
+test (20.x)	Run tests	2025-08-15T23:01:27.4645858Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.4646214Z       at Timeout._onTimeout (__tests__/demo.integration.test.js:56:16)
+test (20.x)	Run tests	2025-08-15T23:01:27.4646646Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.5227749Z PASS __tests__/gmsgParsing.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.6240827Z PASS __tests__/bloodmoon.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.6847560Z PASS __tests__/telemetry.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.7656412Z PASS __tests__/enhancedAnalytics.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.8000685Z PASS __tests__/telnetBuffer.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.8905829Z PASS __tests__/updates.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.9276247Z PASS __tests__/activityPattern.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.9873223Z FAIL __tests__/log-utils.test.js
+test (20.x)	Run tests	2025-08-15T23:01:27.9874273Z   ΓùÅ log-utils ΓÇ║ rotates files when exceeding size
+test (20.x)	Run tests	2025-08-15T23:01:27.9874654Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.9874981Z     expect(received).toBe(expected) // Object.is equality
+test (20.x)	Run tests	2025-08-15T23:01:27.9875381Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.9875526Z     Expected: true
+test (20.x)	Run tests	2025-08-15T23:01:27.9875869Z     Received: false
+test (20.x)	Run tests	2025-08-15T23:01:27.9876079Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.9877044Z     [0m [90m 27 |[39m     rotateIfNeeded(tmp[33m,[39m [35m10[39m[33m,[39m [35m3[39m)[33m;[39m [90m// tiny maxSize to trigger rotation[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.9878369Z      [90m 28 |[39m     [90m// after rotateIfNeeded, active file should exist (possibly empty)[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.9880102Z     [31m[1m>[22m[39m[90m 29 |[39m     expect(fs[33m.[39mexistsSync(f))[33m.[39mtoBe([36mtrue[39m)[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.9881047Z      [90m    |[39m                              [31m[1m^[22m[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.9881644Z      [90m 30 |[39m   })[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.9882174Z      [90m 31 |[39m })[33m;[39m
+test (20.x)	Run tests	2025-08-15T23:01:27.9882613Z      [90m 32 |[39m[0m
+test (20.x)	Run tests	2025-08-15T23:01:27.9883063Z 
+test (20.x)	Run tests	2025-08-15T23:01:27.9883353Z       at Object.toBe (__tests__/log-utils.test.js:29:30)
+test (20.x)	Run tests	2025-08-15T23:01:27.9883730Z 
+test (20.x)	Run tests	2025-08-15T23:01:28.0463044Z PASS __tests__/telnetQueue.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.0553894Z   ΓùÅ Console
+test (20.x)	Run tests	2025-08-15T23:01:28.0554172Z 
+test (20.x)	Run tests	2025-08-15T23:01:28.0554351Z     console.log
+test (20.x)	Run tests	2025-08-15T23:01:28.0554768Z       [TELNET-QUEUE] exec -> cmd1
+test (20.x)	Run tests	2025-08-15T23:01:28.0554993Z 
+test (20.x)	Run tests	2025-08-15T23:01:28.0555244Z       at TelnetQueue.log [as _drain] (lib/telnetQueue.js:34:19)
+test (20.x)	Run tests	2025-08-15T23:01:28.0555557Z 
+test (20.x)	Run tests	2025-08-15T23:01:28.0555693Z     console.log
+test (20.x)	Run tests	2025-08-15T23:01:28.0555985Z       [TELNET-QUEUE] exec -> cmd2
+test (20.x)	Run tests	2025-08-15T23:01:28.0556182Z 
+test (20.x)	Run tests	2025-08-15T23:01:28.0556411Z       at TelnetQueue.log [as _drain] (lib/telnetQueue.js:34:19)
+test (20.x)	Run tests	2025-08-15T23:01:28.0556688Z 
+test (20.x)	Run tests	2025-08-15T23:01:28.1093349Z PASS __tests__/lifecycle.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.1404169Z PASS __tests__/analyticsUtils.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.2058989Z PASS __tests__/trendsHarness.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.2397126Z PASS __tests__/charts.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.2885555Z PASS __tests__/configSchema.extended.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.3198954Z PASS __tests__/configSchema.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.3512960Z PASS __tests__/smoke.test.js
+test (20.x)	Run tests	2025-08-15T23:01:28.3523950Z 
+test (20.x)	Run tests	2025-08-15T23:01:28.3531404Z Test Suites: 2 failed, 16 passed, 18 total
+test (20.x)	Run tests	2025-08-15T23:01:28.3532063Z Tests:       2 failed, 34 passed, 36 total
+test (20.x)	Run tests	2025-08-15T23:01:28.3532611Z Snapshots:   0 total
+test (20.x)	Run tests	2025-08-15T23:01:28.3533315Z Time:        1.77 s
+test (20.x)	Run tests	2025-08-15T23:01:28.3533689Z Ran all test suites.
+test (20.x)	Run tests	2025-08-15T23:01:29.3559977Z Jest did not exit one second after the test run has completed.
+test (20.x)	Run tests	2025-08-15T23:01:29.3560368Z 
+test (20.x)	Run tests	2025-08-15T23:01:29.3561230Z 'This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+test (20.x)	Run tests	2025-08-15T23:01:35.9095350Z ##[error]Process completed with exit code 1.
+test (20.x)	Post Checkout	∩╗┐2025-08-15T23:01:35.9198397Z Post job cleanup.
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0159377Z [command]/usr/bin/git version
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0196453Z git version 2.50.1
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0240517Z Temporarily overriding HOME='/home/runner/work/_temp/1965521b-12fe-40b6-b847-aaf10608a8b7' before making global git config changes
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0241911Z Adding repository directory to the temporary git global config as a safe directory
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0253982Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DeadLink/DeadLink
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0289401Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0321799Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0553705Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0576208Z http.https://github.com/.extraheader
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0589900Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test (20.x)	Post Checkout	2025-08-15T23:01:36.0623396Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (20.x)	Complete job	∩╗┐2025-08-15T23:01:36.0964403Z Cleaning up orphan processes
