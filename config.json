@@ -36,6 +36,23 @@
   "notifyMode": "channel",
   "notifyChannel": "1404125114169036822"
   },
+  
+  "analytics": {
+    "enabled": true,
+    "endpoint": "https://telemetry.deadlink.lol/v1/event",
+  "storagePath": "./telemetry.json",
+  "bufferEnabled": true,
+  "bufferPath": "./logs/telemetry-buffer.jsonl",
+  "flushIntervalMs": 10000,
+  "batchSize": 25
+  },
+    "dailyReports": {
+    "enabled": false,
+    "time": "09:00",          
+    "mode": "brief",         
+    "channel": ""            
+  },
+     
   "bloodMoon": {
     "enabled": true,
     "intervalSeconds": 60,

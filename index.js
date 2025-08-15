@@ -111,6 +111,9 @@ const log = (() => {
   };
 })();
 
+// Expose the runtime logger for other modules (safe fallback if required)
+try { global.deadlinkLog = log; } catch(_) {}
+
 // Suppress expected Discord interaction noise (AbortError / Unknown interaction)
 function shouldSuppressDiscordError(err) {
   if (!err) return false;
@@ -218,6 +221,9 @@ var d7dtdState = {
   // -1 = Error, 0 = No connection/connecting, 1 = Online
   // -100 = Override or N/A (value is ignored)
   connStatus: -100
+  ,
+  // Discord connection status: -1 = Error, 0 = Connecting, 1 = Online, -100 = N/A
+  discordStatus: -100
 };
 // Runtime session tracking for enhanced player stats (not persisted yet)
 d7dtdState.playerSessions = {}; // name -> { start: ts, lastSeen: ts }
@@ -1753,7 +1759,7 @@ function generateTrendsReport() {
   const trendEmoji = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
   report += `${trendEmoji} **Current**: ${currentCount} player${currentCount === 1 ? '' : 's'}\n`;
   report += `📋 **24h Average**: ${avgCount} players\n`;
-  report += `🔝 **Peak**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
+  report += `🔝 **Peak (simultaneous)**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
   report += `\n`;
   
   // Enhanced activity insights
@@ -2018,12 +2024,14 @@ function generateChangesReport() {
 function createDashboardEmbed() {
   const statusEmoji = d7dtdState.connStatus === 1 ? "🟢" : d7dtdState.connStatus === 0 ? "🟡" : "🔴";
   const statusText = d7dtdState.connStatus === 1 ? "Online" : d7dtdState.connStatus === 0 ? "Connecting..." : "Error";
+  const discordEmoji = d7dtdState.discordStatus === 1 ? "🟢" : d7dtdState.discordStatus === 0 ? "🟡" : "🔴";
+  const discordText = d7dtdState.discordStatus === 1 ? "Connected" : d7dtdState.discordStatus === 0 ? "Connecting..." : "Disconnected";
   const modeMsg = config["dev-mode"] ? "🧪 Dev" : "Live";
   
   return {
     color: 0x7289da, // Discord blurple
     title: "🎮 7 Days to Die Server Dashboard",
-  description: `${statusEmoji} **Server Status**: ${statusText}\n🛠️ **Mode**: ${modeMsg}\n\n` +
+  description: `${statusEmoji} **Server Status**: ${statusText}   •   ${discordEmoji} **Discord**: ${discordText}\n🛠️ **Mode**: ${modeMsg}\n\n` +
                  `Welcome to the interactive server control panel! Use the buttons below to quickly access server information and analytics.\n\n` +
                  `🎯 **Activity** - Get detailed player activity reports\n` +
                  `📊 **Trends** - View player count analytics and trends\n` +
@@ -2181,6 +2189,9 @@ function handleActivityFromButton(interaction) {
       hordeTime: null
     };
 
+  log.info('[UI->TELNET]', `User requested activity (lp) via dashboard`);
+  log.info('[UI->TELNET]', `User requested activity details (lp) via dashboard`);
+  log.info('[UI->TELNET]', `User requested players list (lp) via dashboard/select`);
   telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (!err) {
         processTelnetResponse(response, (line) => {
@@ -2192,6 +2203,7 @@ function handleActivityFromButton(interaction) {
           }
         });
 
+  log.info('[UI->TELNET]', `User requested activity details (gettime) via dashboard`);
   telnetQueue.exec("gettime", { timeout: 5000 }).then(({err: timeErr, response: timeResponse}) => {
           if (!timeErr) {
             processTelnetResponse(timeResponse, (timeLine) => {
@@ -2349,6 +2361,7 @@ function handleTrendsFromButton(interaction) {
 function handlePlayersFromButton(interaction) {
   try { telemetry.send('ui_view', { view: 'players' }); } catch(_) {}
   interaction.deferReply().then(() => {
+  log.info('[UI->TELNET]', `User requested players (lp) via dashboard`);
   telnetQueue.exec("lp", { timeout: 7000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
       const players = [];
@@ -2376,6 +2389,8 @@ function handlePlayersFromButton(interaction) {
 function handleTimeFromButton(interaction) {
   try { telemetry.send('ui_view', { view: 'time' }); } catch(_) {}
   interaction.deferReply().then(() => {
+  log.info('[UI->TELNET]', `User requested time (gettime) via dashboard`);
+  log.info('[UI->TELNET]', `User requested time (gettime) via /time or dashboard`);
   telnetQueue.exec("gettime", { timeout: 5000 }).then(({err, response}) => {
       if (err) return handleCmdError(err);
       let timeData = "";
@@ -2652,8 +2667,10 @@ function calculateHordeStatus(timeStr) {
 
   if (daysFromHorde === 0 && hour < 22) {
     const hoursToHorde = 22 - hour;
-    const hourStr = hour === 21 ? "less than an hour" : `${hoursToHorde} hour${hoursToHorde === 1 ? "" : "s"}`;
-    return `🩸 Blood Moon Warning\n> Horde begins in ${hourStr}!`;
+  const hourStr = hour === 21 ? "less than an hour" : `${hoursToHorde} hour${hoursToHorde === 1 ? "" : "s"}`;
+  // Also provide an estimated game-time at which the horde starts (Day X, 22:00)
+  const beginsAt = `Day ${day}, 22:00`;
+  return `🩸 Blood Moon Warning\n> Horde begins in ${hourStr} (approx ${beginsAt})!`;
   } else if (isHordeNow) {
     return `🔴 Blood Moon Active\n> The horde is rampaging! Seek shelter immediately!`;
   } else if (daysFromHorde !== 0) {
@@ -2668,6 +2685,7 @@ function calculateHordeStatus(timeStr) {
 client.on('ready', async () => {
   try {
   log.success('[DISCORD]', `Logged in as ${client.user.tag}`);
+  d7dtdState.discordStatus = 1;
   try { telemetry.send('discord_ready', {}); } catch(_) {}
   // Bind channel immediately on ready (no text command binding)
   if (config.channel) {
@@ -2688,6 +2706,13 @@ client.on('ready', async () => {
     startDailyReportsScheduler();
   } catch(_) {}
 });
+
+client.on('error', (e) => {
+  try { d7dtdState.discordStatus = -1; } catch(_) {}
+  log.warn('[DISCORD]', `Client error: ${e && e.message}`);
+});
+
+client.on('shardDisconnect' , () => { try { d7dtdState.discordStatus = 0; } catch(_) {} });
 
 // Handle button interactions from the dashboard UI
 client.on('interactionCreate', async (interaction) => {
