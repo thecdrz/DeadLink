@@ -114,7 +114,7 @@ Full gallery & docs site:
 - Website: https://DeadLink.lol/
 - Gallery: https://DeadLink.lol/gallery.html
 
-## Latest Release: v2.13.0
+## Latest Release: v2.13.1
 
 Key additions:
 - Player Deep Dive select menu in Players dashboard
@@ -125,7 +125,7 @@ Key additions:
 - Deferred heartbeat until telnet + analytics loaded
 - Players list now shows distance metric
 
-Full notes: `RELEASE_NOTES_v2.13.0.md`
+Full notes: `RELEASE_NOTES_v2.13.1.md`
 
 # How it Works
 DeadLink connects to your server’s telnet console to read game state (chat, players, time) and post summarized insights to Discord. It supports sending selected messages back to the server (optional), but its focus is a reliable companion experience: analytics, alerts, and an interactive control panel.
