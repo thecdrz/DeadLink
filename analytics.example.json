@@ -1,0 +1,30 @@
+{
+  "playerTrends": {
+    "history": [
+      { "timestamp": 1755280000000, "count": 1, "players": ["CDRZ"], "time": "12:40:00" },
+      { "timestamp": 1755280500000, "count": 1, "players": ["TheGuyWho"], "time": "12:48:20" },
+      { "timestamp": 1755278604582, "count": 1, "players": ["ElBriano"], "time": "13:23:24" },
+      { "timestamp": 1755281600000, "count": 3, "players": ["CDRZ","TheGuyWho","ElBriano"], "time": "13:06:40" }
+    ],
+    "maxHistory": 144,
+    "lastCheck": 1755285160943
+  },
+  "playerSessions": {
+    "CDRZ": { "start": 1755280000000, "lastSeen": 1755284000000 },
+    "TheGuyWho": { "start": 1755280500000, "lastSeen": 1755282800000 },
+    "ElBriano": { "start": 1755278604582, "lastSeen": 1755284000000 }
+  },
+  "playerBaselines": {
+    "CDRZ": { "killsAtStart": 12, "deathsAtStart": 3 },
+    "TheGuyWho": { "killsAtStart": 7, "deathsAtStart": 2 },
+    "ElBriano": { "killsAtStart": 5, "deathsAtStart": 1 }
+  },
+  "playerStreaks": {},
+  "playerTravel": {
+    "CDRZ": { "lastPos": { "x": -1672.6, "y": 77.3, "z": 1235.5 }, "sessionDistance": 300.674, "totalDistance": 300.674 },
+    "TheGuyWho": { "lastPos": { "x": 1400.1, "y": 72.1, "z": 662.3 }, "sessionDistance": 453.594, "totalDistance": 453.594 },
+    "ElBriano": { "lastPos": { "x": -874.9, "y": 96.6, "z": -537.3 }, "sessionDistance": 1042.245, "totalDistance": 1042.245 }
+  },
+  "playerCraft": {},
+  "lastSaved": 1755285160943
+}

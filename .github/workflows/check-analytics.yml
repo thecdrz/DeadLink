@@ -1,0 +1,19 @@
+name: Check analytics not committed
+
+on:
+  pull_request:
+
+jobs:
+  ensure-analytics-ignored:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if analytics.json exists
+        run: |
+          if [ -f analytics.json ]; then
+            echo "analytics.json is tracked in the repo. This file contains personal analytics and must not be committed.";
+            ls -la analytics.json || true;
+            exit 1;
+          else
+            echo "analytics.json not present in repo — OK.";
+          fi
