@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="site.css" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -131,7 +131,8 @@
       // Primary: use version.json to pick the file; Fallback: show links to release note files present in repo site.
       try{
     // Attempt to pull version.json (from GitHub raw) to decide which release notes to show
-    const versionRes = await fetch('https://raw.githubusercontent.com/thecdrz/DeadLink/master/version.json', { cache: 'no-store' });
+  // Use `main` as primary branch and fall back to common alternatives (master, gh-pages)
+  const versionRes = await fetch('https://raw.githubusercontent.com/thecdrz/DeadLink/main/version.json', { cache: 'no-store' });
         const versionData = versionRes.ok ? await versionRes.json() : null;
         const v = versionData?.lastAnnouncedVersion;
         const fileName = v ? `RELEASE_NOTES_v${v}.md` : null;
@@ -140,11 +141,13 @@
         // Prefer GitHub raw to avoid relative path issues on Pages subpath
         const tryUrls = [];
         if (fileName){
+          tryUrls.push(`https://raw.githubusercontent.com/thecdrz/DeadLink/main/${fileName}`);
           tryUrls.push(`https://raw.githubusercontent.com/thecdrz/DeadLink/master/${fileName}`);
         }
-        // Fallback: two most recent known versions
-        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/master/RELEASE_NOTES_v2.12.1.md');
-        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/master/RELEASE_NOTES_v2.12.0.md');
+        // Fallback: two known release notes and gh-pages raw path
+        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/main/RELEASE_NOTES_v2.12.1.md');
+        tryUrls.push('https://raw.githubusercontent.com/thecdrz/DeadLink/main/RELEASE_NOTES_v2.12.0.md');
+        tryUrls.push('https://thecdrz.github.io/DeadLink/RELEASE_NOTES_v2.12.1.md');
 
         let md = null;
         for (const url of tryUrls){
