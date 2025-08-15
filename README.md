@@ -376,3 +376,13 @@ Once you complete all of this, you will be able to run the bot by executing run.
 `Connected to game. Connected to 1 Discord Servers.`
 
 Bind your Discord channel by setting DISCORD_CHANNEL in config.json or as an environment variable. Once complete, the bot should be all set!
+
+## Analytics data file
+
+This repository intentionally does not track runtime analytics. If you want a sample to inspect the expected schema, use `analytics.example.json` (committed). Do NOT commit `analytics.json` — it contains personal or environment-specific data and is listed in `.gitignore`.
+
+If you need to reset your local analytics during testing, remove your local `analytics.json` and copy the example:
+
+```powershell
+Copy-Item analytics.example.json analytics.json
+```
