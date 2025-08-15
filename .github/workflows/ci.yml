@@ -24,3 +24,8 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
+      - name: Run smoke e2e (demo)
+        run: npm run smoke:e2e
+        env:
+          DEV_MODE: 'true'
+          LOG_LEVEL: 'debug'
