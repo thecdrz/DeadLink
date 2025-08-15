@@ -111,6 +111,9 @@ const log = (() => {
   };
 })();
 
+// Expose the runtime logger for other modules (safe fallback if required)
+try { global.deadlinkLog = log; } catch(_) {}
+
 // Suppress expected Discord interaction noise (AbortError / Unknown interaction)
 function shouldSuppressDiscordError(err) {
   if (!err) return false;
@@ -1756,7 +1759,7 @@ function generateTrendsReport() {
   const trendEmoji = recentTrend > 0 ? "📈" : recentTrend < 0 ? "📉" : "➡️";
   report += `${trendEmoji} **Current**: ${currentCount} player${currentCount === 1 ? '' : 's'}\n`;
   report += `📋 **24h Average**: ${avgCount} players\n`;
-  report += `🔝 **Peak**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
+  report += `🔝 **Peak (simultaneous)**: ${maxCount} players | 🔽 **Low**: ${minCount} players\n\n`;
   report += `\n`;
   
   // Enhanced activity insights
@@ -2664,8 +2667,10 @@ function calculateHordeStatus(timeStr) {
 
   if (daysFromHorde === 0 && hour < 22) {
     const hoursToHorde = 22 - hour;
-    const hourStr = hour === 21 ? "less than an hour" : `${hoursToHorde} hour${hoursToHorde === 1 ? "" : "s"}`;
-    return `🩸 Blood Moon Warning\n> Horde begins in ${hourStr}!`;
+  const hourStr = hour === 21 ? "less than an hour" : `${hoursToHorde} hour${hoursToHorde === 1 ? "" : "s"}`;
+  // Also provide an estimated game-time at which the horde starts (Day X, 22:00)
+  const beginsAt = `Day ${day}, 22:00`;
+  return `🩸 Blood Moon Warning\n> Horde begins in ${hourStr} (approx ${beginsAt})!`;
   } else if (isHordeNow) {
     return `🔴 Blood Moon Active\n> The horde is rampaging! Seek shelter immediately!`;
   } else if (daysFromHorde !== 0) {
