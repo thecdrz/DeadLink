@@ -1,0 +1,11 @@
+{
+  "lastNotifiedVersion": null,
+  "lastCheckedAt": 0,
+  "lastRelease": {
+    "tag": "v9.9.9",
+    "version": "9.9.9",
+    "name": "R",
+    "url": "http://example/release",
+    "body": "B"
+  }
+}

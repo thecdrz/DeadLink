@@ -1,4 +1,11 @@
 {
   "lastNotifiedVersion": "2.13.1",
-  "lastCheckedAt": 1755287901812
+  "lastCheckedAt": 1755297709713,
+  "lastRelease": {
+    "tag": "v2.13.1",
+    "version": "2.13.1",
+    "name": "v2.13.1",
+    "url": "https://github.com/thecdrz/DeadLink/releases/tag/v2.13.1",
+    "body": "# Release v2.13.1\r\n\r\nRelease date: 2025-08-15\r\n\r\nChangelog (selected):\r\n\r\n- CI: Add smoke e2e demo check that runs the dev-mode demo client to detect regressions in telnet/demo flows.\r\n- Tests: Add deterministic demo integration test to validate demo telnet startup messages.\r\n- Scripts: Add `scripts/smoke-e2e.js` and `npm run smoke:e2e` for CI and local smoke runs.\r\n- Docs: Documented smoke test workflow and reproduction in `SMOKE_TEST.md`.\r\n- Stability: Relaxed and hardened smoke-e2e timing to reduce CI flakiness.\r\n\r\nNotes:\r\n\r\n- This patch does not change runtime behavior in production mode. The smoke checks run only in `DEV_MODE=true` and are safe to run in CI.\r\n"
+  }
 }
