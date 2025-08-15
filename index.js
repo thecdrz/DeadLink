@@ -19,6 +19,7 @@ const { buildTrendsPayload } = require("./lib/trendsHarness.js");
 const { TelnetQueue, friendlyError } = require("./lib/telnetQueue.js");
 const { renderTrendPng, isChartPngAvailable } = require("./lib/charts.js");
 const { initTelemetry } = require("./lib/telemetry.js");
+const { safeReadJson, safeWriteJson } = require('./lib/fs-utils');
 const { calculateActivityLevel, calculateConsistency } = require("./lib/analyticsUtils.js");
 const { validateConfig } = require("./lib/configSchema.js");
 const c = require("./lib/colors.js");
@@ -26,6 +27,9 @@ const c = require("./lib/colors.js");
 const { Client, Intents } = Discord;
 // Require guilds and messages intents to support chat bridging
 const requestedIntents = [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
+
+// Detect test environment to avoid starting long-lived services during unit tests
+const isTest = typeof process.env.JEST_WORKER_ID !== 'undefined' || process.env.NODE_ENV === 'test';
 
 // Fancy ASCII banner & unified logging helper
 // Startup banner (provided by user); colored at print time
@@ -65,42 +69,12 @@ const log = (() => {
   const scopeColor = (s) => c.magenta(s);
   const fmt = (scope, msg) => `${c.dim(ts())} ${scopeColor(scope)} ${msg}`;
   // Minimal file logging with rotation
-  const logDir = './logs';
-  const maxSize = 512 * 1024; // 512KB per file
-  const maxFiles = 5;
-  function ensureDir() { try { if (!fs.existsSync(logDir)) fs.mkdirSync(logDir); } catch(_) {} }
-  function activeFile() { return `${logDir}/deadlink.log`; }
-  function rotateIfNeeded() {
-    try {
-      ensureDir();
-      const f = activeFile();
-      if (fs.existsSync(f)) {
-        const stat = fs.statSync(f);
-        if (stat.size >= maxSize) {
-          // shift older files
-          for (let i = maxFiles-1; i >=0; i--) {
-            const src = i===0 ? f : `${f}.${i}`;
-            const dest = `${f}.${i+1}`;
-            if (fs.existsSync(src)) {
-              if (i+1 >= maxFiles) { try { fs.unlinkSync(src); } catch(_) {} }
-              else { try { fs.renameSync(src, dest); } catch(_) {} }
-            }
-          }
-        }
-      }
-    } catch(_) {}
-  }
-  function writeFileLine(line) {
-    try {
-      rotateIfNeeded();
-      fs.appendFileSync(activeFile(), line + '\n');
-    } catch(_) {}
-  }
+  const { writeFileLine } = require('./lib/log-utils');
   function out(scope,colorFn,msg,levelColorFn) {
     const line = fmt(scope, msg);
     const colored = levelColorFn ? levelColorFn(line) : line;
-    console.log(colored);
-    writeFileLine(line.replace(/\u001b\[[0-9;]*m/g,'')); // strip ANSI for file
+  console.log(colored);
+  writeFileLine(line.replace(/\u001b\[[0-9;]*m/g,'')); // strip ANSI for file
   }
   return {
     error(scope,msg){ if(current>=0) out(scope,c.red,msg,c.red); },
@@ -135,6 +109,16 @@ function logDiscordError(err, scope = '[DISCORD]') {
 process.on('unhandledRejection', (reason) => {
   try { logDiscordError(reason, '[UNHANDLED]'); } catch(_) {}
 });
+// Ensure lifecycle shutdown on process termination signals so long-lived handles are cleared
+try {
+  const lifecycle = require('./lib/lifecycle');
+  const doShutdown = () => {
+    try { lifecycle.shutdown(); } catch(_) {}
+  };
+  process.on('SIGINT', doShutdown);
+  process.on('SIGTERM', doShutdown);
+  process.on('beforeExit', doShutdown);
+} catch(_) {}
 
 console.log(c.cyan(banner) + "\n" + c.bold(`DeadLink v${pjson.version}`));
 log.warn('[SEC]', 'Remote connections to 7 Days to Die servers are not encrypted.');
@@ -178,6 +162,7 @@ function startHeartbeat() {
   }
   beat();
   heartbeatTimer = setInterval(beat, intervalMs);
+  try { require('./lib/lifecycle').registerInterval(heartbeatTimer); } catch(_) {}
 }
 
 const lineSplit = /\n|\r/g;
@@ -564,16 +549,20 @@ function startTelnetWatchdog() {
       }
     } catch(_) {}
   }, intervalMs);
+  try { require('./lib/lifecycle').registerInterval(telnetWatchdogTimer); } catch(_) {}
 }
 
-// Start telnet connection on boot
-startTelnet();
-// Delay heartbeat until after analytics load & telnet connection established
-setTimeout(() => {
-  if (d7dtdState.connStatus === 1) startHeartbeat();
-  else ensureTelnetReady(10000).then(()=> startHeartbeat());
-  startTelnetWatchdog();
-}, 2500);
+// Start telnet connection on boot (skip in test environment)
+if (!isTest) {
+  startTelnet();
+  // Delay heartbeat until after analytics load & telnet connection established
+  setTimeout(() => {
+    if (d7dtdState.connStatus === 1) startHeartbeat();
+    else ensureTelnetReady(10000).then(()=> startHeartbeat());
+    startTelnetWatchdog();
+  }, 2500);
+}
+  try { /* register any startup timers if set */ } catch(_) {}
 
 async function ensureTelnetReady(timeoutMs = 8000) {
   if (d7dtdState.connStatus === 1) return true;
@@ -1533,6 +1522,7 @@ function scheduleAnalyticsSave(delayMs = 4000) {
   saveTimer = setTimeout(() => {
     saveAnalyticsData();
   }, delayMs);
+  try { require('./lib/lifecycle').registerTimeout(saveTimer); } catch(_) {}
 }
 
 function saveAnalyticsData() {
@@ -1546,7 +1536,7 @@ function saveAnalyticsData() {
   playerCraft: d7dtdState.playerCraft,
       lastSaved: Date.now()
     };
-    fs.writeFileSync('./analytics.json', JSON.stringify(analyticsData, null, 2), 'utf8');
+  safeWriteJson('./analytics.json', analyticsData);
   } catch (error) {
     console.warn('Warning: Failed to save analytics data:', error.message);
   }
@@ -1554,9 +1544,8 @@ function saveAnalyticsData() {
 
 function loadAnalyticsData() {
   try {
-    if (!fs.existsSync('./analytics.json')) return;
-    const data = fs.readFileSync('./analytics.json', 'utf8');
-    const analyticsData = JSON.parse(data);
+  const analyticsData = safeReadJson('./analytics.json', null);
+  if (!analyticsData) return;
     if (analyticsData.playerTrends) {
       d7dtdState.playerTrends = analyticsData.playerTrends;
       console.log(c.gray(`Analytics data loaded: ${d7dtdState.playerTrends.history.length} data points restored`));
@@ -1585,13 +1574,7 @@ function loadAnalyticsData() {
 // Version announcement functions
 function checkAndAnnounceVersion() {
   try {
-    let versionData = { lastAnnouncedVersion: null };
-    
-    // Load previous version data
-    if (fs.existsSync('./version.json')) {
-      const data = fs.readFileSync('./version.json', 'utf8');
-      versionData = JSON.parse(data);
-    }
+  let versionData = safeReadJson('./version.json', { lastAnnouncedVersion: null });
     
     // Check if this is a new version
     const currentVersion = pjson.version;
@@ -1599,8 +1582,8 @@ function checkAndAnnounceVersion() {
       console.log(`New version detected: ${currentVersion} (was: ${versionData.lastAnnouncedVersion || 'none'})`);
       
       // Save the new version
-      versionData.lastAnnouncedVersion = currentVersion;
-      fs.writeFileSync('./version.json', JSON.stringify(versionData, null, 2), 'utf8');
+  versionData.lastAnnouncedVersion = currentVersion;
+  safeWriteJson('./version.json', versionData);
       
       // Schedule announcement after Discord is ready
       setTimeout(() => {
@@ -1878,13 +1861,14 @@ function startDailyReportsScheduler() {
     const timeStr = String(cfg.time || '09:00'); // HH:MM local time
     const delay = computeNextDailyDelay(timeStr);
     log.info('[DAILY]', `Scheduling daily activity report for ${timeStr} (in ${Math.round(delay/60000)}m)`);
-    if (dailyReportTimer) clearTimeout(dailyReportTimer);
-    dailyReportTimer = setTimeout(async () => {
+  if (dailyReportTimer) clearTimeout(dailyReportTimer);
+  dailyReportTimer = setTimeout(async () => {
       try { await runDailyReport(); } catch(_) {}
       // reschedule next day
       const nextDelay = computeNextDailyDelay(timeStr);
       dailyReportTimer = setTimeout(async () => { try { await runDailyReport(); } catch(_) {} }, nextDelay);
-    }, delay);
+  }, delay);
+  try { require('./lib/lifecycle').registerTimeout(dailyReportTimer); } catch(_) {}
   } catch (e) {
     log.warn('[DAILY]', `Failed to start scheduler: ${e && e.message}`);
   }
@@ -2442,33 +2426,49 @@ function handleInfoFromButton(interaction) {
 // Slash: /update with options { action: check|notes|announce }
 async function handleUpdateFromSlash(interaction) {
   try {
-    // Defer to allow API calls
     await interaction.deferReply({ ephemeral: false });
     const action = (interaction.options && interaction.options.getString ? (interaction.options.getString('action') || 'check') : 'check').toLowerCase();
+
+    // If we have a cached release, show it immediately to the user and refresh in background.
+    try {
+      if (updates.cache && updates.cache.lastRelease) {
+        const cached = updates.cache.lastRelease;
+        const upToDateCached = !updates.isNewer(cached.version);
+        const embedCached = buildUpdateEmbed(cached, pjson.version, { upToDate: upToDateCached });
+        // For 'check', notify user we're showing cached info and doing a background refresh
+        if (action === 'check') {
+          interaction.editReply({ content: '⚠️ Showing cached release info while attempting a live refresh...', embeds: [embedCached] }).catch(()=>{});
+        } else if (action === 'notes') {
+          const body = cached.body && cached.body.trim() ? cached.body.slice(0, 3900) : 'No release notes available.';
+          interaction.editReply({ content: `Release notes for ${cached.tag}:\n\n${body}\n\n${cached.url}` }).catch(()=>{});
+        } else {
+          interaction.editReply({ embeds: [embedCached] }).catch(()=>{});
+        }
+        // Fire-and-forget refresh to update cache for next time
+        (async () => {
+          try {
+            const fresh = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
+            try { if (fresh) console.log('[updates] background refresh succeeded', fresh.tag); } catch(_) {}
+          } catch (e) { try { console.warn('[updates] background refresh failed:', e && e.message ? e.message : e); } catch(_) {} }
+        })();
+        return;
+      }
+    } catch (_) {}
+
+    // No cached release available — attempt live fetch (this will use retry logic)
     const info = await updates.fetchLatest({ includePrerelease: !!(config.updates && config.updates.prerelease) });
     if (!info) {
-      return interaction.editReply('❌ Could not fetch release info.').catch(() => {});
+      return interaction.editReply('❌ Could not fetch release info (network or GitHub unreachable). Please try again later.').catch(() => {});
     }
     const upToDate = !updates.isNewer(info.version);
     const embed = buildUpdateEmbed(info, pjson.version, { upToDate });
-
-    // Always post publicly to the main channel (the interaction channel), per request
-    if (action === 'check') {
-      return interaction.editReply({ embeds: [embed] }).catch(() => {});
-    }
+    if (action === 'check') return interaction.editReply({ embeds: [embed] }).catch(() => {});
     if (action === 'notes') {
       const body = info.body && info.body.trim() ? info.body.slice(0, 3900) : 'No release notes available.';
       const content = `Release notes for ${info.tag}:\n\n${body}\n\n${info.url}`;
       return interaction.editReply({ content }).catch(() => {});
     }
-    if (action === 'announce') {
-      // Announce to the channel where the command was used
-      try {
-        await interaction.editReply({ embeds: [embed] });
-      } catch (_) {}
-      return; // nothing else needed; this is the public announce
-    }
-    // Fallback
+    if (action === 'announce') { try { await interaction.editReply({ embeds: [embed] }); } catch (_) {} ; return; }
     return interaction.editReply({ embeds: [embed] }).catch(() => {});
   } catch (e) {
     try { await interaction.editReply('❌ Update command failed.'); } catch(_) {}
@@ -2818,7 +2818,9 @@ client.on('interactionCreate', async (interaction) => {
 // Legacy message-based commands removed — use slash commands and dashboard
 
 // Ensure login uses token from config/env earlier
-try { client.login(token); } catch (_) {}
+if (!isTest) {
+  try { client.login(token); } catch (_) {}
+}
 
 // Discord -> Game chat bridge
 client.on('messageCreate', async (msg) => {

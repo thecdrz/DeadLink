@@ -6,7 +6,12 @@ jest.setTimeout(30000);
 test('demo-mode integration emits telnet startup lines', () => {
   return new Promise((resolve, reject) => {
     const cwd = path.resolve(__dirname, '..');
-    const env = Object.assign({}, process.env, { DEV_MODE: 'true', LOG_LEVEL: 'debug' });
+  // Ensure the spawned child is not treated as a Jest worker (inheritance of JEST_WORKER_ID
+  // causes the app to think it's running under tests and skip startup paths). Remove it.
+  const env = Object.assign({}, process.env);
+  try { delete env.JEST_WORKER_ID; } catch(_) {}
+  try { delete env.NODE_ENV; } catch(_) {}
+  Object.assign(env, { DEV_MODE: 'true', LOG_LEVEL: 'debug' });
 
     // Spawn a separate node process running the app in demo mode
     const child = spawn(process.execPath, ['index.js'], { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });

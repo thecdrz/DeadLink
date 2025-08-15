@@ -6,6 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { safeReadLines, safeReadJson, safeWriteFile } = require('../lib/fs-utils');
 const minimist = require('minimist');
 
 function parseSince(s) {
@@ -19,19 +20,8 @@ function parseSince(s) {
   return n * mult;
 }
 
-function safeReadLines(file) {
-  try {
-    if (!fs.existsSync(file)) return [];
-    return fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean);
-  } catch (_) { return []; }
-}
-
-function readJSONSafe(file) {
-  try {
-    if (!fs.existsSync(file)) return null;
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch (_) { return null; }
-}
+// reuse safeReadLines/safeReadJson from lib/fs-utils
+function readJSONSafe(file) { return safeReadJson(file, null); }
 
 function quantile(sortedArr, q) {
   if (!sortedArr.length) return 0;
@@ -1728,7 +1718,7 @@ function main() {
   else if (out === 'html') content = renderHtml(rep);
   else content = renderText(rep);
   if (outFile) {
-    try { fs.writeFileSync(outFile, content); console.log(`Wrote ${outFile}`); } catch (e) { console.error('Failed to write output:', e.message || e); }
+    try { safeWriteFile(outFile, content, { ensureDirectory: true }); console.log(`Wrote ${outFile}`); } catch (e) { console.error('Failed to write output:', e.message || e); }
   } else {
     console.log(content);
   }

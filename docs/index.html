@@ -27,162 +27,34 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="site.css" />
 </head>
 <body>
-  <div class="page">
-    <nav class="topnav" aria-label="Primary">
-      <div class="nav-left">
-        <a class="brand backlink" href="./index.html"><img src="assets/deadlink-logo.png" alt="DeadLink logo small">DeadLink</a>
-      </div>
-      <div class="nav-right">
-        <a href="./devops.html">DevOps</a>
-        <a href="./guide.html">Docs</a>
-        <a href="./telemetry-report.html">Telemetry</a>
-        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
-      </div>
-    </nav>
-
-    <!-- HERO -->
+  <main class="minimal">
     <header class="hero">
-      <img class="hero-logo" src="assets/deadlink-logo.png" alt="DeadLink logo">
-      <p class="tagline">7 DAYS TO DIE SERVER COMPANION</p>
+      <img src="assets/deadlink-logo.png" alt="DeadLink logo" class="hero-logo">
+      <h1>DeadLink</h1>
+      <p class="lead">A clean, focused 7 Days to Die server companion — analytics, concise reports, and safe server controls.</p>
+      <p class="cta">
+        <a class="btn" href="./guide.html">Documentation</a>
+        <a class="btn ghost" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </p>
     </header>
 
-    <!-- SHOWCASE: fresh v2.13 embeds -->
-    <section class="showcase" aria-label="Live UI Preview">
-      <div class="grid showcase-grid">
-        <figure class="card">
-          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-activity-report-basic.png" alt="Activity brief embed" />
-          <figcaption>Activity (Brief) — fast narrative snapshot with survival context.</figcaption>
-        </figure>
-        <figure class="card">
-          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-activity-report-details.png" alt="Activity detailed embed" />
-          <figcaption>Activity (Details) — expanded guidance & blood moon awareness.</figcaption>
-        </figure>
-        <figure class="card">
-          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-info.png" alt="Info panel embed" />
-          <figcaption>Info Panel — feature overview & quick command help.</figcaption>
-        </figure>
-        <figure class="card">
-          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-trends.png" alt="Trends analytics embed" />
-          <figcaption>Trends — player peaks, retention signals & pattern analysis.</figcaption>
-        </figure>
-        <figure class="card">
-          <img loading="lazy" data-lightbox src="https://raw.githubusercontent.com/thecdrz/DeadLink/master/screenshots/deadbot-blood-moon-imminent.png" alt="Blood moon imminent alert" />
-          <figcaption>Blood Moon Imminent — countdown alert (rate‑limited).</figcaption>
-        </figure>
-      </div>
+    <section class="features simple">
+      <ul>
+        <li>Player & Server Trends — concise charts and trend snapshots</li>
+        <li>Daily Activity Reports — short narrative summaries for Discord</li>
+        <li>Horde Night Alerts — polite, rate-limited notifications</li>
+        <li>Safe Server Controls — scoped telnet-backed actions</li>
+      </ul>
     </section>
 
-    <!-- FEATURES -->
-    <section class="features">
-      <div class="grid">
-        <article class="card">
-          <div class="icon" aria-hidden="true" title="Trends">
-            <!-- chart icon -->
-            <svg viewBox="0 0 24 24" width="28" height="28" role="img" aria-label=""><path d="M4 19h16" stroke="currentColor" stroke-width="2" fill="none"/><path d="M6 15l4-4 3 3 5-6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-          </div>
-          <h3>Player & Server Trends</h3>
-          <p>See player counts, peak times, restarts, and basic latency trends.</p>
-        </article>
-
-        <article class="card">
-          <div class="icon" aria-hidden="true" title="Reports">
-            <!-- server drawers -->
-            <svg viewBox="0 0 24 24" width="28" height="28"><rect x="3" y="4" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><rect x="3" y="14" width="18" height="6" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="8" cy="7" r="1" fill="currentColor"/><circle cx="8" cy="17" r="1" fill="currentColor"/></svg>
-          </div>
-          <h3>Daily Activity Reports</h3>
-          <p>Automatic summaries of logins, deaths, chat, and key events to Discord.</p>
-        </article>
-
-        <article class="card">
-          <div class="icon" aria-hidden="true" title="Horde Night">
-            <!-- moon -->
-            <svg viewBox="0 0 24 24" width="28" height="28"><path d="M21 12.5A8.5 8.5 0 0 1 10.5 2 9 9 0 1 0 22 13.5c-3 .8-5.3-.4-1-1z" fill="currentColor"/></svg>
-          </div>
-          <h3>Horde Night Alerts</h3>
-          <p>Polite, rate-limited blood moon warnings with cool-downs—no spam.</p>
-        </article>
-
-        <article class="card">
-          <div class="icon" aria-hidden="true" title="Controls">
-            <!-- tools -->
-            <svg viewBox="0 0 24 24" width="28" height="28"><path d="M14 7l3 3-7 7H7v-3l7-7z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M14 7l3 3" stroke="currentColor" stroke-width="2"/></svg>
-          </div>
-          <h3>Safe Server Controls</h3>
-          <p>Scoped commands for restart, say, moderation—no raw telnet noise.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- Link to Gallery page instead of embedding full gallery -->
-    <section class="features">
-      <div class="grid">
-        <article class="card">
-          <div class="icon" aria-hidden="true">🖼️</div>
-          <h3>UI Gallery</h3>
-          <p>Preview the Dashboard, Activity, Players, Time, and Player Deep Dive.</p>
-          <p><a class="btn" href="./gallery.html" aria-label="Open the gallery page">Open Gallery</a></p>
-        </article>
-        <article class="card">
-          <div class="icon" aria-hidden="true">🔁</div>
-          <h3>DevOps & CI/CD</h3>
-          <p>How we ship: tests, releases, Docker images, and website publishing.</p>
-          <p><a class="btn" href="./devops.html" aria-label="Open the DevOps documentation">DevOps Docs</a></p>
-        </article>
-        <article class="card">
-          <div class="icon" aria-hidden="true">📦</div>
-          <h3>Docker</h3>
-          <p>Run DeadLink in a container with a few environment variables.</p>
-          <p><a class="btn" href="https://github.com/thecdrz/DeadLink#docker" target="_blank" rel="noopener">Docker Guide</a></p>
-        </article>
-        <article class="card">
-          <div class="icon" aria-hidden="true">📑</div>
-          <h3>Docs</h3>
-          <p>Read the full guide and configuration tips on GitHub.</p>
-          <p><a class="btn" href="./guide.html">Open Docs</a></p>
-        </article>
-      </div>
-    </section>
-
-    <!-- GET STARTED -->
-    <section class="cta-panel">
-      <h2>Get Started</h2>
-      <div class="cta-grid">
-        <div class="left">
-          <div class="terminal" id="cmd" aria-label="Docker command">
-$ docker run --name deadlink \
-  -e DISCORD_TOKEN=... \
-  -e TELNET_HOST=... \
-  -e TELNET_PASS=... \
-  -e DEV_MODE=true \
-  ghcr.io/thecdrz/deadlink:latest
-          </div>
-          <button class="copybtn" data-target="cmd" aria-label="Copy command">
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="9" y="9" width="10" height="12" rx="2" stroke="currentColor" fill="none" stroke-width="2"/><rect x="5" y="5" width="10" height="12" rx="2" stroke="currentColor" fill="none" stroke-width="2"/></svg>
-            <span>Copy</span>
-          </button>
-        </div>
-        <div class="right">
-          <div class="terminal ghost">$ docker run  --name  deadlink</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FOOTER BAR -->
-    <footer class="footerbar">
-      <a class="btn" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
-      <a class="link" href="https://discord.gg/YjeBPdSp" target="_blank" rel="noopener">Join us on Discord</a>
-      <a class="link discord-link" href="https://discord.com/users/217012303063678978" target="_blank" rel="noopener">
-        <svg class="discord-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-          <path fill="currentColor" d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09-.01-.02-.04-.03-.07-.03-1.5.26-2.93.71-4.27 1.33-.01 0-.02.01-.03.02-2.72 4.07-3.47 8.03-3.1 11.95 0 .02.01.04.03.05 1.8 1.32 3.53 2.12 5.24 2.65.03.01.06 0 .07-.02.4-.55.76-1.13 1.07-1.74.02-.04 0-.08-.04-.09-.57-.22-1.11-.48-1.64-.78-.04-.02-.04-.08-.01-.11.11-.08.22-.17.33-.25.02-.02.05-.02.07-.01 3.44 1.57 7.15 1.57 10.55 0 .02-.01.05-.01.07.01.11.09.22.17.33.26.04.03.04.09-.01.11-.52.31-1.07.56-1.64.78-.04.01-.05.06-.04.09.32.61.68 1.19 1.07 1.74.03.02.06.03.09.02 1.72-.53 3.45-1.33 5.25-2.65.02-.01.03-.03.03-.05.44-4.53-.73-8.46-3.1-11.95-.01-.01-.02-.02-.04-.02z"/>
-        </svg>
-        CDRZ
-      </a>
+    <footer class="foot centered">
+      <p>Documentation: <a href="./guide.html">Guide & Configuration</a> · Example analytics: <code>analytics.example.json</code></p>
+      <p>&copy; 2025 DeadLink</p>
     </footer>
-
-  </div>
+  </main>
 
   <!-- Scripts: copy-to-clipboard -->
   <script>
