@@ -331,8 +331,14 @@ else {
   
   // Validate required configuration
   if (!config.token || config.token === "yourbottoken") {
-    console.error("ERROR: Discord token not configured. Set DISCORD_TOKEN environment variable or update config.json");
-    process.exit(1);
+    // In dev-mode (simulated telnet) allow missing Discord token for local/demo/test runs.
+    if (config["dev-mode"]) {
+      console.warn("WARNING: Discord token not configured but running in dev-mode; continuing without Discord connection.");
+      config.token = null; // explicit null to indicate missing token
+    } else {
+      console.error("ERROR: Discord token not configured. Set DISCORD_TOKEN environment variable or update config.json");
+      process.exit(1);
+    }
   }
   
   // In dev-mode (simulated telnet), allow missing telnet credentials
