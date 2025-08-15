@@ -1,4 +1,6 @@
 const http = require('http');
+const os = require('os');
+const path = require('path');
 
 describe('telemetry client', () => {
   test('posts event payload to HTTP endpoint', async () => {
@@ -24,8 +26,10 @@ describe('telemetry client', () => {
       });
       server.listen(0, '127.0.0.1', async () => {
         const { port } = server.address();
-        const endpoint = `http://127.0.0.1:${port}/v1/event`;
-        const t = initTelemetry({ analytics: { enabled: true, endpoint, flushIntervalMs: 999999999 } }, pjson, false);
+  const endpoint = `http://127.0.0.1:${port}/v1/event`;
+  const tmpBuf = path.join(os.tmpdir(), `dl-telemetry-buffer-${Date.now()}-${Math.random().toString(36).slice(2)}.jsonl`);
+  const tmpStore = path.join(os.tmpdir(), `dl-telemetry-store-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
+  const t = initTelemetry({ analytics: { enabled: true, endpoint, flushIntervalMs: 999999999, bufferEnabled: false, bufferPath: tmpBuf, storagePath: tmpStore } }, pjson, false);
         await t.send('unit_test', { ping: true });
         await t.flushNow();
       });
