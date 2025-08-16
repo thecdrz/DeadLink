@@ -1,4 +1,5 @@
 # Analytics & Telemetry
+# Analytics & Telemetry
 
 ## Gameplay Analytics
 DeadLink tracks non-PII server activity to provide insights:

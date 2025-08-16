@@ -22,6 +22,30 @@ Tip: set `DEV_MODE=true` for a simulated telnet source in screenshots/demos.
 ## Register slash commands
 ```powershell
 # Global (may take ~1 hour)
+# Getting Started
+
+Welcome to DeadLink! This quick start helps you run the bot and see the dashboard in minutes.
+
+## Prerequisites
+- Node.js LTS installed
+- A Discord bot token (from the Developer Portal)
+- Your 7 Days to Die server telnet credentials
+
+## Run locally
+```powershell
+$env:DISCORD_TOKEN = "<bot token>"
+$env:TELNET_PASSWORD = "<telnet password>"
+$env:TELNET_IP = "<server ip>"
+$env:TELNET_PORT = "<port>"
+$env:DISCORD_CHANNEL = "<channel id>"
+node index.js
+```
+
+Tip: set `DEV_MODE=true` for a simulated telnet source in screenshots/demos.
+
+## Register slash commands
+```powershell
+# Global (may take ~1 hour)
 npm run slash:global
 
 # Guild (instant) – set your guild ID first:
