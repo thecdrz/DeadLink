@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to publish (e.g. v2.13.3)'
+        description: 'Tag to publish (e.g. v2.14.0)'
         required: false
-        default: 'v2.13.3'
+        default: 'v2.14.0'
 
 jobs:
   publish:
@@ -33,13 +33,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v4
+      - name: Log in to Docker Hub
+        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push (GHCR + DockerHub)
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ghcr.io/thecdrz/deadlink:${{ github.event.release.tag_name || inputs.tag }}
             ghcr.io/thecdrz/deadlink:latest
-          platforms: linux/amd64,linux/arm64
+            docker.io/thecdrz/deadlink:${{ github.event.release.tag_name || inputs.tag }}
+            docker.io/thecdrz/deadlink:latest
