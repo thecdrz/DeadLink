@@ -75,7 +75,7 @@ Below are quick previews of the main dashboards. Click to open the full image in
     <img alt="Terminal startup logs with clean sections for init, telnet, discord, analytics, updates" src="assets/snapshots/terminal-startup.png">
   </a>
   <figcaption>
-    Terminal — Clean, structured startup logs show config, telnet/Discord connect, analytics load, and update checks.
+    Terminal – Clean, structured startup logs show config, telnet/Discord connect, analytics load, and update checks.
   </figcaption>
 </figure>
 
@@ -123,3 +123,5 @@ Below are quick previews of the main dashboards. Click to open the full image in
   For a headless preview pipeline, run <code>npm run snapshots</code> to regenerate these images.
   Images are saved to <code>docs/assets/snapshots/</code>.
 </p>
+
+

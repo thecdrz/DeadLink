@@ -52,7 +52,7 @@ node index.js
   // Logging
   "log-console": true,              // Write console.log file (rotating)
   "log-messages": false,            // Echo chat messages to terminal
-  "log-telnet": false,              // Echo raw telnet lines to terminal
+  "log-telnet": false,              // Echo raw telnet stream in terminal (noisy).
 
   // Message filters (legacy relay)
   "show-private-chat": true,
@@ -132,7 +132,7 @@ node index.js
   // Logging
   "log-console": true,              // Write console.log file (rotating)
   "log-messages": false,            // Echo chat messages to terminal
-  "log-telnet": false,              // Echo raw telnet lines to terminal
+  "log-telnet": false,              // Echo raw telnet stream in terminal (noisy).
 
   // Message filters (legacy relay)
   "show-private-chat": true,
@@ -161,7 +161,7 @@ node index.js
 
   // Analytics & telemetry
   "analytics": {
-    "enabled": true,                 // Local anonymous telemetry (opt-out)
+    "enabled": true,                 // Local anonymous telemetry. (opt-out)
     "storagePath": "./analytics.json"
   }
 }
@@ -171,12 +171,12 @@ node index.js
 
 | Setting | Type | Default | Purpose |
 |---|---:|---:|---|
-| token | string | — | Discord bot token. Prefer env var DISCORD_TOKEN. |
-| channel | string | — | Discord channel ID to post dashboards. DISCORD_CHANNEL overrides. |
+| token | string |  | Discord bot token. Prefer env var DISCORD_TOKEN. |
+| channel | string |  | Discord channel ID to post dashboards. DISCORD_CHANNEL overrides. |
 | ip | string | "localhost" | Telnet host/IP of your 7DtD server. TELNET_IP overrides. |
 | port | number | 8081 | Telnet port. TELNET_PORT overrides. |
-| password | string | — | Telnet password. Use TELNET_PASSWORD. |
-| dev-mode | boolean | false | Simulated data; no telnet. Great for demos/tests. |
+| password | string |  | Telnet password. Use TELNET_PASSWORD. |
+| dev-mode | boolean | false | Simulated data; no telnet. Great for demos. |
 | allow-multiple-instances | boolean | false | Permit multiple bot instances. Generally false. |
 | disable-commands | boolean | true | Legacy text commands off (slash-first). |
 | disable-status-updates | boolean | false | Hide Discord presence when true. |
@@ -194,8 +194,8 @@ node index.js
 | enabled | boolean | false | Auto-check GitHub releases. |
 | intervalHours | number | 24 | Check cadence. |
 | prerelease | boolean | false | Include prereleases. |
-| notifyMode | string | — | "channel" to announce to public channel. |
-| notifyChannel | string | — | Channel ID for announcements. |
+| notifyMode | string |  | "channel" to announce to public channel. |
+| notifyChannel | string |  | Channel ID for announcements. |
 
 ### bloodMoon.*
 | Setting | Type | Default | Purpose |
@@ -225,4 +225,3 @@ node index.js
 Notes:
 - Env vars win over config.json when both are present.
 - For Windows, prefer PowerShell syntax shown above; for Linux/macOS, use export VAR=value.
-
