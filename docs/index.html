@@ -6,96 +6,83 @@
   <meta name="color-scheme" content="dark" />
   <title>DeadLink – 7 Days to Die Server Companion</title>
   <meta name="description" content="DeadLink is a lightweight 7 Days to Die server companion: trends, reports, horde-night alerts, and safe server controls. Docker-friendly and Discord-integrated." />
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DeadLink — 7 Days to Die Companion</title>
+  <meta name="description" content="DeadLink: Discord-first companion for 7 Days to Die — dashboards, horde alerts, telemetry and safe server controls.">
 
-  <!-- Brand / sharing -->
-  <meta name="theme-color" content="#121112">
-  <meta property="og:title" content="DeadLink – 7 Days to Die Server Companion">
-  <meta property="og:description" content="Trends, reports, horde-night alerts, and safe controls for your 7 Days to Die server.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/deadlink-logo.png">
-  <link rel="canonical" href="https://thecdrz.github.io/DeadLink/">
-
-  <!-- Icon / logo -->
-  <link rel="icon" href="assets/deadlink-logo.png" type="image/png" />
-  <link rel="preload" href="assets/deadlink-logo.png" as="image" />
-
-  <!-- Tagline font -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800;900&display=swap" rel="stylesheet">
-  
-  <!-- Modern fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="site.css" />
+  <link rel="icon" href="assets/deadlink-logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
 </head>
-<body>
-  <main class="minimal">
-    <header class="hero">
-      <img src="assets/deadlink-logo.png" alt="DeadLink logo" class="hero-logo">
-      <h1>DeadLink</h1>
-      <p class="lead">A clean, focused 7 Days to Die server companion — analytics, concise reports, and safe server controls.</p>
-      <p class="cta">
-        <a class="btn" href="./guide.html">Documentation</a>
-        <a class="btn ghost" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
-      </p>
+<body class="theme-survivor">
+  <div class="wrap">
+    <header class="masthead">
+      <div class="brand">
+        <img src="assets/deadlink-logo.png" alt="DeadLink" class="brand-logo">
+        <div>
+          <h1>DeadLink</h1>
+          <p class="subtitle">A 7 Days to Die server companion — dashboards, alerts, and safe controls</p>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a class="nav-btn" href="./guide.html">Documentation</a>
+        <a class="nav-ghost" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </nav>
     </header>
 
-    <section class="features simple">
-      <div class="release-banner">
-        <strong>Release v2.13.3</strong> — <a href="/RELEASE_NOTES_v2.13.3.md">Release notes</a>
+    <main class="hero-panel">
+      <div class="hero-left">
+        <h2>Survive the Horde, Run the Server</h2>
+        <p class="lead">Monitor players, get horde-night context, and perform safe server actions without leaving Discord.</p>
+        <p class="ctas">
+          <a class="btn primary" href="./guide.html">Get Started</a>
+          <a class="btn" href="/RELEASE_NOTES_v2.14.0.md">Release notes</a>
+        </p>
+        <div class="features-grid">
+          <div class="feat">🧭 Dashboard-first UI</div>
+          <div class="feat">🧟 Horde-night alerts</div>
+          <div class="feat">📈 Player analytics & trends</div>
+          <div class="feat">🔐 Safe telnet controls</div>
+        </div>
       </div>
-      <ul>
-        <li>Player & Server Trends — concise charts and trend snapshots</li>
-        <li>Daily Activity Reports — short narrative summaries for Discord</li>
-        <li>Horde Night Alerts — polite, rate-limited notifications</li>
-        <li>Safe Server Controls — scoped telnet-backed actions</li>
+      <div class="hero-right">
+        <div class="panel card">
+          <h3 class="panel-title">Latest Release</h3>
+          <p class="release-tag">v2.14.0</p>
+          <a class="small-link" href="/RELEASE_NOTES_v2.14.0.md">Read the release notes</a>
+        </div>
+        <div class="panel card">
+          <h3 class="panel-title">Quick Config</h3>
+          <pre class="snippet">$env:DISCORD_TOKEN=&lt;token&gt;
+$env:TELNET_IP=127.0.0.1
+$env:TELNET_PORT=8081
+node index.js</pre>
+        </div>
+      </div>
+    </main>
+
+    <section class="showcase">
+      <h3>Why DeadLink?</h3>
+      <p>Built for communities running dedicated 7 Days to Die servers — clear, reliable, and forgiving. Works with telnet, not game mods.</p>
+      <ul class="showcase-list">
+        <li><strong>Interactive dashboard</strong> — Activity, Players, Trends, Info</li>
+        <li><strong>Deterministic tests</strong> — snapshot-ready embeds</li>
+        <li><strong>CI-driven Docker images</strong> — GHCR & Docker Hub ready</li>
       </ul>
     </section>
 
-    <footer class="foot centered">
-      <p>Documentation: <a href="./guide.html">Guide & Configuration</a> · Example analytics: <code>analytics.example.json</code></p>
-      <p>&copy; 2025 DeadLink</p>
+    <footer class="site-foot">
+      <div>© 2025 DeadLink — <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">Source</a></div>
+      <div class="foot-links">
+        <a href="./guide.html">Docs</a>
+        <a href="./guide/configuration.md">Config</a>
+      </div>
     </footer>
-  </main>
-
-  <!-- Scripts: copy-to-clipboard -->
-  <script>
-
-  // Copy-to-clipboard for the Docker command
-    document.addEventListener('click', e => {
-      if (!e.target.closest('.copybtn')) return;
-      const btn = e.target.closest('.copybtn');
-      const id = btn.getAttribute('data-target');
-      const el = document.getElementById(id);
-      if (!el) return;
-      const text = el.innerText.replace(/\u00A0/g,' ');
-      navigator.clipboard.writeText(text).then(() => {
-        const span = btn.querySelector('span');
-        const old = span.textContent;
-        span.textContent = 'Copied!';
-        setTimeout(() => span.textContent = old, 1200);
-      });
-    });
-
-    // Lightweight lightbox reuse (same as gallery) for showcase images
-    document.addEventListener('click', (e) => {
-      const img = e.target.closest('img[data-lightbox]');
-      if (!img) return;
-      const overlay = document.createElement('div');
-      overlay.className = 'lightbox-overlay fade-in';
-      overlay.setAttribute('role','dialog');
-      overlay.setAttribute('aria-modal','true');
-      overlay.innerHTML = `<img class="lightbox-img" src="${img.src}" alt="${img.alt}">`;
-      overlay.addEventListener('click', () => overlay.remove());
-      document.body.appendChild(overlay);
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const lb = document.querySelector('.lightbox-overlay');
-        if (lb) lb.remove();
-      }
-    });
-  </script>
+  </div>
 </body>
 </html>
+      overlay.setAttribute('aria-modal','true');

@@ -1,19 +1,81 @@
-/* Minimalist site stylesheet */
-:root{--bg:#0f1113;--fg:#e6eef6;--muted:#9aa6b2;--accent:#7dd3fc}
+/* 7 Days to Die themed site stylesheet for DeadLink docs
+	 Palette: muted earth tones, oxidized metal, blood accents.
+	 Designed to be compact, readable and evoke survival/horde-night mood.
+*/
+:root{
+	--bg:#0f0e0b; /* nearly black */
+	--panel:#141412; /* dark panel */
+	--muted:#9a8f7f; /* dusty tan */
+	--accent:#b33a2d; /* blood red */
+	--accent-2:#7fb069; /* faded moss */
+	--glass:rgba(255,255,255,0.03);
+	--card-shadow: 0 6px 18px rgba(0,0,0,0.6);
+	--radius:10px;
+	--mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Segoe UI Mono', monospace;
+	--ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
-.main,main,minimal{display:block}
-.minimal{max-width:900px;margin:6vh auto;padding:48px 24px}
-.hero{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
-.hero-logo{width:92px;height:92px;border-radius:12px}
-h1{font-weight:700;margin:0;font-size:28px}
-.lead{color:var(--muted);max-width:64ch}
-.cta{margin-top:10px}
-.btn{display:inline-block;padding:10px 16px;border-radius:8px;background:var(--accent);color:#071426;text-decoration:none;font-weight:600;margin:0 8px}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--fg)}
-.features.simple{margin-top:28px;padding:24px 0}
-.features.simple ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-.features.simple li{background:rgba(255,255,255,0.02);padding:12px 16px;border-radius:8px;color:var(--muted)}
-.foot{margin-top:36px;color:var(--muted);text-align:center}
-.centered{display:flex;flex-direction:column;gap:8px;align-items:center}
-@media (prefers-color-scheme:light){:root{--bg:#ffffff;--fg:#071426;--muted:#4b5563;--accent:#0ea5a4}}
+html,body{height:100%}
+body{background:linear-gradient(180deg,var(--bg) 0%, #0b0b0b 100%);color:#e6e1d9;font-family:var(--ui);line-height:1.45;margin:0}
+.wrap{max-width:1100px;margin:28px auto;padding:24px}
+
+/* Masthead */
+.masthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.brand{display:flex;gap:16px;align-items:center}
+.brand-logo{width:64px;height:64px;object-fit:contain;border-radius:8px;background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05));padding:6px}
+.masthead h1{font-family:'Cinzel',serif;margin:0;font-size:28px;letter-spacing:1px}
+.subtitle{margin:0;color:var(--muted);font-size:13px}
+.main-nav{display:flex;gap:10px;align-items:center}
+.nav-btn,.nav-ghost{padding:10px 14px;border-radius:8px;text-decoration:none;color:inherit;font-weight:600;font-size:14px}
+.nav-btn{background:var(--glass);border:1px solid rgba(255,255,255,0.03)}
+.nav-ghost{background:transparent;border:1px dashed rgba(255,255,255,0.03)}
+
+/* HERO */
+.hero-panel{display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start;margin-bottom:24px}
+.hero-left{padding:18px 16px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);box-shadow:var(--card-shadow)}
+.hero-left h2{margin-top:0;font-size:30px;font-family:'Cinzel',serif;color:#efe9de}
+.lead{color:var(--muted);font-size:15px;margin:12px 0}
+.ctas{margin:16px 0}
+.btn{display:inline-block;padding:10px 14px;border-radius:8px;text-decoration:none;color:#efe9de;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.03);font-weight:700}
+.btn.primary{background:linear-gradient(90deg,var(--accent),#8f2d24);box-shadow:0 6px 18px rgba(179,58,45,0.12)}
+.features-grid{Display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.feat{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);color:var(--muted);font-size:13px}
+
+/* Right column cards */
+.panel.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);margin-bottom:12px}
+.panel-title{margin:0;font-size:13px;color:var(--muted);font-weight:700}
+.release-tag{font-family:var(--mono);background:rgba(0,0,0,0.3);display:inline-block;padding:6px 8px;border-radius:6px;margin-top:6px}
+.small-link{display:inline-block;margin-top:8px;color:var(--accent);text-decoration:none}
+.snippet{background:#0b0b07;border-radius:8px;padding:10px;color:#dcd6ca;font-family:var(--mono);font-size:13px;white-space:pre-wrap}
+
+/* Showcase */
+.showcase{margin:18px 0;padding:16px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
+.showcase-list{margin:12px 0 0 0;padding-left:18px;color:var(--muted)}
+.showcase-list li{margin:8px 0}
+
+/* Footer */
+.site-foot{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;padding:12px 8px}
+.foot-links a{margin-left:12px;color:var(--muted);text-decoration:none}
+
+/* Responsive */
+@media (max-width:860px){
+	.hero-panel{grid-template-columns:1fr}
+	.hero-right{order:2}
+}
+
+/* Small UI niceties */
+.code{font-family:var(--mono);background:rgba(0,0,0,0.25);padding:2px 6px;border-radius:4px}
+
+/* Survival accent bar */
+.theme-survivor::before{content:"";position:fixed;left:0;top:0;width:100%;height:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 2px 12px rgba(0,0,0,0.6);z-index:999}
+
+/* Lightbox overlay (reused if images added) */
+.lightbox-overlay{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(2,2,2,0.92);display:flex;align-items:center;justify-content:center;z-index:9999}
+.lightbox-img{max-width:92%;max-height:92%;border-radius:8px}
+
+/* Small print */
+.small-link, a{color:var(--accent)}
+
+/* Accessibility helpers */
+[role="dialog"]{outline:2px solid rgba(255,255,255,0.02)}

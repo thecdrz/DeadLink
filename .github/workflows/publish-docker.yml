@@ -34,12 +34,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log in to Docker Hub
-        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}
+        if: ${{ secrets.DOCKERHUBUSERNAME && secrets.DOCKERHUBTOKEN }}
         uses: docker/login-action@v2
         with:
           registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUBUSERNAME }}
+          password: ${{ secrets.DOCKERHUBTOKEN }}
 
       - name: Build and push (GHCR + DockerHub)
         uses: docker/build-push-action@v6
@@ -53,3 +53,20 @@ jobs:
             ghcr.io/thecdrz/deadlink:latest
             docker.io/thecdrz/deadlink:${{ github.event.release.tag_name || inputs.tag }}
             docker.io/thecdrz/deadlink:latest
+
+      - name: Create GitHub release comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const release = context.payload.release;
+            if (!release) {
+              core.info('No release payload present; skipping release comment.');
+              return;
+            }
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: release.id,
+              body: `Docker images for ${release.tag_name} pushed: ghcr.io/thecdrz/deadlink:${release.tag_name} and docker.io/thecdrz/deadlink:${release.tag_name}`
+            });

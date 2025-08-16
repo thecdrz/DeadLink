@@ -16,21 +16,20 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <div class="page">
-    <nav class="topnav" aria-label="Primary">
-      <div class="nav-left">
-        <a class="brand backlink" href="./index.html"><img src="assets/deadlink-logo.png" alt="DeadLink logo small">DeadLink</a>
+  <div class="wrap">
+    <header class="masthead">
+      <div class="brand">
+        <img src="assets/deadlink-logo.png" alt="DeadLink logo small" class="brand-logo">
+        <div>
+          <h1>DeadLink</h1>
+          <p class="subtitle">Documentation</p>
+        </div>
       </div>
-      <div class="nav-right">
-        <a href="./devops.html">DevOps</a>
-        <a href="./guide.html" aria-current="page">Docs</a>
-        <a href="./telemetry-report.html">Telemetry</a>
-        <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
-      </div>
-    </nav>
-    <header class="hero" style="padding-top:18px;">
-      <img class="hero-logo" src="assets/deadlink-logo.png" alt="DeadLink logo">
-      <p class="tagline">DOCUMENTATION</p>
+      <nav class="main-nav">
+        <a class="nav-btn" href="./index.html">Home</a>
+        <a class="nav-btn" href="./devops.html">DevOps</a>
+        <a class="nav-ghost" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
+      </nav>
     </header>
 
     <section class="docs-container" aria-label="Documentation">
@@ -56,10 +55,12 @@
       </main>
     </section>
 
-    <footer class="footerbar">
-      <a class="btn" href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">GitHub</a>
-      <a class="link" href="./index.html">Home</a>
-      <a class="link" href="./devops.html">DevOps</a>
+    <footer class="site-foot">
+      <div>© 2025 DeadLink — <a href="https://github.com/thecdrz/DeadLink" target="_blank" rel="noopener">Source</a></div>
+      <div class="foot-links">
+        <a href="./index.html">Home</a>
+        <a href="./guide/configuration.md">Config</a>
+      </div>
     </footer>
   </div>
 

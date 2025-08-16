@@ -2,10 +2,10 @@
   "lastNotifiedVersion": "2.13.1",
   "lastCheckedAt": 1755312885252,
   "lastRelease": {
-    "tag": "v2.13.3",
-    "version": "2.13.3",
-    "name": "v2.13.3",
-    "url": "https://github.com/thecdrz/DeadLink/releases/tag/v2.13.3",
-    "body": "# Release v2.13.3\r\n\r\nRelease date: 2025-08-15\r\n\r\nChangelog (selected):\r\n\r\n- Docs: Removed accidental full-file code fences from `docs/guide/*.md` and hardened the client-side docs loader.\r\n- CI: Added docs fence detection and lightweight docs link checks via `scripts/check-docs-fences.js` and `scripts/check-doc-links.js`.\r\n- Tests: Fixed lingering async handle in `lib/http-utils.js` so Jest exits cleanly.\r\n- Docs: Cleaned legacy/alternate docs pages and consolidated canonical site assets.\r\n- Misc: Minor fixes to log rotation behavior to ensure active log file presence after rotation.\r\n\r\nNotes:\r\n\r\n- This is a docs and tooling focused patch; no breaking changes to runtime behavior are expected.\r\n- Marked as prerelease for final QA before broader publication.\r\n"
+    "tag": "v2.14.0",
+    "version": "2.14.0",
+    "name": "v2.14.0",
+    "url": "https://github.com/thecdrz/DeadLink/releases/tag/v2.14.0",
+    "body": "# Release v2.14.0\r\n\r\nRelease date: 2025-08-16\r\n\r\nHighlights:\r\n - Centralized UI constants and consistent embed legends.\r\n - Deterministic embed snapshot tests and developer-friendly test setup.\r\n - CI workflow for Docker publishing on GitHub Releases.\r\n - Demo telnet client improvements for dev-mode watchdog stability.\r\n"
   }
 }
