@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`embeds snapshot dashboardEmbed with legend remains stable 1`] = `
+{
+  "color": 7506394,
+  "description": "🟢 **Server Status**: Online   •   🟢 **Discord**: Online
+🛠️ **Mode**: Dev
+
+Welcome to the interactive server control panel! Use the buttons below to quickly access server information and analytics.
+
+🎯 **Activity** - Get detailed player activity reports
+📊 **Trends** - View player count analytics and trends
+👥 **Players** - See current online players
+⏰ **Time** - Use /time to check current game time
+ℹ️ **Info** - Server version and details",
+  "fields": [
+    {
+      "inline": false,
+      "name": "Legend",
+      "value": "⚔️ Kills · ☠️ Deaths · 📏 Distance · 🔥 Streak · ❤️ Health · 🧪 Dev",
+    },
+  ],
+  "footer": {
+    "text": "DeadLink v9.9.9",
+  },
+  "title": "🎮 7 Days to Die Server Dashboard",
+}
+`;

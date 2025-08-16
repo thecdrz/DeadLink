@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`player deep dive snapshot playerDeepDiveEmbed with fields 1`] = `
+{
+  "color": 5793266,
+  "fields": [
+    {
+      "inline": false,
+      "name": "Stats",
+      "value": "Level: 12
+❤️ 92% | ⚔️ 5 kills | ☠️ 0 deaths",
+    },
+    {
+      "inline": false,
+      "name": "Session",
+      "value": "15m active | 120m traveled",
+    },
+  ],
+  "footer": {
+    "text": "Generated on <fixed>",
+  },
+  "title": "🎯 Player Deep Dive",
+}
+`;

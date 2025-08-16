@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`players embed snapshot playersListEmbed with sample players 1`] = `
+{
+  "color": 3066993,
+  "fields": [
+    {
+      "inline": false,
+      "name": "Alice L12 — ❤️ 92",
+      "value": "⚔️ 5 · ☠️ 0 · 45ms · 15m · 📏 120m · 🔥 60m
+↳ Near the central hub",
+    },
+    {
+      "inline": false,
+      "name": "Bob L5 — ❤️ 76",
+      "value": "⚔️ 1 · ☠️ 2 · 120ms · 5m · 📏 10m · 🔥 5m
+↳ Outskirts",
+    },
+  ],
+  "footer": {
+    "text": "Generated on <fixed>",
+  },
+  "title": "👥 Current Players Online",
+}
+`;

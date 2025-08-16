@@ -14,7 +14,7 @@ var TelnetClient = require("telnet-client");
 const DishordeInitializer = require("./lib/init.js");
 const Logger = require("./lib/log.js");
 const { createPinoLogger, patchConsoleToPino } = require("./lib/pinoLogger.js");
-const { serverAnalyticsEmbed, activityEmbed, playersListEmbed, timeEmbed, playerDeepDiveEmbed } = require("./lib/embeds.js");
+const { serverAnalyticsEmbed, activityEmbed, playersListEmbed, timeEmbed, playerDeepDiveEmbed, legendField } = require("./lib/embeds.js");
 const { buildTrendsPayload } = require("./lib/trendsHarness.js");
 const { TelnetQueue, friendlyError } = require("./lib/telnetQueue.js");
 const { renderTrendPng, isChartPngAvailable } = require("./lib/charts.js");
@@ -103,6 +103,17 @@ function logDiscordError(err, scope = '[DISCORD]') {
   }
   const m = (err && err.message) ? err.message : String(err);
   return log.warn(scope, m);
+}
+
+// Normalize arbitrary error payloads into a safe string for logging
+function formatErrorForLog(e) {
+  if (!e) return 'unknown';
+  if (e && e.message) return e.message;
+  try {
+    return JSON.stringify(e);
+  } catch (_) {
+    try { return String(e); } catch(_) { return 'unknown'; }
+  }
 }
 
 // Global unhandled promise rejection filter for Discord noise
@@ -210,6 +221,16 @@ var d7dtdState = {
   // Discord connection status: -1 = Error, 0 = Connecting, 1 = Online, -100 = N/A
   discordStatus: -100
 };
+
+// Shared helper to format numeric status codes for UI use
+function formatStatus(s) {
+  // s: numeric status
+  // -100 = N/A, -1 = Error, 0 = Connecting, 1 = Online/Connected
+  if (s === 1) return { emoji: '🟢', text: 'Online' };
+  if (s === 0) return { emoji: '🟡', text: 'Connecting...' };
+  if (s === -100) return { emoji: '⚪', text: 'N/A' };
+  return { emoji: '🔴', text: 'Error' };
+}
 // Runtime session tracking for enhanced player stats (not persisted yet)
 d7dtdState.playerSessions = {}; // name -> { start: ts, lastSeen: ts }
 d7dtdState.playerBaselines = {}; // name -> { killsAtStart: number, deathsAtStart: number }
@@ -480,7 +501,7 @@ function startTelnet() {
   try { telnet.on && telnet.on('close', () => { d7dtdState.connStatus = -1; resetStreamState('Closed'); scheduleReconnect(); }); } catch(_) {}
   try { telnet.on && telnet.on('end', () => { d7dtdState.connStatus = -1; resetStreamState('End'); scheduleReconnect(); }); } catch(_) {}
   try { telnet.on && telnet.on('timeout', () => { d7dtdState.connStatus = -1; resetStreamState('Timeout'); scheduleReconnect(); }); } catch(_) {}
-  try { telnet.on && telnet.on('error', (e) => { d7dtdState.connStatus = -1; resetStreamState('Error'); log.error('[TELNET]', `Error: ${e && e.message}`); }); } catch(_) {}
+  try { telnet.on && telnet.on('error', (e) => { d7dtdState.connStatus = -1; resetStreamState('Error'); log.error('[TELNET]', `Error: ${formatErrorForLog(e)}`); }); } catch(_) {}
 
       // Stream incoming telnet console output and parse GMSG/Chat lines
       try {
@@ -535,7 +556,7 @@ function startTelnet() {
     }
   } catch (e) {
     d7dtdState.connStatus = -1;
-  log.error('[TELNET]', `Unexpected connect error: ${e && e.message}`);
+  log.error('[TELNET]', `Unexpected connect error: ${formatErrorForLog(e)}`);
     scheduleReconnect(8000);
   }
 }
@@ -681,29 +702,10 @@ function buildUpdateEmbed(info, currentVersion, opts = {}) {
     color: upToDate ? 0x2ecc71 : 0x7289da,
     title,
     description,
-  fields: whatsNew ? [{ name: "What's new", value: whatsNew }] : [],
+    fields: whatsNew ? [{ name: "What's new", value: whatsNew }] : [],
     timestamp: new Date().toISOString()
   };
   return embed;
-}
-if (config.updates.enabled === true) {
-  updates.startSchedule({ intervalHours: config.updates.intervalHours || 24, includePrerelease: !!config.updates.prerelease }, (info) => {
-    // Public announcement: post to the configured updates.notifyChannel, independent of the bound default channel
-    try {
-      if (config.updates.notifyMode === 'channel' && config.updates.notifyChannel && client && client.channels) {
-        const embed = buildUpdateEmbed(info, pjson.version);
-        const targetId = config.updates.notifyChannel.toString();
-        const fetched = client.channels.fetch(targetId);
-        if (fetched && typeof fetched.then === 'function') {
-          fetched.then((ch) => {
-            if (ch && typeof ch.isText === 'function' && ch.isText()) {
-              ch.send({ embeds: [embed] }).catch(() => {});
-            }
-          }).catch(() => {});
-        }
-      }
-    } catch (_) { /* ignore */ }
-  });
 }
 
 ////// # Functions # //////
@@ -1065,7 +1067,7 @@ function generateActivityMessage(players, time, hordeInfo) {
     let playerStats = "";
     if (player.health) playerStats += `❤️ ${player.health}% HP`;
     if (player.level) playerStats += ` | 📊 Level ${player.level}`;
-    if (player.zombiesKilled) playerStats += ` | 🧟 ${player.zombiesKilled} kills`;
+  if (player.zombiesKilled) playerStats += ` | ⚔️ ${player.zombiesKilled} kills`;
     
     activityMsg = `**Solo Survivor Report**\n\n`;
     activityMsg += `**${player.name}** — ${playerStats ? `${playerStats}` : ""}\n`;
@@ -2011,17 +2013,18 @@ function generateChangesReport() {
   );
 }
 
+const UI = require('./lib/uiConstants');
+
 function createDashboardEmbed() {
-  const statusEmoji = d7dtdState.connStatus === 1 ? "🟢" : d7dtdState.connStatus === 0 ? "🟡" : "🔴";
-  const statusText = d7dtdState.connStatus === 1 ? "Online" : d7dtdState.connStatus === 0 ? "Connecting..." : "Error";
-  const discordEmoji = d7dtdState.discordStatus === 1 ? "🟢" : d7dtdState.discordStatus === 0 ? "🟡" : "🔴";
-  const discordText = d7dtdState.discordStatus === 1 ? "Connected" : d7dtdState.discordStatus === 0 ? "Connecting..." : "Disconnected";
-  const modeMsg = config["dev-mode"] ? "🧪 Dev" : "Live";
+  const connFmt = formatStatus(d7dtdState.connStatus);
+  const discordFmt = formatStatus(d7dtdState.discordStatus);
+  const modeMsg = config["dev-mode"] ? `${UI.ICON_DEV_BADGE} Dev` : "Live";
   
+  const titleBadge = config["dev-mode"] ? `${UI.ICON_DEV_BADGE} ` : '';
   return {
     color: 0x7289da, // Discord blurple
-    title: "🎮 7 Days to Die Server Dashboard",
-  description: `${statusEmoji} **Server Status**: ${statusText}   •   ${discordEmoji} **Discord**: ${discordText}\n🛠️ **Mode**: ${modeMsg}\n\n` +
+    title: `${titleBadge}🎮 7 Days to Die Server Dashboard`,
+  description: `${connFmt.emoji} **Server Status**: ${connFmt.text}   •   ${discordFmt.emoji} **Discord**: ${discordFmt.text}\n${UI.ICON_MODE} **Mode**: ${modeMsg}\n\n` +
                  `Welcome to the interactive server control panel! Use the buttons below to quickly access server information and analytics.\n\n` +
                  `🎯 **Activity** - Get detailed player activity reports\n` +
                  `📊 **Trends** - View player count analytics and trends\n` +
@@ -2039,11 +2042,11 @@ function createDashboardButtons() {
   return {
     type: 1, // Action Row
     components: [
-      { type: 2, style: 1, label: '🏠 Dashboard', custom_id: 'dashboard', disabled: false },
-      { type: 2, style: 1, label: '🎯 Activity', custom_id: 'dashboard_activity', disabled: d7dtdState.connStatus !== 1 },
-  { type: 2, style: 1, label: '📊 Trends', custom_id: 'dashboard_trends', disabled: false },
-  { type: 2, style: 3, label: '👥 Players', custom_id: 'dashboard_players', disabled: d7dtdState.connStatus !== 1 },
-  { type: 2, style: 4, label: 'ℹ️ Info', custom_id: 'dashboard_info', disabled: false }
+    { type: 2, style: 1, label: UI.BTN_DASHBOARD, custom_id: 'dashboard', disabled: false },
+    { type: 2, style: 1, label: UI.BTN_ACTIVITY, custom_id: 'dashboard_activity', disabled: d7dtdState.connStatus !== 1 },
+  { type: 2, style: 1, label: UI.BTN_TRENDS, custom_id: 'dashboard_trends', disabled: false },
+  { type: 2, style: 3, label: UI.BTN_PLAYERS, custom_id: 'dashboard_players', disabled: d7dtdState.connStatus !== 1 },
+  { type: 2, style: 4, label: UI.BTN_INFO, custom_id: 'dashboard_info', disabled: false }
     ]
   };
 }
@@ -2402,23 +2405,29 @@ function handleTimeFromButton(interaction) {
 function handleInfoFromButton(interaction) {
   try { telemetry.send('ui_view', { view: 'info' }); } catch(_) {}
   interaction.deferReply().then(async () => {
-    const statusMsg = d7dtdState.connStatus === 1 ? ":green_circle: Online" : 
-                     d7dtdState.connStatus === 0 ? ":white_circle: Connecting..." : 
-                     ":red_circle: Error";
-  const modeMsg = config["dev-mode"] ? "🧪 Dev" : "Live";
+    const modeMsg = config["dev-mode"] ? "🧪 Dev" : "Live";
+  const connFmt = formatStatus(d7dtdState.connStatus);
+  const discordFmt = formatStatus(d7dtdState.discordStatus);
+  // Use textual emoji codes for larger text blocks (Discord supports :emoji: shortcodes)
+  const statusMsg = `${connFmt.emoji} ${connFmt.text}`;
+  const discordMsg = `${discordFmt.emoji} ${discordFmt.text}`;
     
     // Use the comprehensive changes content for info (same as main info command)
     const changesReport = generateChangesReport();
     const latestLine = `\n\n**Updates**\nLatest release: https://DeadLink.lol`;
-  const infoContent = `Server connection: ${statusMsg}\nMode: ${modeMsg}\n\n${changesReport}${latestLine}`;
+  const infoContent = `${changesReport}${latestLine}`;
     
+    const connFmt2 = formatStatus(d7dtdState.connStatus);
+    const discordFmt2 = formatStatus(d7dtdState.discordStatus);
+    const modeMsg2 = config["dev-mode"] ? "🧪 Dev" : "Live";
+    const headerLine = `${connFmt2.emoji} **Server Status**: ${connFmt2.text}   •   ${discordFmt2.emoji} **Discord**: ${discordFmt2.text}\n🛠️ **Mode**: ${modeMsg2}\n\n`;
+
     const embed = {
-      color: 0x7289da, // Discord blurple for info
-  title: "🎮 DeadLink Information & Features",
-      description: infoContent,
-      footer: {
-  text: `DeadLink by CDRZ`,
-      }
+      color: 0x7289da,
+      title: '🎮 7 Days to Die Server Dashboard',
+      description: headerLine + infoContent,
+      fields: [ legendField() ],
+      footer: { text: `DeadLink v${pjson.version}` }
     };
     
   const navigationButtons = createNavigationButtons();
@@ -2960,40 +2969,50 @@ function clusterPlayers(players, threshold = 150) {
 
 function buildPlayersEmbed(players, totalLine) {
   const now = Date.now();
-  if (!players.length) {
-  return playersListEmbed({ description: totalLine || 'No players online' });
+  if (!players || !players.length) {
+    return playersListEmbed({ description: totalLine || 'No players online' });
   }
-  // Sessions & per-player lines
-  const lines = [];
-  players.forEach(p => {
+
+  // Build structured player objects for compact embed fields
+  const structured = players.map(p => {
     ensurePlayerSession(p.name);
-    const sess = d7dtdState.playerSessions[p.name];
-    const dur = formatDuration(now - sess.start);
-  const k = parseInt(p.zombiesKilled || '0');
-  const d = parseInt(p.deaths || '0');
-  // Removed KPM baselines/metrics
+    const sess = d7dtdState.playerSessions[p.name] || { start: now, lastSeen: now };
+    const travel = d7dtdState.playerTravel[p.name] || { sessionDistance: 0, totalDistance: 0 };
+    const streakInfo = d7dtdState.playerStreaks[p.name] || { lastDeathAt: null, longestMinutes: 0 };
+    const currentStreakMins = streakInfo.lastDeathAt ? Math.floor((now - streakInfo.lastDeathAt)/60000) : 0;
+
+    const sessionDuration = sess && sess.start ? formatDuration(now - sess.start) : '—';
+    const sessionDistance = Math.round(travel.sessionDistance || 0);
+    const totalDistance = Math.round(travel.totalDistance || 0);
+    const kills = parseInt(p.zombiesKilled || '0') || 0;
+    const deaths = parseInt(p.deaths || '0') || 0;
     const hp = p.health ? `${p.health}%` : '—';
-    const hs = healthStatus(p.health);
     const pq = pingQuality(p.ping);
     let loc = getLocationDescription(p.pos);
-    if (loc.length > 50) loc = loc.slice(0,47) + '…';
-  const streakInfo = d7dtdState.playerStreaks[p.name] || { lastDeathAt: null, longestMinutes: 0 };
-  const currentStreakMins = streakInfo.lastDeathAt ? Math.floor((now - streakInfo.lastDeathAt)/60000) : 0;
-  const streakDisplay = streakInfo.longestMinutes > 0 ? `🔥 ${Math.max(currentStreakMins,0)}m (PB ${streakInfo.longestMinutes}m)` : `🔥 ${currentStreakMins}m`;
-  const travel = d7dtdState.playerTravel[p.name] || { sessionDistance: 0 };
-  const distDisplay = travel.sessionDistance ? `📏 ${Math.round(travel.sessionDistance)}m` : '📏 0m';
-  lines.push(`**${p.name}** L${p.level||'?'} | ❤️ ${hp} (${hs}) | 🧟 ${k} | ☠️ ${d} | ${pq} ${p.ping||'?'}ms | ${distDisplay} | ⏱️ ${dur} | ${streakDisplay}\n↳ ${loc}`);
+    if (loc.length > 64) loc = loc.slice(0,61) + '…';
+
+    return {
+      name: p.name,
+      level: p.level || '?',
+      health: hp,
+      kills,
+      deaths,
+      ping: p.ping || '?',
+      sessionDuration,
+      sessionDistance,
+      totalDistance,
+      streak: currentStreakMins,
+      location: loc
+    };
   });
-  // MVP (removed: previously based on kill rate)
-  let mvp = null;
-  // Clusters
+
+  // Clustering summary
   const clusters = clusterPlayers(players);
   const largest = clusters[0] || [];
   const isolated = clusters.filter(c=>c.length===1).length;
   const clusterSummary = `Clusters: ${clusters.length} | Largest: ${largest.length} | Isolated: ${isolated}`;
-  const mvpLine = '';
-  const description = `${totalLine}\n\n${lines.join('\n\n')}\n\n${clusterSummary}${mvpLine?`\n${mvpLine}`:''}`;
-  return playersListEmbed({ description: description.slice(0, 4000) });
+
+  return playersListEmbed({ players: structured, clustersSummary: clusterSummary, description: totalLine });
 }
 
 async function handlePlayerDeepDive(interaction) {
