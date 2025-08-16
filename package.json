@@ -1,11 +1,13 @@
 {
   "name": "deadlink",
-  "version": "2.13.1",
+  "version": "2.13.2",
   "description": "Advanced Discord bridge bot for 7 Days to Die with interactive dashboard, dynamic narrative storytelling, and intelligent activity tracking. Built on Dishorde by LakeYS with comprehensive enhancements by CDRZ.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
   "test": "jest --runInBand",
+  "check:docs-fences": "node scripts/check-docs-fences.js",
+  "ci:docs": "npm run check:docs-fences && npm test",
   "smoke:e2e": "node scripts/smoke-e2e.js",
   "test:json": "node -e \"require('fs').mkdirSync('logs',{recursive:true})\" && jest --runInBand --json --outputFile logs/jest-last-run.json",
   "test:coverage": "node -e \"require('fs').mkdirSync('logs',{recursive:true})\" && jest --runInBand --coverage --coverageReporters=json-summary --json --outputFile logs/jest-last-run.json",

@@ -1,0 +1,35 @@
+name: Docs & Tests CI
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'scripts/**'
+      - 'package.json'
+  push:
+    branches:
+      - chore/refactor-utils-lifecycle
+
+jobs:
+  docs-and-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Docs fence check
+        run: npm run check:docs-fences
+
+      - name: Run tests
+        run: npm test --silent
+
+      - name: Docs link check
+        run: node scripts/check-doc-links.js

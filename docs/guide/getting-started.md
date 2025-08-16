@@ -22,6 +22,30 @@ Tip: set `DEV_MODE=true` for a simulated telnet source in screenshots/demos.
 ## Register slash commands
 ```powershell
 # Global (may take ~1 hour)
+# Getting Started
+
+Welcome to DeadLink! This quick start helps you run the bot and see the dashboard in minutes.
+
+## Prerequisites
+- Node.js LTS installed
+- A Discord bot token (from the Developer Portal)
+- Your 7 Days to Die server telnet credentials
+
+## Run locally
+```powershell
+$env:DISCORD_TOKEN = "<bot token>"
+$env:TELNET_PASSWORD = "<telnet password>"
+$env:TELNET_IP = "<server ip>"
+$env:TELNET_PORT = "<port>"
+$env:DISCORD_CHANNEL = "<channel id>"
+node index.js
+```
+
+Tip: set `DEV_MODE=true` for a simulated telnet source in screenshots/demos.
+
+## Register slash commands
+```powershell
+# Global (may take ~1 hour)
 npm run slash:global
 
 # Guild (instant) – set your guild ID first:
@@ -51,7 +75,7 @@ Below are quick previews of the main dashboards. Click to open the full image in
     <img alt="Terminal startup logs with clean sections for init, telnet, discord, analytics, updates" src="assets/snapshots/terminal-startup.png">
   </a>
   <figcaption>
-    Terminal — Clean, structured startup logs show config, telnet/Discord connect, analytics load, and update checks.
+    Terminal – Clean, structured startup logs show config, telnet/Discord connect, analytics load, and update checks.
   </figcaption>
 </figure>
 
@@ -99,3 +123,5 @@ Below are quick previews of the main dashboards. Click to open the full image in
   For a headless preview pipeline, run <code>npm run snapshots</code> to regenerate these images.
   Images are saved to <code>docs/assets/snapshots/</code>.
 </p>
+
+
