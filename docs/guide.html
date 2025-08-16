@@ -86,7 +86,10 @@
           await loadChangelog();
         } else {
           const res = await fetch(`./guide/${name}.md`);
-          const md = await res.text();
+          let md = await res.text();
+          // If editors accidentally wrapped the whole file in a code fence (```), strip it.
+          md = md.replace(/^\s*```[\w\-]*\r?\n/, '');
+          md = md.replace(/\r?\n```\s*$/, '');
           const html = marked.parse(md);
           contentEl.innerHTML = html;
           contentEl.querySelectorAll('table').forEach(t => t.classList.add('doc-table'));
